@@ -4,7 +4,7 @@
 
 namespace Sexy
 {
-	typedef enum KeyCode
+	enum KeyCode
 	{
 		KEYCODE_UNKNOWN = 0x00,
 		KEYCODE_LBUTTON = 0x01,
@@ -99,6 +99,6 @@ namespace Sexy
 		KEYCODE_ASCIIEND2 = 0xE0
 	};
 
-	KeyCode GetKeyCodeFromName(const std::string& theKeyName);
-	const std::string GetKeyNameFromCode(const KeyCode& theKeyCode);
+	KeyCode GetKeyCodeFromName(const std::string &theKeyName);
+	const std::string GetKeyNameFromCode(const KeyCode &theKeyCode);
 } // namespace Sexy

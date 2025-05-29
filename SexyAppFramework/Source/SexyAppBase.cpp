@@ -411,7 +411,7 @@ SexyAppBase::~SexyAppBase()
 	{
 		HWND aWindow = mInvisHWnd;
 		mInvisHWnd = NULL;
-		SetWindowLong(aWindow, GWL_USERDATA, NULL);
+		SetWindowLongPtr(aWindow, GWLP_USERDATA, NULL);
 		DestroyWindow(aWindow);
 	}
 
@@ -3630,7 +3630,7 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 	case WM_DESTROY: {
 		char aStr[256];
-		sprintf(aStr, "DESTROYED HWND: %d\r\n", hWnd);
+		sprintf(aStr, "DESTROYED HWND: %p\r\n", hWnd);
 		OutputDebugStringA(aStr);
 	}
 	break;
@@ -4564,7 +4564,7 @@ void SexyAppBase::MakeWindow()
 
 	if (mHWnd != NULL)
 	{
-		SetWindowLong(mHWnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(mHWnd, GWLP_USERDATA, NULL);
 		HWND anOldWindow = mHWnd;
 		mHWnd = NULL;
 		DestroyWindow(anOldWindow);

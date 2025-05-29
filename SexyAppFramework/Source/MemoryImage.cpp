@@ -1718,8 +1718,8 @@ void MemoryImage::BltMatrixHelper(Image* theImage, float x, float y, const SexyM
 	float v0 = (float)theSrcRect.mY / theImage->mHeight;
 	float v1 = (float)(theSrcRect.mY + theSrcRect.mHeight) / theImage->mHeight;
 
-	SWHelper::XYZStruct aVerts[4] = { { -w2, -h2, u0, v0, 0xFFFFFFFF }, { w2, -h2, u1, v0, 0xFFFFFFFF }, { -w2, h2, u0, v1, 0xFFFFFFFF },
-		{ w2, h2, u1, v1, 0xFFFFFFFF } };
+	SWHelper::XYZStruct aVerts[4] = { { -w2, -h2, u0, v0, -1 }, { w2, -h2, u1, v0, -1 }, { -w2, h2, u0, v1, -1 },
+		{ w2, h2, u1, v1, -1 } };
 
 	for (int i = 0; i < 4; i++)
 	{

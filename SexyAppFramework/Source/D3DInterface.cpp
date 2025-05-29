@@ -2119,7 +2119,7 @@ void D3DInterface::FillPoly(const Point theVertices[], int theNumVertices, const
 	VertexList aList;
 	for (int i = 0; i < theNumVertices; i++)
 	{
-		D3DTLVERTEX vert = { theVertices[i].mX + tx, theVertices[i].mY + ty, 0, 1, aColor, 0, 0, 0 };
+		D3DTLVERTEX vert = { (D3DVALUE)(theVertices[i].mX + tx), D3DVALUE(theVertices[i].mY + ty), 0, 1, aColor, 0, 0, 0 };
 		if (!mTransformStack.empty())
 		{
 			SexyVector2 v(vert.sx, vert.sy);

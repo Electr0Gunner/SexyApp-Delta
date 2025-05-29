@@ -5,7 +5,7 @@ using namespace Sexy;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline int QueryCounters(__int64* lpPerformanceCount)
+inline int QueryCounters(__int64 *lpPerformanceCount)
 {
 	/* returns TSC only */
 	_asm
@@ -20,7 +20,7 @@ inline int QueryCounters(__int64* lpPerformanceCount)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline int DeltaCounters(__int64* lpPerformanceCount)
+inline int DeltaCounters(__int64 *lpPerformanceCount)
 {
 	_asm
 	{
@@ -134,7 +134,7 @@ int PerfTimer::GetCPUSpeedMHz()
 ///////////////////////////////////////////////////////////////////////////////
 struct PerfInfo
 {
-	const char* mPerfName;
+	const char *mPerfName;
 	mutable __int64 mStartTime;
 	mutable __int64 mDuration;
 	mutable double mMillisecondDuration;
@@ -142,9 +142,9 @@ struct PerfInfo
 	mutable int mStartCount;
 	mutable int mCallCount;
 
-	PerfInfo(const char* theName) : mPerfName(theName), mStartTime(0), mDuration(0), mStartCount(0), mCallCount(0), mLongestCall(0) {}
+	PerfInfo(const char *theName) : mPerfName(theName), mStartTime(0), mDuration(0), mStartCount(0), mCallCount(0), mLongestCall(0) {}
 
-	bool operator<(const PerfInfo& theInfo) const
+	bool operator<(const PerfInfo &theInfo) const
 	{
 		return stricmp(mPerfName, theInfo.mPerfName) < 0;
 	}
@@ -165,12 +165,12 @@ int gPerfRecordTop = 0;
 ///////////////////////////////////////////////////////////////////////////////
 struct PerfRecord
 {
-	const char* mName;
+	const char *mName;
 	__int64 mTime;
 	bool mStart;
 
 	PerfRecord() {}
-	PerfRecord(const char* theName, bool start) : mName(theName), mStart(start)
+	PerfRecord(const char *theName, bool start) : mName(theName), mStart(start)
 	{
 		QueryCounters(&mTime);
 	}
@@ -180,7 +180,7 @@ PerfRecordVector gPerfRecordVector;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static inline void InsertPerfRecord(PerfRecord& theRecord)
+static inline void InsertPerfRecord(PerfRecord &theRecord)
 {
 	if (theRecord.mStart)
 	{
@@ -225,7 +225,7 @@ static inline void CollatePerfRecords()
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static inline void PushPerfRecord(const PerfRecord& theRecord)
+static inline void PushPerfRecord(const PerfRecord &theRecord)
 {
 	if (gPerfRecordTop >= (int)gPerfRecordVector.size())
 		gPerfRecordVector.push_back(theRecord);
@@ -274,7 +274,7 @@ void SexyPerf::EndPerf()
 
 	for (PerfInfoSet::iterator anItr = gPerfInfoSet.begin(); anItr != gPerfInfoSet.end(); ++anItr)
 	{
-		const PerfInfo& anInfo = *anItr;
+		const PerfInfo &anInfo = *anItr;
 		anInfo.mMillisecondDuration = (double)anInfo.mDuration * 1000 / aFreq;
 		anInfo.mLongestCall = anInfo.mLongestCall * 1000 / aFreq;
 	}
@@ -282,7 +282,7 @@ void SexyPerf::EndPerf()
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-void SexyPerf::StartTiming(const char* theName)
+void SexyPerf::StartTiming(const char *theName)
 {
 	if (gPerfOn)
 	{
@@ -293,7 +293,7 @@ void SexyPerf::StartTiming(const char* theName)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-void SexyPerf::StopTiming(const char* theName)
+void SexyPerf::StopTiming(const char *theName)
 {
 	if (gPerfOn)
 	{
@@ -314,9 +314,9 @@ std::string SexyPerf::GetResults()
 	aResult += aBuf;
 	for (PerfInfoSet::iterator anItr = gPerfInfoSet.begin(); anItr != gPerfInfoSet.end(); ++anItr)
 	{
-		const PerfInfo& anInfo = *anItr;
+		const PerfInfo &anInfo = *anItr;
 		sprintf(aBuf, "%s (%d calls, %%%.2f time): %.2f (%.2f avg, %.2f longest)\n", anInfo.mPerfName, anInfo.mCallCount,
-			anInfo.mMillisecondDuration / gDuration * 100, anInfo.mMillisecondDuration, anInfo.mMillisecondDuration / anInfo.mCallCount, anInfo.mLongestCall);
+				anInfo.mMillisecondDuration / gDuration * 100, anInfo.mMillisecondDuration, anInfo.mMillisecondDuration / anInfo.mCallCount, anInfo.mLongestCall);
 		aResult += aBuf;
 	}
 
