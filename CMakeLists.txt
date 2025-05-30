@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.19)
 
 project(lawn C CXX)
 
@@ -35,4 +35,3 @@ add_subdirectory(SexyAppFramework)
 if(ENABLE_DEMOS)
 add_subdirectory(Demos)
 endif()
-
