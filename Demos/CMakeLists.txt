@@ -1,4 +1,4 @@
-file(GLOB_RECURSE COMMON_SOURCES CONFIGURE_DEPENDS Common/Source/*.cpp)
+file(GLOB_RECURSE COMMON_SOURCES CONFIGURE_DEPENDS Common/*.cpp)
 
 # This custom target represents a task that copies all demo assets to the output directory
 add_custom_target(DemoResources ALL)
@@ -7,7 +7,7 @@ add_custom_target(DemoResources ALL)
 function(define_demo DIR)
     file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${DIR}/*.cpp)
     add_executable(${DIR} WIN32 ${SOURCES} ${COMMON_SOURCES})
-    target_include_directories(${DIR} PRIVATE ${DIR}/Include Common/Include)
+    target_include_directories(${DIR} PRIVATE ${DIR}/Include Common)
     target_link_libraries(${DIR} PRIVATE SexyAppFramework)
     add_dependencies(${DIR} DemoResources)
 endfunction()
@@ -25,6 +25,6 @@ define_demo(Hungarr)
 # Definition for the demo resources copy target
 add_custom_command(TARGET DemoResources POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/bass.dll $<TARGET_FILE_DIR:Demo1> # BASS DLL for audio
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Common/Resources/ $<TARGET_FILE_DIR:Demo1> # Resource files
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ $<TARGET_FILE_DIR:Demo1> # Resource files
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/dxwrapper/ $<TARGET_FILE_DIR:Demo1> # DXWrapper for compatibility
 )
