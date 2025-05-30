@@ -19,9 +19,15 @@ namespace Sexy
 	typedef BOOL(__stdcall* STACKWALKPROC)(DWORD, HANDLE, HANDLE, LPSTACKFRAME, LPVOID, PREAD_PROCESS_MEMORY_ROUTINE, PFUNCTION_TABLE_ACCESS_ROUTINE,
 		PGET_MODULE_BASE_ROUTINE, PTRANSLATE_ADDRESS_ROUTINE);
 
+#if defined(__i386__) || defined(_M_IX86)|| defined(__i386)
 	typedef LPVOID(__stdcall* SYMFUNCTIONTABLEACCESSPROC)(HANDLE, DWORD);
-
 	typedef DWORD(__stdcall* SYMGETMODULEBASEPROC)(HANDLE, DWORD);
+#elif defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
+	typedef LPVOID(__stdcall* SYMFUNCTIONTABLEACCESSPROC)(HANDLE, DWORD64);
+	typedef DWORD64(__stdcall* SYMGETMODULEBASEPROC)(HANDLE, DWORD64);
+#else
+#error "Unsupported architecture in SEHCatcher.h"
+#endif
 
 	typedef BOOL(__stdcall* SYMGETSYMFROMADDRPROC)(HANDLE, DWORD, PDWORD, PIMAGEHLP_SYMBOL);
 

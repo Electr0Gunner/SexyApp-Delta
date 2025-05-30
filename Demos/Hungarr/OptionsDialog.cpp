@@ -224,7 +224,7 @@ void OptionsDialog::CheckboxChecked(int theId, bool checked)
 			// Turn on 3D acceleration. But we need to check if the user is
 			// even allowed to have it on. Some cards are just not compatible
 			// with the framework (less than 8MB RAM for instance):
-			if (!gSexyAppBase->Is3DAccelerationSupported())
+			/*if (!gSexyAppBase->Is3DAccelerationSupported())
 			{
 				// It's not supported. Don't let the checkbox get checked.
 				// Display an error dialog to the user to let them know why this happened.
@@ -237,7 +237,7 @@ void OptionsDialog::CheckboxChecked(int theId, bool checked)
 					video card does not meet the minimum requirements for this game."),
 					_S("OK"), Dialog::BUTTONS_FOOTER);
 			}
-			else if(!gSexyAppBase->Is3DAccelerationRecommended())
+			else*/ if(!gSexyAppBase->Is3DAccelerationRecommended())
 			{
 				// We can also check if 3D acceleration is not recommended for this computer
 				// with a call to Is3DAccelerationRecommended. This allows the user to override

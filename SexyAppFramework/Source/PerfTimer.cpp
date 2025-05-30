@@ -8,13 +8,7 @@ using namespace Sexy;
 inline int QueryCounters(__int64 *lpPerformanceCount)
 {
 	/* returns TSC only */
-	_asm
-	{
-		mov ebx, dword ptr [lpPerformanceCount]
-		rdtsc
-			mov dword ptr [ebx], eax
-			mov dword ptr [ebx+4], edx
-	}
+	*lpPerformanceCount = __rdtsc();
 	return 1;
 }
 
@@ -22,15 +16,8 @@ inline int QueryCounters(__int64 *lpPerformanceCount)
 ///////////////////////////////////////////////////////////////////////////////
 inline int DeltaCounters(__int64 *lpPerformanceCount)
 {
-	_asm
-	{
-		mov ebx, dword ptr [lpPerformanceCount]
-		rdtsc
-			sub eax, dword ptr [ebx]
-			sbb edx, dword ptr [ebx+4]
-			mov dword ptr [ebx],   eax
-				mov dword ptr [ebx+4], edx
-	}
+	__int64 current = __rdtsc();
+	*lpPerformanceCount = current - *lpPerformanceCount;
 	return 1;
 }
 

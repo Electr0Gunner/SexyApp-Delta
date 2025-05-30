@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SexyAppFramework/bass.h>
+#include <bass/bass.h>
 #include <SexyAppFramework/MusicInterface.h>
 
 namespace Sexy

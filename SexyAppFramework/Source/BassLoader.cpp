@@ -8,9 +8,9 @@ static long gBassLoadCount = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static void CheckBassFunction(unsigned int theFunc, const char* theName)
+static void CheckBassFunction(FARPROC theFunc, const char* theName)
 {
-	if (theFunc == 0)
+	if (theFunc == nullptr)
 	{
 		char aBuf[1024];
 		sprintf(aBuf, "%s function not found in bass.dll", theName);
@@ -27,24 +27,15 @@ BASS_INSTANCE::BASS_INSTANCE(const char* dllName)
 	if (!mModule)
 		return;
 
-#define GETPROC(_x) CheckBassFunction(*((unsigned int*)&_x) = (unsigned int)GetProcAddress(mModule, #_x), #_x)
+#define GETPROC(_x) CheckBassFunction(*((FARPROC*)&_x) = GetProcAddress(mModule, #_x), #_x)
 
 	GETPROC(BASS_Init);
 	GETPROC(BASS_Free);
 	GETPROC(BASS_Stop);
 	GETPROC(BASS_Start);
-
-	*((unsigned int*)&BASS_SetGlobalVolumes) = (unsigned int)GetProcAddress(mModule, "BASS_SetGlobalVolumes");
-	*((unsigned int*)&BASS_SetVolume) = (unsigned int)GetProcAddress(mModule, "BASS_SetVolume");
-
-	if ((BASS_SetVolume == NULL) && (BASS_SetGlobalVolumes == NULL))
-	{
-		MessageBoxA(NULL, "Neither BASS_SetGlobalVolumes or BASS_SetVolume found in bass.dll", "Error", MB_OK | MB_ICONERROR);
-		exit(0);
-	}
-
-	*((unsigned int*)&BASS_SetConfig) = (unsigned int)GetProcAddress(mModule, "BASS_SetConfig");
-	*((unsigned int*)&BASS_GetConfig) = (unsigned int)GetProcAddress(mModule, "BASS_GetConfig");
+	GETPROC(BASS_SetVolume);
+	GETPROC(BASS_SetConfig);
+	GETPROC(BASS_GetConfig);
 
 	GETPROC(BASS_GetVolume);
 	GETPROC(BASS_GetInfo);
@@ -53,13 +44,13 @@ BASS_INSTANCE::BASS_INSTANCE(const char* dllName)
 	GETPROC(BASS_ChannelStop);
 	GETPROC(BASS_ChannelPlay);
 	GETPROC(BASS_ChannelPause);
-	GETPROC(BASS_ChannelSetAttributes);
-	GETPROC(BASS_ChannelGetAttributes);
+	GETPROC(BASS_ChannelSetAttribute);
+	GETPROC(BASS_ChannelGetAttribute);
 	GETPROC(BASS_ChannelSetPosition);
 	GETPROC(BASS_ChannelGetPosition);
 	GETPROC(BASS_ChannelIsActive);
-	GETPROC(BASS_ChannelSetFlags);
-	GETPROC(BASS_ChannelSlideAttributes);
+	GETPROC(BASS_ChannelFlags);
+	GETPROC(BASS_ChannelSlideAttribute);
 	GETPROC(BASS_ChannelIsSliding);
 	GETPROC(BASS_ChannelGetLevel);
 	GETPROC(BASS_ChannelSetSync);
@@ -74,14 +65,9 @@ BASS_INSTANCE::BASS_INSTANCE(const char* dllName)
 
 	GETPROC(BASS_MusicLoad);
 	GETPROC(BASS_MusicFree);
-	GETPROC(BASS_MusicGetAttribute);
-	GETPROC(BASS_MusicSetAttribute);
 
 	GETPROC(BASS_StreamCreateFile);
 	GETPROC(BASS_StreamFree);
-
-	GETPROC(BASS_MusicGetOrders);
-	GETPROC(BASS_MusicGetOrderPosition);
 
 	GETPROC(BASS_SampleLoad);
 	GETPROC(BASS_SampleFree);
@@ -91,30 +77,8 @@ BASS_INSTANCE::BASS_INSTANCE(const char* dllName)
 	GETPROC(BASS_SampleStop);
 
 	GETPROC(BASS_ErrorGetCode);
-
-	mVersion2 = BASS_SetConfig != NULL;
-	if (mVersion2)
-	{
-		// Version 2 has different BASS_Init params
-		*((unsigned int*)&BASS_Init2) = (unsigned int)BASS_Init;
-		BASS_Init = NULL;
-
-		*((unsigned int*)&BASS_MusicLoad2) = (unsigned int)BASS_MusicLoad;
-		BASS_MusicLoad = NULL;
-
-		// The following are only supported in 2.2 and higher
-		*((unsigned int*)&BASS_PluginLoad) = (unsigned int)GetProcAddress(mModule, "BASS_PluginLoad");
-		*((unsigned int*)&BASS_ChannelGetLength) = (unsigned int)GetProcAddress(mModule, "BASS_ChannelGetLength");
-
-		// 2.1 and higher only
-		*((unsigned int*)&BASS_ChannelPreBuf) = (unsigned int)GetProcAddress(mModule, "BASS_ChannelPreBuf");
-	}
-	else
-	{
-		BASS_PluginLoad = NULL;
-		BASS_ChannelPreBuf = NULL;
-	}
-
+	GETPROC(BASS_PluginLoad);
+	GETPROC(BASS_ChannelGetLength);
 #undef GETPROC
 }
 
@@ -128,7 +92,7 @@ BASS_INSTANCE::~BASS_INSTANCE()
 
 BOOL BASS_INSTANCE::BASS_MusicSetAmplify(HMUSIC handle, DWORD amp)
 {
-	BASS_MusicSetAttribute(handle, BASS_MUSIC_ATTRIB_AMPLIFY, amp);
+	BASS_MusicSetAttribute(handle, BASS_ATTRIB_MUSIC_AMPLIFY, amp);
 	return true;
 }
 
@@ -137,12 +101,14 @@ BOOL BASS_INSTANCE::BASS_MusicPlay(HMUSIC handle)
 	return BASS_ChannelPlay(handle, true);
 }
 
+#define MAKEMUSICPOS(order,row) (0x80000000|MAKELONG(order,row))
+
 BOOL BASS_INSTANCE::BASS_MusicPlayEx(HMUSIC handle, DWORD pos, int flags, BOOL reset)
 {
 	int anOffset = MAKEMUSICPOS(pos, 0);
 
 	BASS_ChannelStop(handle);
-	BASS_ChannelSetPosition(handle, anOffset);
+	BASS_ChannelSetPosition(handle, anOffset, BASS_POS_MUSIC_ORDER);
 	BASS_ChannelSetFlags(handle, flags);
 
 	return BASS_ChannelPlay(handle, false /*reset*/);
@@ -159,6 +125,73 @@ BOOL BASS_INSTANCE::BASS_StreamPlay(HSTREAM handle, BOOL flush, DWORD flags)
 	return BASS_ChannelPlay(handle, flush);
 }
 
+BOOL BASS_INSTANCE::BASS_ChannelSetAttributes(DWORD handle, int freq, int volume, int pan)
+{
+	BOOL result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_FREQ, (float)freq);
+	if (result)
+		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_VOL, (float)volume / 100.0f);
+	if (result)
+		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_PAN, (float)pan / 100.0f);
+	return result;
+}
+
+BOOL BASS_INSTANCE::BASS_ChannelGetAttributes(DWORD handle, DWORD* freq, DWORD* volume, int* pan)
+{
+	float fVolume, fPan;
+	BOOL result = BASS_ChannelGetAttribute(handle, BASS_ATTRIB_FREQ, (float*)freq);
+	if (result)
+		result = BASS_ChannelGetAttribute(handle, BASS_ATTRIB_VOL, &fVolume);
+	if (result)
+		result = BASS_ChannelGetAttribute(handle, BASS_ATTRIB_PAN, &fPan);
+	if (result)
+	{
+		*volume = (DWORD)(fVolume * 100.0f);
+		*pan = (int)(fPan * 100.0f);
+	}
+	return result;
+}
+
+BOOL BASS_INSTANCE::BASS_ChannelSetFlags(DWORD handle, DWORD flags)
+{
+	return BASS_ChannelFlags(handle, flags, 0xFFFFFFFF) != -1;
+}
+
+BOOL BASS_INSTANCE::BASS_ChannelSlideAttributes(DWORD handle, int freq, int volume, int pan, DWORD time)
+{
+	BOOL result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_FREQ, (float)freq, time);
+	if (result)
+		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_VOL, (float)volume / 100.0f, time);
+	if (result)
+		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_PAN, (float)pan / 100.0f, time);
+	return result;
+}
+
+
+DWORD BASS_INSTANCE::BASS_MusicGetAttribute(DWORD handle, DWORD attrib)
+{
+	float value;
+	if (BASS_ChannelGetAttribute(handle, attrib, &value))
+		return (DWORD)value;
+	else
+		return 0;
+}
+
+void BASS_INSTANCE::BASS_MusicSetAttribute(DWORD handle, DWORD attrib, DWORD value)
+{
+	float fValue = (float)value;
+	BASS_ChannelSetAttribute(handle, attrib, fValue);
+}
+
+
+DWORD BASS_INSTANCE::BASS_MusicGetOrders(HMUSIC handle)
+{
+	return BASS_ChannelGetLength(handle, BASS_POS_MUSIC_ORDER);
+}
+
+DWORD BASS_INSTANCE::BASS_MusicGetOrderPosition(HMUSIC handle)
+{
+	return BASS_ChannelGetPosition(handle, BASS_POS_MUSIC_ORDER);
+}
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 void Sexy::LoadBassDLL()

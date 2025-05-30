@@ -24,7 +24,6 @@ define_demo(Hungarr)
 
 # Definition for the demo resources copy target
 add_custom_command(TARGET DemoResources POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/bass.dll $<TARGET_FILE_DIR:Demo1> # BASS DLL for audio
+    COMMAND ${CMAKE_COMMAND} -E copy ${BASS_PATH} $<TARGET_FILE_DIR:Demo1> # BASS DLL for audio
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ $<TARGET_FILE_DIR:Demo1> # Resource files
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/dxwrapper/ $<TARGET_FILE_DIR:Demo1> # DXWrapper for compatibility
 )

@@ -438,7 +438,7 @@ SexyAppBase::~SexyAppBase()
 		HWND aWindow = mHWnd;
 		mHWnd = NULL;
 
-		SetWindowLong(aWindow, GWL_USERDATA, NULL);
+		SetWindowLongPtr(aWindow, GWLP_USERDATA, NULL);
 
 		/*char aStr[256];
 		sprintf(aStr, "HWND: %d\r\n", aWindow);
@@ -3345,7 +3345,7 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			return aResult;
 	}
 
-	SexyAppBase* aSexyApp = (SexyAppBase*)GetWindowLong(hWnd, GWL_USERDATA);
+	SexyAppBase* aSexyApp = (SexyAppBase*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	switch (uMsg)
 	{
 		//  TODO: switch to killfocus/setfocus?
@@ -4652,7 +4652,7 @@ void SexyAppBase::MakeWindow()
 	sprintf(aStr, "HWND: %d\r\n", mHWnd);
 	OutputDebugString(aStr);*/
 
-	SetWindowLong(mHWnd, GWL_USERDATA, (LONG)this);
+	SetWindowLongPtr(mHWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 	if (mDDInterface == NULL)
 	{
@@ -6032,7 +6032,7 @@ void SexyAppBase::Init()
 		DBG_ASSERTE(success);
 
 		mInvisHWnd = CreateWindowExA(0, "InvisWindow", SexyStringToStringFast(mTitle).c_str(), 0, 0, 0, 0, 0, NULL, NULL, gHInstance, 0);
-		SetWindowLong(mInvisHWnd, GWL_USERDATA, (LONG)this);
+		SetWindowLongPtr(mInvisHWnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
 	else
 	{
@@ -6066,7 +6066,7 @@ void SexyAppBase::Init()
 		DBG_ASSERTE(success);
 
 		mInvisHWnd = CreateWindowEx(0, _S("InvisWindow"), mTitle.c_str(), 0, 0, 0, 0, 0, NULL, NULL, gHInstance, 0);
-		SetWindowLong(mInvisHWnd, GWL_USERDATA, (LONG)this);
+		SetWindowLongPtr(mInvisHWnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
 
 	mHandCursor = CreateCursor(gHInstance, 11, 4, 32, 32, gFingerCursorData, gFingerCursorData + sizeof(gFingerCursorData) / 2);

@@ -62,5 +62,5 @@ add_library(SexyAppFramework
 )
 
 target_include_directories(SexyAppFramework PUBLIC Include)
-target_link_libraries(SexyAppFramework PRIVATE winmm.lib Ws2_32.lib)
-target_link_libraries(SexyAppFramework PRIVATE png ogg jpeg)
+target_link_libraries(SexyAppFramework PUBLIC bass)
+target_link_libraries(SexyAppFramework PRIVATE png ogg jpeg winmm.lib Ws2_32.lib)
