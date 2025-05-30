@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.30)
 
 project(lawn C CXX)
 
@@ -16,15 +16,23 @@ else()
 endif()
 
 if (TARGET_ARCH STREQUAL "X86")
-    set(BASS_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/bass/X86/bass.dll")
     add_compile_definitions(-D__i386__)
 elseif(TARGET_ARCH STREQUAL "X64")
-    set(BASS_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/bass/X64/bass.dll")
     add_compile_definitions(-D__x86_64__)
 else()
     message(FATAL_ERROR "TARGET_ARCH not set (this is a bug in CMakeLists.txts.")
 endif()
 
+set(BASS_DLL_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/bass/${TARGET_ARCH}/bass.dll")
+set(BASS_LIB_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/bass/${TARGET_ARCH}/bass.lib")
+set(BASS_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/bass/Include")
+
+option(ENABLE_DEMOS "Enable demos" ON)
+
 add_subdirectory(ThirdParty)
 add_subdirectory(SexyAppFramework)
+
+if(ENABLE_DEMOS)
 add_subdirectory(Demos)
+endif()
+

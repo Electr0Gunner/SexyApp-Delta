@@ -1,7 +1,7 @@
 add_library(SexyAppFramework
     Source/ImageLib/ImageLib.cpp
     Source/PakLib/PakInterface.cpp
-    Source/BassLoader.cpp
+    
     Source/BassMusicInterface.cpp
     Source/Buffer.cpp
     Source/ButtonWidget.cpp
@@ -61,6 +61,5 @@ add_library(SexyAppFramework
     Source/XMLParser.cpp
 )
 
-target_include_directories(SexyAppFramework PUBLIC Include)
-target_link_libraries(SexyAppFramework PUBLIC bass)
-target_link_libraries(SexyAppFramework PRIVATE png ogg jpeg winmm.lib Ws2_32.lib)
+target_include_directories(SexyAppFramework PUBLIC Include ${BASS_INCLUDE_PATH})
+target_link_libraries(SexyAppFramework PRIVATE png ogg jpeg ${BASS_LIB_PATH} winmm.lib Ws2_32.lib)
