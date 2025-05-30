@@ -65,7 +65,7 @@ namespace Sexy
 		HMUSIC(WINAPI* BASS_MusicLoad)(BOOL mem, const void* file, QWORD offset, DWORD length, DWORD flags, DWORD freq);
 		void(WINAPI* BASS_MusicFree)(HMUSIC handle);
 
-		HSTREAM(WINAPI* BASS_StreamCreateFile)(BOOL mem, void* file, DWORD offset, DWORD length, DWORD flags);
+		HSTREAM(WINAPI* BASS_StreamCreateFile)(BOOL mem, void* file, QWORD offset, QWORD length, DWORD flags);
 		void(WINAPI* BASS_StreamFree)(HSTREAM handle);
 
 		BOOL(WINAPI* BASS_FXSetParameters)(HFX handle, const void* par);

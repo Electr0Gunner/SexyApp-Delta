@@ -129,9 +129,9 @@ BOOL BASS_INSTANCE::BASS_ChannelSetAttributes(DWORD handle, int freq, int volume
 {
 	BOOL result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_FREQ, (float)freq);
 	if (result)
-		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_VOL, (float)volume / 100.0f);
+		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_VOL, (float)volume);
 	if (result)
-		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_PAN, (float)pan / 100.0f);
+		result = BASS_ChannelSetAttribute(handle, BASS_ATTRIB_PAN, (float)pan);
 	return result;
 }
 
@@ -145,8 +145,8 @@ BOOL BASS_INSTANCE::BASS_ChannelGetAttributes(DWORD handle, DWORD* freq, DWORD* 
 		result = BASS_ChannelGetAttribute(handle, BASS_ATTRIB_PAN, &fPan);
 	if (result)
 	{
-		*volume = (DWORD)(fVolume * 100.0f);
-		*pan = (int)(fPan * 100.0f);
+		*volume = (DWORD)(fVolume);
+		*pan = (int)(fPan);
 	}
 	return result;
 }
@@ -160,9 +160,9 @@ BOOL BASS_INSTANCE::BASS_ChannelSlideAttributes(DWORD handle, int freq, int volu
 {
 	BOOL result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_FREQ, (float)freq, time);
 	if (result)
-		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_VOL, (float)volume / 100.0f, time);
+		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_VOL, (float)volume, time);
 	if (result)
-		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_PAN, (float)pan / 100.0f, time);
+		result = BASS_ChannelSlideAttribute(handle, BASS_ATTRIB_PAN, (float)pan, time);
 	return result;
 }
 

@@ -313,8 +313,8 @@ void BassMusicInterface::SetVolume(double theVolume)
 {
 	int aVolume = (int)(theVolume * mMaxMusicVolume);
 
-	gBass->BASS_SetConfig(/*BASS_CONFIG_GVOL_MUSIC*/ 6, (int)(theVolume * 100));
-	gBass->BASS_SetConfig(/*BASS_CONFIG_GVOL_STREAM*/ 5, (int)(theVolume * 100));
+	gBass->BASS_SetConfig(/*BASS_CONFIG_GVOL_MUSIC*/ 6, (int)(theVolume * 100)*100);
+	gBass->BASS_SetConfig(/*BASS_CONFIG_GVOL_STREAM*/ 5, (int)(theVolume * 100)*100);
 }
 
 void BassMusicInterface::SetSongVolume(int theSongId, double theVolume)
