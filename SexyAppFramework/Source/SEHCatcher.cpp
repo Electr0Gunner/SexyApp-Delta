@@ -4,11 +4,6 @@
 #include <fstream>
 #include <process.h>
 
-#ifdef ZYLOM
-#include "zylomso.h"
-using namespace zylom::zylomso;
-#endif
-
 using namespace Sexy;
 
 LPTOP_LEVEL_EXCEPTION_FILTER SEHCatcher::mPreviousFilter;
@@ -418,9 +413,6 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 
 	WriteToFile(aDebugDump);
 
-#ifdef ZYLOM
-	ZylomGS_StandAlone_SendBugReport((char*)aDebugDump.c_str());
-#else
 	if (mApp != NULL)
 	{
 		if (mApp->mRecordingDemoBuffer)
@@ -448,7 +440,6 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 
 	if (mShowUI)
 		ShowErrorDialog(anErrorTitle, aDebugDump);
-#endif
 
 	//::MessageBox(NULL, aDebugDump.c_str(), "ERROR", MB_ICONERROR);
 
