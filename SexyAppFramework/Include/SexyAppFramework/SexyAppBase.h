@@ -372,8 +372,7 @@ namespace Sexy
 		virtual void LoadingThreadProc();
 		virtual void WriteToRegistry();
 		virtual void ReadFromRegistry();
-		virtual Dialog* NewDialog(int theDialogId, bool isModal, const SexyString& theDialogHeader, const SexyString& theDialogLines,
-			const SexyString& theDialogFooter, int theButtonMode);
+		virtual Dialog* NewDialog(int theDialogId, bool isModal, const SexyString& theDialogHeader, const SexyString& theDialogLines, const SexyString& theDialogFooter, int theButtonMode);
 		virtual void PreDisplayHook();
 
 		// Public methods

@@ -244,8 +244,9 @@ bool SexyApp::OpenHTMLTemplate(const std::string& theTemplateFile, const Defines
 	std::fstream anInStream(theTemplateFile.c_str(), std::ios::in);
 	if (!anInStream.is_open())
 		return false;
+
 	WIN32_FIND_DATA aFindData;
-	HANDLE aHandle = FindFirstFile("temp\tpl*.html", &aFindData);
+	HANDLE aHandle = FindFirstFile("temp\\tpl*.html", &aFindData);
 	if (aHandle != NULL)
 	{
 		do
@@ -256,7 +257,7 @@ bool SexyApp::OpenHTMLTemplate(const std::string& theTemplateFile, const Defines
 		FindClose(aHandle);
 	}
 	Sexy::MkDir("temp");
-	std::string anOutFilename = StrFormat("temp\tpl%04d.html", rand() % 10000);
+	std::string anOutFilename = StrFormat("temp\\tpl%04d.html", rand() % 10000);
 	//TODO: A better failover case?
 	std::fstream anOutStream(anOutFilename.c_str(), std::ios::out);
 	if (!anOutStream.is_open())
@@ -442,7 +443,7 @@ void SexyApp::InitPropertiesHook()
 {
 	// Load properties if we need to
 	bool checkSig = !IsScreenSaver();
-	LoadProperties("properties\partner.xml", false, checkSig);
+	LoadProperties("properties\\partner.xml", false, checkSig);
 	// Check to see if this build is unlocked.
 	if (GetBoolean("NoReg", false))
 	{

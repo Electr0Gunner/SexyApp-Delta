@@ -696,6 +696,8 @@ static LRESULT CALLBACK SEHProgressWindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 static void CreateProgressWindow()
 {
+	const auto hInstance = GetModuleHandle(nullptr);
+
 	WNDCLASSA wc;
 	wc.style = 0;
 	wc.cbClsExtra = 0;
@@ -703,7 +705,7 @@ static void CreateProgressWindow()
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
 	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
-	wc.hInstance = gHInstance;
+	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SEHProgressWindowProc;
 	wc.lpszClassName = "SEHProgressWindow";
 	wc.lpszMenuName = NULL;
@@ -720,7 +722,7 @@ static void CreateProgressWindow()
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd = CreateWindowA(
-		"SEHProgressWindow", "Submitting Report", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, gHInstance, 0);
+		"SEHProgressWindow", "Submitting Report", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
 
 	// Check every 20ms to see if the transfer has completed
 	SetTimer(aHWnd, 0, 20, NULL);
@@ -730,12 +732,12 @@ static void CreateProgressWindow()
 
 	gEditWindow = CreateWindowA("EDIT", "Please Wait",
 
-		WS_VISIBLE | WS_CHILD | ES_READONLY, 24, 10, 240 - 8 - 8, 24, aHWnd, NULL, gHInstance, 0);
+		WS_VISIBLE | WS_CHILD | ES_READONLY, 24, 10, 240 - 8 - 8, 24, aHWnd, NULL, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(gEditWindow, WM_SETFONT, (WPARAM)SEHCatcher::mBoldFont, 0);
 
 	SEHCatcher::mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, (240 - 96) / 2, 64 - 22 - 6, 96, 22, aHWnd, NULL, gHInstance, 0);
+		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, (240 - 96) / 2, 64 - 22 - 6, 96, 22, aHWnd, NULL, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(SEHCatcher::mNoButtonWindow, WM_SETFONT, (WPARAM)SEHCatcher::mDialogFont, 0);
 
@@ -912,6 +914,8 @@ void SEHCatcher::SubmitReportThread(void* theArg)
 
 void SEHCatcher::ShowSubmitInfoDialog()
 {
+	const auto hInstance = GetModuleHandle(nullptr);
+
 	WNDCLASSA wc;
 	wc.style = 0;
 	wc.cbClsExtra = 0;
@@ -919,7 +923,7 @@ void SEHCatcher::ShowSubmitInfoDialog()
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
 	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
-	wc.hInstance = gHInstance;
+	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SubmitInfoWindowProc;
 	wc.lpszClassName = "SubmitInfoWindow";
 	wc.lpszMenuName = NULL;
@@ -936,11 +940,11 @@ void SEHCatcher::ShowSubmitInfoDialog()
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd = CreateWindowA(
-		"SubmitInfoWindow", "Error Details", aWindowStyle, 64 + 16, 64 + 16, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, gHInstance, 0);
+		"SubmitInfoWindow", "Error Details", aWindowStyle, 64 + 16, 64 + 16, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
 
 	HWND aLabelWindow = CreateWindowW(L"EDIT", mSubmitMessage.c_str(),
 
-		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, gHInstance, 0);
+		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, hInstance, 0);
 
 	HDC aDC = ::GetDC(aLabelWindow);
 	int aFontHeight = -MulDiv(9, 96, 72);
@@ -952,7 +956,7 @@ void SEHCatcher::ShowSubmitInfoDialog()
 		SendMessage(aLabelWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	mEditWindow = CreateWindowA(
-		"EDIT", "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL, 8, 300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, gHInstance, 0);
+		"EDIT", "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL, 8, 300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, hInstance, 0);
 
 	aDC = ::GetDC(mEditWindow);
 	aFontHeight = -MulDiv(8, 96, 72);
@@ -971,14 +975,14 @@ void SEHCatcher::ShowSubmitInfoDialog()
 	if (mApp == NULL)
 		aWindowStyle |= WS_DISABLED;
 
-	mYesButtonWindow = CreateWindowA("BUTTON", "Continue", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, gHInstance, 0);
+	mYesButtonWindow = CreateWindowA("BUTTON", "Continue", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(mYesButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	aCurX += aButtonWidth + 8;
 
 	mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, gHInstance, 0);
+		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(mNoButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -987,6 +991,8 @@ void SEHCatcher::ShowSubmitInfoDialog()
 
 void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::string& theErrorText)
 {
+	const auto hInstance = GetModuleHandle(nullptr);
+
 	OSVERSIONINFO aVersionInfo;
 	aVersionInfo.dwOSVersionInfoSize = sizeof(aVersionInfo);
 	GetVersionEx(&aVersionInfo);
@@ -1015,7 +1021,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
 	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
-	wc.hInstance = gHInstance;
+	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SEHWindowProc;
 	wc.lpszClassName = "SEHWindow";
 	wc.lpszMenuName = NULL;
@@ -1032,10 +1038,10 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd =
-		CreateWindowW(L"SEHWindow", L"Fatal Error!", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, gHInstance, 0);
+		CreateWindowW(L"SEHWindow", L"Fatal Error!", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
 
 	HWND aLabelWindow =
-		CreateWindowW(L"EDIT", mCrashMessage.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, gHInstance, 0);
+		CreateWindowW(L"EDIT", mCrashMessage.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, hInstance, 0);
 
 	int aFontHeight = -MulDiv(9, 96, 72);
 	HFONT aBoldArialFont = CreateFontA(aFontHeight, 0, 0, 0, FW_BOLD, 0, 0, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -1045,7 +1051,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 		SendMessage(aLabelWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	HWND anEditWindow = CreateWindowA("EDIT", theErrorText.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL | ES_READONLY, 8,
-		300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, gHInstance, 0);
+		300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, hInstance, 0);
 
 	aFontHeight = -MulDiv(8, 96, 72);
 	HFONT aCourierNewFont = CreateFontA(aFontHeight, 0, 0, 0, FW_NORMAL, 0, 0, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -1073,7 +1079,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 
 	if (canSubmit)
 	{
-		mYesButtonWindow = CreateWindowA("BUTTON", "Send Report", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, gHInstance, 0);
+		mYesButtonWindow = CreateWindowA("BUTTON", "Send Report", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
 		if (!gUseDefaultFonts)
 			SendMessage(mYesButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -1082,7 +1088,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 
 	if (doDebugButton)
 	{
-		mDebugButtonWindow = CreateWindowA("BUTTON", "Debug", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, gHInstance, 0);
+		mDebugButtonWindow = CreateWindowA("BUTTON", "Debug", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
 		if (!gUseDefaultFonts)
 			SendMessage(mDebugButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -1090,7 +1096,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	}
 
 	mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Close Now", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, gHInstance, 0);
+		"BUTTON", "Close Now", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
 
 	if (!gUseDefaultFonts)
 		SendMessage(mNoButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);

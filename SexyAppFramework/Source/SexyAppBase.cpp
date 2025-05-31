@@ -358,11 +358,11 @@ SexyAppBase::~SexyAppBase()
 					showedMsgBox = true;
 					int aResult = MessageBox(NULL,
 						GetString("HARDWARE_ACCEL_SWITCHED_ON", _S("Hardware Acceleration was switched on during this session.\r\n")
-																	_S("If this resulted in slower performance, it should be switched off.\r\n")
-																		_S("Would you like to keep Hardware Acceleration switched on?"))
-							.c_str(),
+							_S("If this resulted in slower performance, it should be switched off.\r\n")
+							_S("Would you like to keep Hardware Acceleration switched on?"))
+						.c_str(),
 						(StringToSexyString(mCompanyName) + _S(" ") + GetString("HARDWARE_ACCEL_CONFIRMATION", _S("Hardware Acceleration Confirmation")))
-							.c_str(),
+						.c_str(),
 						MB_YESNO | MB_ICONQUESTION);
 
 					mDDInterface->mIs3D = aResult == IDYES ? true : false;
@@ -383,9 +383,9 @@ SexyAppBase::~SexyAppBase()
 	{
 		int aResult = MessageBox(NULL,
 			GetString("HARDWARE_ACCEL_NOT_WORKING", _S("Hardware Acceleration may not have been working correctly during this session.\r\n")
-														_S("If you noticed graphics problems, you may want to turn off Hardware Acceleration.\r\n")
-															_S("Would you like to keep Hardware Acceleration switched on?"))
-				.c_str(),
+				_S("If you noticed graphics problems, you may want to turn off Hardware Acceleration.\r\n")
+				_S("Would you like to keep Hardware Acceleration switched on?"))
+			.c_str(),
 			(StringToSexyString(mCompanyName) + _S(" ") + GetString("HARDWARE_ACCEL_CONFIRMATION", _S("Hardware Acceleration Confirmation"))).c_str(),
 			MB_YESNO | MB_ICONQUESTION);
 
@@ -1048,9 +1048,9 @@ bool SexyAppBase::OpenURL(const std::string& theURL, bool shutdownOnOpen)
 std::string SexyAppBase::GetProductVersion(const std::string& thePath)
 {
 	// Dynamically Load Version.dll
-	typedef DWORD(APIENTRY * GetFileVersionInfoSizeFunc)(LPSTR lptstrFilename, LPDWORD lpdwHandle);
-	typedef BOOL(APIENTRY * GetFileVersionInfoFunc)(LPSTR lptstrFilename, DWORD dwHandle, DWORD dwLen, LPVOID lpData);
-	typedef BOOL(APIENTRY * VerQueryValueFunc)(const LPCVOID pBlock, LPCSTR lpSubBlock, LPVOID* lplpBuffer, PUINT puLen);
+	typedef DWORD(APIENTRY* GetFileVersionInfoSizeFunc)(LPSTR lptstrFilename, LPDWORD lpdwHandle);
+	typedef BOOL(APIENTRY* GetFileVersionInfoFunc)(LPSTR lptstrFilename, DWORD dwHandle, DWORD dwLen, LPVOID lpData);
+	typedef BOOL(APIENTRY* VerQueryValueFunc)(const LPCVOID pBlock, LPCSTR lpSubBlock, LPVOID* lplpBuffer, PUINT puLen);
 
 	static GetFileVersionInfoSizeFunc aGetFileVersionInfoSizeFunc = NULL;
 	static GetFileVersionInfoFunc aGetFileVersionInfoFunc = NULL;
@@ -1301,7 +1301,7 @@ void SexyAppBase::DumpProgramInfo()
 		aDumpStream << "<TR>" << std::endl;
 
 		aDumpStream << "<TD><A HREF=" << anImageName << "><IMG SRC=" << aThumbName << " WIDTH=" << aThumbWidth << " HEIGHT=" << aThumbHeight << "></A></TD>"
-					<< std::endl;
+			<< std::endl;
 
 		int aNumPixels = aMemoryImage->mWidth * aMemoryImage->mHeight;
 
@@ -1371,25 +1371,25 @@ void SexyAppBase::DumpProgramInfo()
 
 		aDumpStream << "<TD>" << SexyStringToString(((aBitsMemory != 0) ? _S("mBits<BR>") + CommaSeperate(aBitsMemory) : _S("&nbsp;"))) << "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aPalletizedMemory != 0) ? _S("Palletized<BR>") + CommaSeperate(aPalletizedMemory) : _S("&nbsp;")))
-					<< "</TD>" << std::endl;
+			<< "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aSurfaceMemory != 0) ? _S("DDSurface<BR>") + CommaSeperate(aSurfaceMemory) : _S("&nbsp;"))) << "</TD>"
-					<< std::endl;
+			<< std::endl;
 		aDumpStream << "<TD>"
-					<< SexyStringToString(((aMemoryImage->mD3DData != NULL)
-											   ? _S("Texture<BR>") + StringToSexyString(aTextureFormatName) + _S("<BR>") + CommaSeperate(aTextureMemory)
-											   : _S("&nbsp;")))
-					<< "</TD>" << std::endl;
+			<< SexyStringToString(((aMemoryImage->mD3DData != NULL)
+				? _S("Texture<BR>") + StringToSexyString(aTextureFormatName) + _S("<BR>") + CommaSeperate(aTextureMemory)
+				: _S("&nbsp;")))
+			<< "</TD>" << std::endl;
 
 		aDumpStream << "<TD>" << SexyStringToString(((aMemoryImage->mIsVolatile) ? _S("Volatile") : _S("&nbsp;"))) << "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aMemoryImage->mForcedMode) ? _S("Forced") : _S("&nbsp;"))) << "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aMemoryImage->mHasAlpha) ? _S("HasAlpha") : _S("&nbsp;"))) << "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aMemoryImage->mHasTrans) ? _S("HasTrans") : _S("&nbsp;"))) << "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aNativeAlphaMemory != 0) ? _S("NativeAlpha<BR>") + CommaSeperate(aNativeAlphaMemory) : _S("&nbsp;")))
-					<< "</TD>" << std::endl;
+			<< "</TD>" << std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aRLAlphaMemory != 0) ? _S("RLAlpha<BR>") + CommaSeperate(aRLAlphaMemory) : _S("&nbsp;"))) << "</TD>"
-					<< std::endl;
+			<< std::endl;
 		aDumpStream << "<TD>" << SexyStringToString(((aRLAdditiveMemory != 0) ? _S("RLAdditive<BR>") + CommaSeperate(aRLAdditiveMemory) : _S("&nbsp;")))
-					<< "</TD>" << std::endl;
+			<< "</TD>" << std::endl;
 		aDumpStream << "<TD>" << (aMemoryImage->mFilePath.empty() ? "&nbsp;" : aMemoryImage->mFilePath) << "</TD>" << std::endl;
 
 		aDumpStream << "</TR>" << std::endl;
@@ -2093,12 +2093,12 @@ std::string SexyAppBase::GetGameSEHInfo()
 	std::string anInfoString = "Product: " + mProdName + "\r\n" + "Version: " + mProductVersion + "\r\n";
 
 	anInfoString += "Time Loaded: " + std::string(aTimeStr) +
-					"\r\n"
-					"Fullscreen: " +
-					(mIsWindowed ? std::string("No") : std::string("Yes")) +
-					"\r\n"
-					"Primary ThreadId: " +
-					aThreadIdStr + "\r\n";
+		"\r\n"
+		"Fullscreen: " +
+		(mIsWindowed ? std::string("No") : std::string("Yes")) +
+		"\r\n"
+		"Primary ThreadId: " +
+		aThreadIdStr + "\r\n";
 
 	return anInfoString;
 }
@@ -2944,7 +2944,7 @@ static int ListDemoMarkers()
 	*lpw++ = 0;		 // no creation data
 
 	GlobalUnlock(hgbl);
-	ret = DialogBoxIndirect(gHInstance, (LPDLGTEMPLATE)hgbl, gSexyAppBase->mHWnd, (DLGPROC)MarkerListDialogProc);
+	ret = DialogBoxIndirect(GetModuleHandle(nullptr), (LPDLGTEMPLATE)hgbl, gSexyAppBase->mHWnd, (DLGPROC)MarkerListDialogProc);
 	GlobalFree(hgbl);
 
 	gSexyAppBase->mLastTime = timeGetTime();
@@ -2975,7 +2975,7 @@ static INT_PTR CALLBACK JumpToTimeDialogProc(HWND hwnd, UINT msg, WPARAM wParam,
 		}
 		return TRUE;
 	}
-	break;
+					  break;
 
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
@@ -3112,7 +3112,7 @@ static int DemoJumpToTime()
 	*lpw++ = 0;			  // no creation data
 
 	GlobalUnlock(hgbl);
-	ret = DialogBoxIndirect(gHInstance, (LPDLGTEMPLATE)hgbl, gSexyAppBase->mHWnd, (DLGPROC)JumpToTimeDialogProc);
+	ret = DialogBoxIndirect(GetModuleHandle(nullptr), (LPDLGTEMPLATE)hgbl, gSexyAppBase->mHWnd, (DLGPROC)JumpToTimeDialogProc);
 	GlobalFree(hgbl);
 
 	gSexyAppBase->mLastTime = timeGetTime();
@@ -3146,7 +3146,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	static int gMouseMoveCount = 0;
 	static int gLastMouseX = 0, gLastMouseY = 0;
 	static bool gClosed = false;
-	typedef BOOL(WINAPI * VERIFYPWDPROC)(HWND);
+	typedef BOOL(WINAPI* VERIFYPWDPROC)(HWND);
 	static VERIFYPWDPROC aPasswordFunc = NULL;
 	HMODULE aPasswordLib = NULL;
 
@@ -3194,7 +3194,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		}
 		return false;
 	}
-	break;
+				  break;
 
 	case WM_SYSCOMMAND: {
 		switch (wParam)
@@ -3210,7 +3210,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return false;
 		}
 	}
-	break;
+					  break;
 
 	case WM_MOUSEMOVE: {
 		int aMouseX = LOWORD(lParam);
@@ -3229,7 +3229,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return true;
 		}
 	}
-	break;
+					 break;
 
 	case WM_NCACTIVATE:
 	case WM_ACTIVATE:
@@ -3237,7 +3237,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		if (wParam != FALSE)
 			return false;
 	}
-	break;
+					   break;
 
 	case WM_CLOSE:
 	case WM_LBUTTONDOWN:
@@ -3402,19 +3402,19 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 						break;
 					}*/
 
-		/*if ((aSexyApp != NULL) && (aSexyApp->mNoDefer))
-		{
-			// Check to see if we should be windowed
-			WINDOWPLACEMENT aWindowPlacement;
-			aWindowPlacement.length = sizeof(aWindowPlacement);
-			if (GetWindowPlacement(aSexyApp->mHWnd, &aWindowPlacement))
-			{
-				if (aWindowPlacement.showCmd == SW_SHOWMINIMIZED)
-				{
-					aSexyApp->Redraw(NULL);
-				}
-			}
-		}*/
+					/*if ((aSexyApp != NULL) && (aSexyApp->mNoDefer))
+					{
+						// Check to see if we should be windowed
+						WINDOWPLACEMENT aWindowPlacement;
+						aWindowPlacement.length = sizeof(aWindowPlacement);
+						if (GetWindowPlacement(aSexyApp->mHWnd, &aWindowPlacement))
+						{
+							if (aWindowPlacement.showCmd == SW_SHOWMINIMIZED)
+							{
+								aSexyApp->Redraw(NULL);
+							}
+						}
+					}*/
 
 		if ((aSexyApp != NULL) && (!aSexyApp->mNoDefer))
 		{
@@ -3571,7 +3571,7 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			}
 		}
 	}
-	break;
+						  break;
 
 	case WM_ENABLE:
 		if (aSexyApp != NULL)
@@ -3629,7 +3629,7 @@ LRESULT CALLBACK SexyAppBase::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		sprintf(aStr, "DESTROYED HWND: %p\r\n", hWnd);
 		OutputDebugStringA(aStr);
 	}
-	break;
+				   break;
 	case WM_SETCURSOR:
 		if (!aSexyApp->mSEHOccured)
 			aSexyApp->EnforceCursor();
@@ -3802,7 +3802,7 @@ void SexyAppBase::ProcessDemo()
 
 						mWidgetManager->MouseMove(mLastDemoMouseX, mLastDemoMouseY);
 					}
-					break;
+						  break;
 					case 1: {
 						bool down = mDemoBuffer.ReadNumBits(1, false) != 0;
 						int aBtnCount = mDemoBuffer.ReadNumBits(3, true);
@@ -3812,7 +3812,7 @@ void SexyAppBase::ProcessDemo()
 						else
 							mWidgetManager->MouseUp(mLastDemoMouseX, mLastDemoMouseY, aBtnCount);
 					}
-					break;
+						  break;
 					}
 				}
 				else
@@ -3825,7 +3825,7 @@ void SexyAppBase::ProcessDemo()
 
 						mWidgetManager->MouseMove(mLastDemoMouseX, mLastDemoMouseY);
 					}
-					break;
+											break;
 					case DEMO_ACTIVATE_APP: {
 						mActive = mDemoBuffer.ReadNumBits(1, false) != 0;
 
@@ -3837,7 +3837,7 @@ void SexyAppBase::ProcessDemo()
 						if ((mIsOpeningURL) && (!mActive))
 							URLOpenSucceeded(mOpeningURL);
 					}
-					break;
+										  break;
 					case DEMO_SIZE: {
 						bool isMinimized = mDemoBuffer.ReadBoolean();
 
@@ -3857,28 +3857,28 @@ void SexyAppBase::ProcessDemo()
 
 						RehupFocus();
 					}
-					break;
+								  break;
 					case DEMO_MOUSE_WHEEL: {
 						int aScroll = mDemoBuffer.ReadNumBits(8, true);
 						mWidgetManager->MouseWheel(aScroll);
 					}
-					break;
+										 break;
 					case DEMO_KEY_DOWN: {
 						KeyCode aKeyCode = (KeyCode)mDemoBuffer.ReadNumBits(8, false);
 						mWidgetManager->KeyDown(aKeyCode);
 					}
-					break;
+									  break;
 					case DEMO_KEY_UP: {
 						KeyCode aKeyCode = (KeyCode)mDemoBuffer.ReadNumBits(8, false);
 						mWidgetManager->KeyUp(aKeyCode);
 					}
-					break;
+									break;
 					case DEMO_KEY_CHAR: {
 						int sizeMult = (int)mDemoBuffer.ReadNumBits(1, false) + 1; // will be 1 for single, 2 for double
 						SexyChar aChar = (SexyChar)mDemoBuffer.ReadNumBits(8 * sizeMult, false);
 						mWidgetManager->KeyChar(aChar);
 					}
-					break;
+									  break;
 					case DEMO_CLOSE:
 						Shutdown();
 						break;
@@ -4146,7 +4146,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mDemoBuffer.WriteNumBits(DEMO_SIZE, 5);
 				mDemoBuffer.WriteBoolean(isMinimized);
 			}
-			break;
+						break;
 			case WM_LBUTTONDOWN:
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:
@@ -4227,7 +4227,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mLastDemoMouseX = aCurX;
 				mLastDemoMouseY = aCurY;
 			}
-			break;
+							 break;
 			case WM_MOUSEWHEEL: {
 				int aZDelta = ((short)HIWORD(wParam)) / 120;
 
@@ -4236,7 +4236,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mDemoBuffer.WriteNumBits(DEMO_MOUSE_WHEEL, 5);
 				mDemoBuffer.WriteNumBits(aZDelta, 8);
 			}
-			break;
+							  break;
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN: {
 				KeyCode aKeyCode = (KeyCode)wParam;
@@ -4246,7 +4246,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mDemoBuffer.WriteNumBits(DEMO_KEY_DOWN, 5);
 				mDemoBuffer.WriteNumBits(aKeyCode, 8);
 			}
-			break;
+							  break;
 			case WM_KEYUP:
 			case WM_SYSKEYUP: {
 				KeyCode aKeyCode = (KeyCode)wParam;
@@ -4256,7 +4256,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mDemoBuffer.WriteNumBits(DEMO_KEY_UP, 5);
 				mDemoBuffer.WriteNumBits((int)aKeyCode, 8);
 			}
-			break;
+							break;
 			case WM_CHAR: {
 				SexyChar aChar = (SexyChar)wParam;
 
@@ -4266,7 +4266,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				mDemoBuffer.WriteNumBits(sizeof(SexyChar) == 2, 1);
 				mDemoBuffer.WriteNumBits(aChar, sizeof(SexyChar) * 8);
 			}
-			break;
+						break;
 			case WM_CLOSE:
 				if ((hWnd == mHWnd) || (hWnd == mInvisHWnd))
 				{
@@ -4377,7 +4377,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				char aZDelta = ((short)HIWORD(wParam)) / 120;
 				mWidgetManager->MouseWheel(aZDelta);
 			}
-			break;
+							  break;
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
 				mLastUserInputTick = mLastTimerTime;
@@ -4426,7 +4426,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 					}
 				}
 			}
-			break;
+						break;
 			case WM_SIZE: {
 				bool isMinimized = wParam == SIZE_MINIMIZED;
 
@@ -4453,7 +4453,7 @@ bool SexyAppBase::ProcessDeferredMessages(bool singleMessage)
 				if (wParam == SIZE_MAXIMIZED)
 					SwitchScreenMode(false);
 			}
-			break;
+						break;
 			case WM_TIMER:
 				if ((!gInAssert) && (!mSEHOccured) && (mRunning))
 				{
@@ -4567,6 +4567,8 @@ void SexyAppBase::MakeWindow()
 		mWidgetManager->mImage = NULL;
 	}
 
+	const auto hInstance = GetModuleHandle(nullptr);
+
 	if ((mPlayingDemoBuffer) || (mIsWindowed && !mFullScreenWindow))
 	{
 		DWORD aWindowStyle = WS_CLIPCHILDREN | WS_POPUP | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
@@ -4614,11 +4616,11 @@ void SexyAppBase::MakeWindow()
 		if (CheckFor98Mill())
 		{
 			mHWnd = CreateWindowExA(
-				0, "MainWindow", SexyStringToStringFast(mTitle).c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, gHInstance, 0);
+				0, "MainWindow", SexyStringToStringFast(mTitle).c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, hInstance, 0);
 		}
 		else
 		{
-			mHWnd = CreateWindowEx(0, _S("MainWindow"), mTitle.c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, gHInstance, 0);
+			mHWnd = CreateWindowEx(0, _S("MainWindow"), mTitle.c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, hInstance, 0);
 		}
 
 		if (mPreferredX == -1)
@@ -4634,11 +4636,11 @@ void SexyAppBase::MakeWindow()
 		if (CheckFor98Mill())
 		{
 			mHWnd = CreateWindowExA(
-				WS_EX_TOPMOST, "MainWindow", SexyStringToStringFast(mTitle).c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, gHInstance, 0);
+				WS_EX_TOPMOST, "MainWindow", SexyStringToStringFast(mTitle).c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, hInstance, 0);
 		}
 		else
 		{
-			mHWnd = CreateWindowEx(WS_EX_TOPMOST, _S("MainWindow"), mTitle.c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, gHInstance, 0);
+			mHWnd = CreateWindowEx(WS_EX_TOPMOST, _S("MainWindow"), mTitle.c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, hInstance, 0);
 		}
 
 		mIsPhysWindowed = false;
@@ -4711,7 +4713,7 @@ void SexyAppBase::MakeWindow()
 		else
 		{
 			Popup(GetString("FAILED_INIT_DIRECTDRAW", _S("Failed to initialize DirectDraw: ")) +
-				  StringToSexyString(DDInterface::ResultToString(aResult) + " " + mDDInterface->mErrorString));
+				StringToSexyString(DDInterface::ResultToString(aResult) + " " + mDDInterface->mErrorString));
 			DoExit(1);
 		}
 	}
@@ -5089,7 +5091,7 @@ bool SexyAppBase::Process(bool allowSleep)
 		Shutdown();
 
 	bool isVSynched = (!mPlayingDemoBuffer) && (mVSyncUpdates) && (!mLastDrawWasEmpty) && (!mVSyncBroken) &&
-					  ((!mIsPhysWindowed) || (mIsPhysWindowed && mWaitForVSync && !mSoftVSyncWait));
+		((!mIsPhysWindowed) || (mIsPhysWindowed && mWaitForVSync && !mSoftVSyncWait));
 	double aFrameFTime;
 	double anUpdatesPerUpdateF;
 
@@ -5962,9 +5964,6 @@ void SexyAppBase::Init()
 	if (IsScreenSaver())
 		mOnlyAllowOneCopyToRun = false;
 
-	if (gHInstance == NULL)
-		gHInstance = (HINSTANCE)GetModuleHandle(NULL);
-
 	// Change directory
 	if (!ChangeDirHook(mChangeDirTo.c_str()))
 		chdir(mChangeDirTo.c_str());
@@ -5995,6 +5994,8 @@ void SexyAppBase::Init()
 	}
 
 	srand(GetTickCount());
+	
+	const auto hInstance = GetModuleHandle(nullptr);
 
 	if (CheckFor98Mill())
 	{
@@ -6006,8 +6007,8 @@ void SexyAppBase::Init()
 		wc.cbWndExtra = 0;
 		wc.hbrBackground = NULL;
 		wc.hCursor = NULL;
-		wc.hIcon = ::LoadIconA(gHInstance, "IDI_MAIN_ICON");
-		wc.hInstance = gHInstance;
+		wc.hIcon = ::LoadIconA(hInstance, "IDI_MAIN_ICON");
+		wc.hInstance = hInstance;
 		wc.lpfnWndProc = WindowProc;
 		wc.lpszClassName = "MainWindow";
 		wc.lpszMenuName = NULL;
@@ -6020,14 +6021,14 @@ void SexyAppBase::Init()
 		wc.hbrBackground = NULL;
 		wc.hCursor = NULL;
 		wc.hIcon = NULL;
-		wc.hInstance = gHInstance;
+		wc.hInstance = hInstance;
 		wc.lpfnWndProc = WindowProc;
 		wc.lpszClassName = "InvisWindow";
 		wc.lpszMenuName = NULL;
 		success = RegisterClassA(&wc) != 0;
 		DBG_ASSERTE(success);
 
-		mInvisHWnd = CreateWindowExA(0, "InvisWindow", SexyStringToStringFast(mTitle).c_str(), 0, 0, 0, 0, 0, NULL, NULL, gHInstance, 0);
+		mInvisHWnd = CreateWindowExA(0, "InvisWindow", SexyStringToStringFast(mTitle).c_str(), 0, 0, 0, 0, 0, NULL, NULL, hInstance, 0);
 		SetWindowLongPtr(mInvisHWnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
 	else
@@ -6040,8 +6041,8 @@ void SexyAppBase::Init()
 		wc.cbWndExtra = 0;
 		wc.hbrBackground = NULL;
 		wc.hCursor = NULL;
-		wc.hIcon = ::LoadIconA(gHInstance, "IDI_MAIN_ICON");
-		wc.hInstance = gHInstance;
+		wc.hIcon = ::LoadIconA(hInstance, "IDI_MAIN_ICON");
+		wc.hInstance = hInstance;
 		wc.lpfnWndProc = WindowProc;
 		wc.lpszClassName = _S("MainWindow");
 		wc.lpszMenuName = NULL;
@@ -6054,19 +6055,19 @@ void SexyAppBase::Init()
 		wc.hbrBackground = NULL;
 		wc.hCursor = NULL;
 		wc.hIcon = NULL;
-		wc.hInstance = gHInstance;
+		wc.hInstance = hInstance;
 		wc.lpfnWndProc = WindowProc;
 		wc.lpszClassName = _S("InvisWindow");
 		wc.lpszMenuName = NULL;
 		success = RegisterClass(&wc) != 0;
 		DBG_ASSERTE(success);
 
-		mInvisHWnd = CreateWindowEx(0, _S("InvisWindow"), mTitle.c_str(), 0, 0, 0, 0, 0, NULL, NULL, gHInstance, 0);
+		mInvisHWnd = CreateWindowEx(0, _S("InvisWindow"), mTitle.c_str(), 0, 0, 0, 0, 0, NULL, NULL, hInstance, 0);
 		SetWindowLongPtr(mInvisHWnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
 
-	mHandCursor = CreateCursor(gHInstance, 11, 4, 32, 32, gFingerCursorData, gFingerCursorData + sizeof(gFingerCursorData) / 2);
-	mDraggingCursor = CreateCursor(gHInstance, 15, 10, 32, 32, gDraggingCursorData, gDraggingCursorData + sizeof(gDraggingCursorData) / 2);
+	mHandCursor = CreateCursor(hInstance, 11, 4, 32, 32, gFingerCursorData, gFingerCursorData + sizeof(gFingerCursorData) / 2);
+	mDraggingCursor = CreateCursor(hInstance, 15, 10, 32, 32, gDraggingCursorData, gDraggingCursorData + sizeof(gDraggingCursorData) / 2);
 
 	// Let app do something before showing window, or switching to fullscreen mode
 	// NOTE: Moved call to PreDisplayHook above mIsWindowed and GetSystemsMetrics
@@ -6309,9 +6310,9 @@ Sexy::DDImage* SexyAppBase::CreateCrossfadeImage(
 			// p2 = 0xFFFFFFFF;
 
 			*d++ = ((((p1 & 0x000000FF) * aOMM + (p2 & 0x000000FF) * aMult) >> 8) & 0x000000FF) |
-				   ((((p1 & 0x0000FF00) * aOMM + (p2 & 0x0000FF00) * aMult) >> 8) & 0x0000FF00) |
-				   ((((p1 & 0x00FF0000) * aOMM + (p2 & 0x00FF0000) * aMult) >> 8) & 0x00FF0000) |
-				   ((((p1 >> 24) * aOMM + (p2 >> 24) * aMult) << 16) & 0xFF000000);
+				((((p1 & 0x0000FF00) * aOMM + (p2 & 0x0000FF00) * aMult) >> 8) & 0x0000FF00) |
+				((((p1 & 0x00FF0000) * aOMM + (p2 & 0x00FF0000) * aMult) >> 8) & 0x00FF0000) |
+				((((p1 >> 24) * aOMM + (p2 >> 24) * aMult) << 16) & 0xFF000000);
 		}
 	}
 
@@ -6348,7 +6349,7 @@ void SexyAppBase::ColorizeImage(Image* theImage, const Color& theColor)
 			ulong aColor = aBits[i];
 
 			aBits[i] = ((((aColor & 0xFF000000) >> 8) * theColor.mAlpha) & 0xFF000000) | ((((aColor & 0x00FF0000) * theColor.mRed) >> 8) & 0x00FF0000) |
-					   ((((aColor & 0x0000FF00) * theColor.mGreen) >> 8) & 0x0000FF00) | ((((aColor & 0x000000FF) * theColor.mBlue) >> 8) & 0x000000FF);
+				((((aColor & 0x0000FF00) * theColor.mGreen) >> 8) & 0x0000FF00) | ((((aColor & 0x000000FF) * theColor.mBlue) >> 8) & 0x000000FF);
 		}
 	}
 	else
@@ -6416,7 +6417,7 @@ DDImage* SexyAppBase::CreateColorizedImage(Image* theImage, const Color& theColo
 			ulong aColor = aSrcBits[i];
 
 			aDestBits[i] = ((((aColor & 0xFF000000) >> 8) * theColor.mAlpha) & 0xFF000000) | ((((aColor & 0x00FF0000) * theColor.mRed) >> 8) & 0x00FF0000) |
-						   ((((aColor & 0x0000FF00) * theColor.mGreen) >> 8) & 0x0000FF00) | ((((aColor & 0x000000FF) * theColor.mBlue) >> 8) & 0x000000FF);
+				((((aColor & 0x0000FF00) * theColor.mGreen) >> 8) & 0x0000FF00) | ((((aColor & 0x000000FF) * theColor.mBlue) >> 8) & 0x000000FF);
 		}
 	}
 	else
@@ -6904,7 +6905,7 @@ void SexyAppBase::Set3DAcclerated(bool is3D, bool reinit)
 		else if (aResult != DDInterface::RESULT_OK)
 		{
 			Popup(GetString("FAILED_INIT_DIRECTDRAW", _S("Failed to initialize DirectDraw: ")) +
-				  StringToSexyString(DDInterface::ResultToString(aResult) + " " + mDDInterface->mErrorString));
+				StringToSexyString(DDInterface::ResultToString(aResult) + " " + mDDInterface->mErrorString));
 			DoExit(1);
 		}
 
