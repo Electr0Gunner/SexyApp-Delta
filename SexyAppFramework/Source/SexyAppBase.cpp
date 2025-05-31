@@ -58,10 +58,6 @@ typedef BOOL(WINAPI* GetLastInputInfoFunc)(LASTINPUTINFO* plii);
 GetLastInputInfoFunc gGetLastInputInfoFunc = NULL;
 static bool gScreenSaverActive = false;
 
-#ifndef SPI_GETSCREENSAVERRUNNING
-#define SPI_GETSCREENSAVERRUNNING 114
-#endif
-
 // HotSpot: 11 4
 // Size: 32 32
 unsigned char gFingerCursorData[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe7, 0xff, 0xff,
@@ -101,7 +97,7 @@ void* GetSHGetFolderPath(const char* theDLL, HMODULE* theMod)
 
 	if (aMod != NULL)
 	{
-		*((void**)&aFunc) = (void*)GetProcAddress(aMod, "SHGetFolderPathA");
+		*((FARPROC*)&aFunc) = GetProcAddress(aMod, "SHGetFolderPathA");
 		if (aFunc == NULL)
 		{
 			FreeLibrary(aMod);
