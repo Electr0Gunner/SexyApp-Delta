@@ -306,10 +306,10 @@ void BassMusicInterface::FadeOutAll(bool stopSong, double theSpeed)
 
 void BassMusicInterface::SetVolume(double theVolume)
 {
-	int aVolume = (int)(theVolume * mMaxMusicVolume);
+	const auto aVolume = theVolume * mMaxMusicVolume;
 
-	BASS_SetConfig(/*BASS_CONFIG_GVOL_MUSIC*/ 6, (int)(theVolume * 100) * 100);
-	BASS_SetConfig(/*BASS_CONFIG_GVOL_STREAM*/ 5, (int)(theVolume * 100) * 100);
+	BASS_SetConfig(BASS_CONFIG_GVOL_MUSIC, theVolume * 100);
+	BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, theVolume * 100);
 }
 
 void BassMusicInterface::SetSongVolume(int theSongId, double theVolume)
