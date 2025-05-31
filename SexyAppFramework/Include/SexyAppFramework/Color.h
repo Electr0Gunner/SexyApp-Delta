@@ -23,14 +23,71 @@ namespace Sexy
 		static Color White;
 
 	public:
-		Color();
-		Color(int theColor);
-		Color(int theColor, int theAlpha);
-		Color(int theRed, int theGreen, int theBlue);
-		Color(int theRed, int theGreen, int theBlue, int theAlpha);
-		Color(const SexyRGBA& theColor);
-		Color(const uchar* theElements);
-		Color(const int* theElements);
+		constexpr Color() :
+			mRed(0),
+			mGreen(0),
+			mBlue(0),
+			mAlpha(255)
+		{
+		}
+
+		constexpr Color(int theColor) :
+			mAlpha((theColor >> 24) & 0xFF),
+			mRed((theColor >> 16) & 0xFF),
+			mGreen((theColor >> 8) & 0xFF),
+			mBlue((theColor) & 0xFF)
+		{
+			if (mAlpha == 0)
+				mAlpha = 0xff;
+		}
+
+		constexpr Color(int theColor, int theAlpha) :
+			mRed((theColor >> 16) & 0xFF),
+			mGreen((theColor >> 8) & 0xFF),
+			mBlue((theColor) & 0xFF),
+			mAlpha(theAlpha)
+		{
+		}
+
+		constexpr Color(int theRed, int theGreen, int theBlue) :
+			mRed(theRed),
+			mGreen(theGreen),
+			mBlue(theBlue),
+			mAlpha(0xFF)
+		{
+		}
+
+		constexpr Color(int theRed, int theGreen, int theBlue, int theAlpha) :
+			mRed(theRed),
+			mGreen(theGreen),
+			mBlue(theBlue),
+			mAlpha(theAlpha)
+		{
+		}
+
+		constexpr Color(const SexyRGBA& theColor) :
+			mRed(theColor.r),
+			mGreen(theColor.g),
+			mBlue(theColor.b),
+			mAlpha(theColor.a)
+		{
+		}
+
+		constexpr Color(const uchar* theElements) :
+			mRed(theElements[0]),
+			mGreen(theElements[1]),
+			mBlue(theElements[2]),
+			mAlpha(0xFF)
+		{
+		}
+
+		constexpr Color(const int* theElements) :
+			mRed(theElements[0]),
+			mGreen(theElements[1]),
+			mBlue(theElements[2]),
+			mAlpha(0xFF)
+		{
+		}
 
 		int GetRed() const;
 		int GetGreen() const;

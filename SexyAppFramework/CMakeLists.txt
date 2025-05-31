@@ -1,4 +1,4 @@
-add_library(SexyAppFramework
+add_library(SexyAppFramework STATIC
     Source/ImageLib/ImageLib.cpp
     Source/PakLib/PakInterface.cpp
     
