@@ -151,7 +151,7 @@ namespace Sexy
 	std::wstring XMLEncodeString(const std::wstring& theString);
 
 	bool Deltree(const std::string& thePath);
-	bool FileExists(const std::string& theFileName);
+	bool FileExists(const std::string& theFileName, bool* outIsDir = nullptr);
 	void MkDir(const std::string& theDir);
 	std::string GetFileName(const std::string& thePath, bool noExtension = false);
 	std::string GetFileDir(const std::string& thePath, bool withSlash = false);

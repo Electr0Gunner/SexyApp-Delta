@@ -736,7 +736,7 @@ bool Sexy::Deltree(const std::string& thePath)
 	return success;
 }
 
-bool Sexy::FileExists(const std::string& theFileName)
+bool Sexy::FileExists(const std::string& theFileName, bool* outIsDirectory)
 {
 	WIN32_FIND_DATAA aFindData;
 
@@ -745,6 +745,10 @@ bool Sexy::FileExists(const std::string& theFileName)
 		return false;
 
 	FindClose(aFindHandle);
+
+	if (outIsDirectory != nullptr)
+		*outIsDirectory = (aFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+
 	return true;
 }
 
