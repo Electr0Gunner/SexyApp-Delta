@@ -47,6 +47,7 @@ add_library(SexyAppFramework STATIC
     Source/Ratio.cpp
     Source/ResourceManager.cpp
     Source/SEHCatcher.cpp
+    Source/SexyApp.cpp
     Source/SexyAppBase.cpp
     Source/SexyMatrix.cpp
     Source/SharedImage.cpp
