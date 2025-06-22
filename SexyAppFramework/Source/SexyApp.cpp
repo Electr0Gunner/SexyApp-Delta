@@ -32,6 +32,7 @@ SexyApp::SexyApp()
 	mDemoPrefix = "popcap";
 	mDemoFileName = mDemoPrefix + ".dmo";
 	mCompanyName = "PopCap";
+	mFullCompanyName = "PopCap Games";
 	mInternetManager = /*new InternetManager()*/ nullptr;
 	mBetaSupport = NULL;
 	mBetaValidate = false;
