@@ -223,4 +223,7 @@ namespace Sexy
 			return _stricmp(s1.c_str(), s2.c_str()) < 0;
 		}
 	};
+
+	void SMemR(void** theMem, void* theData, size_t theSize);
+	void SMemW(void** theMem, const void* theData, size_t theSize);
 } // namespace Sexy

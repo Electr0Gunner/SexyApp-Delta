@@ -677,9 +677,9 @@ bool Sexy::AllowAllAccess(const std::string& theFileName)
 			{
 				// Add the ACL to the security descriptor.
 				if (fnSetSecurityDescriptorDacl(pSD,
-						TRUE, // bDaclPresent flag
-						pACL,
-						FALSE)) // not a default DACL
+					TRUE, // bDaclPresent flag
+					pACL,
+					FALSE)) // not a default DACL
 				{
 					if (fnSetFileSecurity(theFileName.c_str(), DACL_SECURITY_INFORMATION, pSD))
 						result = true;
@@ -1298,4 +1298,16 @@ bool Sexy::StrPrefixNoCase(const char* theStr, const char* thePrefix, int maxLen
 	}
 
 	return c2 == 0 || i == maxLength;
+}
+
+void Sexy::SMemR(void** theMem, void* theData, size_t theSize)
+{
+	memcpy(theData, *theMem, theSize);
+	*reinterpret_cast<uintptr_t*>(theMem) += theSize;
+}
+
+void Sexy::SMemW(void** theMem, const void* theData, size_t theSize)
+{
+	memcpy(*theMem, theData, theSize);
+	*reinterpret_cast<uintptr_t*>(theMem) += theSize;
 }
