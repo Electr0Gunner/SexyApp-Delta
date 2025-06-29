@@ -9,6 +9,7 @@
 #include <SexyAppFramework/Ratio.h>
 #include <SexyAppFramework/Rect.h>
 #include <SexyAppFramework/SharedImage.h>
+#include <SexyAppFramework/WidgetManager.h>
 
 namespace ImageLib
 {

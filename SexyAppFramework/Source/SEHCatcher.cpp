@@ -1,6 +1,7 @@
 #include <SexyAppFramework/SEHCatcher.h>
 
 #include <SexyAppFramework/SexyAppBase.h>
+#include <cinttypes>
 #include <fstream>
 #include <process.h>
 
@@ -452,16 +453,16 @@ std::string SEHCatcher::IntelWalk(PCONTEXT theContext, int theSkipCount)
 	char aBuffer[2048];
 
 #if defined(__i386__) || defined(_M_IX86) || defined(__i386)
-	DWORD pc = theContext->Eip;
-	PDWORD pFrame = (PDWORD)theContext->Ebp;
+	uintptr_t pc = theContext->Eip;
+	uintptr_t* pFrame = (uintptr_t*)theContext->Ebp;
+	uintptr_t* pPrevFrame;
 #elif defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
-	DWORD pc = theContext->Rip;
-	PDWORD pFrame = (PDWORD)theContext->Rbp;
+	uintptr_t pc = theContext->Rip;
+	uintptr_t* pFrame = (uintptr_t*)theContext->Rbp;
+	uintptr_t* pPrevFrame;
 #else
 #error Unsupported architecture in SEHCatcher::IntelWalk
 #endif
-
-	PDWORD pPrevFrame;
 
 	for (;;)
 	{
@@ -470,14 +471,14 @@ std::string SEHCatcher::IntelWalk(PCONTEXT theContext, int theSkipCount)
 
 		GetLogicalAddress((PVOID)pc, szModule, sizeof(szModule), section, offset);
 
-		sprintf(aBuffer, "%08X  %08p  %04X:%08X %s\r\n", pc, pFrame, section, offset, GetFilename(szModule).c_str());
+		sprintf(aBuffer, "%" PRIXPTR "  %" PRIXPTR "  %04X:%08X %s\r\n", pc, pFrame, section, offset, GetFilename(szModule).c_str());
 		aDebugDump += aBuffer;
 
 		pc = pFrame[1];
 
 		pPrevFrame = pFrame;
 
-		pFrame = (PDWORD)pFrame[0]; // proceed to next higher frame on stack
+		pFrame = (uintptr_t*)pFrame[0]; // proceed to next higher frame on stack
 
 		if ((DWORD)pFrame & 3) // Frame pointer must be aligned on a
 			break;			   // DWORD boundary.  Bail if not so.
@@ -556,7 +557,7 @@ std::string SEHCatcher::ImageHelpWalk(PCONTEXT theContext, int theSkipCount)
 				UNDNAME_NO_ALLOCATION_MODEL | UNDNAME_NO_ALLOCATION_LANGUAGE | UNDNAME_NO_MS_THISTYPE | UNDNAME_NO_ACCESS_SPECIFIERS | UNDNAME_NO_THISTYPE |
 				UNDNAME_NO_MEMBER_TYPE | UNDNAME_NO_RETURN_UDT_MODEL | UNDNAME_NO_THROW_SIGNATURES | UNDNAME_NO_SPECIAL_SYMS);
 
-			sprintf(aBuffer, "%08X %08X %hs+%X\r\n", sf.AddrFrame.Offset, sf.AddrPC.Offset, aUDName, symDisplacement);
+			sprintf(aBuffer, "%" PRIXPTR " %" PRIXPTR " %hs+%X\r\n", sf.AddrFrame.Offset, sf.AddrPC.Offset, aUDName, symDisplacement);
 		}
 		else // No symbol found.  Print out the logical address instead.
 		{
@@ -564,11 +565,11 @@ std::string SEHCatcher::ImageHelpWalk(PCONTEXT theContext, int theSkipCount)
 			DWORD section = 0, offset = 0;
 
 			GetLogicalAddress((PVOID)sf.AddrPC.Offset, szModule, sizeof(szModule), section, offset);
-			sprintf(aBuffer, "%08X %08X %04X:%08X %s\r\n", sf.AddrFrame.Offset, sf.AddrPC.Offset, section, offset, GetFilename(szModule).c_str());
+			sprintf(aBuffer, "%" PRIXPTR " %" PRIXPTR " %04X:%" PRIXPTR " %s\r\n", sf.AddrFrame.Offset, sf.AddrPC.Offset, section, offset, GetFilename(szModule).c_str());
 		}
 		aDebugDump += aBuffer;
 
-		sprintf(aBuffer, "Params: %08X %08X %08X %08X\r\n", sf.Params[0], sf.Params[1], sf.Params[2], sf.Params[3]);
+		sprintf(aBuffer, "Params: %" PRIXPTR " %" PRIXPTR " %" PRIXPTR " %" PRIXPTR "\r\n", sf.Params[0], sf.Params[1], sf.Params[2], sf.Params[3]);
 		aDebugDump += aBuffer;
 		aDebugDump += "\r\n";
 
