@@ -62,5 +62,8 @@ add_library(SexyAppFramework STATIC
     Source/XMLParser.cpp
 )
 
-target_include_directories(SexyAppFramework PUBLIC Include ${BASS_INCLUDE_PATH})
+target_include_directories(SexyAppFramework
+    PUBLIC Include ${BASS_INCLUDE_PATH}
+    PRIVATE Include/SexyAppFramework
+)
 target_link_libraries(SexyAppFramework PRIVATE png ogg jpeg ${BASS_LIB_PATH} winmm.lib Ws2_32.lib)
