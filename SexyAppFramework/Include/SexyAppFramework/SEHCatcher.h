@@ -75,7 +75,7 @@ namespace Sexy
 		static LRESULT CALLBACK SubmitInfoWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static long __stdcall UnhandledExceptionFilter(LPEXCEPTION_POINTERS lpExceptPtr);
 		static void DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP);
-		static bool GetLogicalAddress(void* addr, char* szModule, DWORD len, DWORD& section, DWORD& offset);
+		static bool GetLogicalAddress(void* addr, char* szModule, uintptr_t len, uintptr_t& section, uintptr_t& offset);
 		static std::string GetFilename(const std::string& thePath);
 		static void WriteToFile(const std::string& theErrorText);
 		static void ShowSubmitInfoDialog();

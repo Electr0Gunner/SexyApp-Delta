@@ -346,10 +346,10 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 
 	///////////////////////////////////////////////////////////
 	// Get logical address of the module where exception occurs
-	DWORD section, offset;
+	uintptr_t section, offset;
 	GetLogicalAddress(lpEP->ExceptionRecord->ExceptionAddress, aBuffer, sizeof(aBuffer), section, offset);
 	aDebugDump += "Module: " + GetFilename(aBuffer) + "\r\n";
-	sprintf(aBuffer, "Logical Address: %04X:%08X\r\n", section, offset);
+	sprintf(aBuffer, "Logical Address: %04" PRIXPTR ":%08" PRIXPTR "\r\n", section, offset);
 	aDebugDump += aBuffer;
 
 	aDebugDump += "\r\n";
@@ -467,11 +467,11 @@ std::string SEHCatcher::IntelWalk(PCONTEXT theContext, int theSkipCount)
 	for (;;)
 	{
 		char szModule[MAX_PATH] = "";
-		DWORD section = 0, offset = 0;
+		uintptr_t section = 0, offset = 0;
 
-		GetLogicalAddress((PVOID)pc, szModule, sizeof(szModule), section, offset);
+		GetLogicalAddress((void*)pc, szModule, sizeof(szModule), section, offset);
 
-		sprintf(aBuffer, "%" PRIXPTR "  %" PRIXPTR "  %04X:%08X %s\r\n", pc, pFrame, section, offset, GetFilename(szModule).c_str());
+		sprintf(aBuffer, "%" PRIXPTR "  %" PRIXPTR "  %04" PRIXPTR ":%" PRIXPTR " %s\r\n", pc, (uintptr_t)pFrame, section, offset, GetFilename(szModule).c_str());
 		aDebugDump += aBuffer;
 
 		pc = pFrame[1];
@@ -562,7 +562,7 @@ std::string SEHCatcher::ImageHelpWalk(PCONTEXT theContext, int theSkipCount)
 		else // No symbol found.  Print out the logical address instead.
 		{
 			char szModule[MAX_PATH];
-			DWORD section = 0, offset = 0;
+			uintptr_t section = 0, offset = 0;
 
 			GetLogicalAddress((PVOID)sf.AddrPC.Offset, szModule, sizeof(szModule), section, offset);
 			sprintf(aBuffer, "%" PRIXPTR " %" PRIXPTR " %04X:%" PRIXPTR " %s\r\n", sf.AddrFrame.Offset, sf.AddrPC.Offset, section, offset, GetFilename(szModule).c_str());
@@ -579,14 +579,14 @@ std::string SEHCatcher::ImageHelpWalk(PCONTEXT theContext, int theSkipCount)
 	return aDebugDump;
 }
 
-bool SEHCatcher::GetLogicalAddress(void* addr, char* szModule, DWORD len, DWORD& section, DWORD& offset)
+bool SEHCatcher::GetLogicalAddress(void* addr, char* szModule, uintptr_t len, uintptr_t& section, uintptr_t& offset)
 {
 	MEMORY_BASIC_INFORMATION mbi;
 
 	if (!VirtualQuery(addr, &mbi, sizeof(mbi)))
 		return false;
 
-	DWORD hMod = (DWORD)mbi.AllocationBase;
+	uintptr_t hMod = (uintptr_t)mbi.AllocationBase;
 
 	if (!GetModuleFileNameA((HMODULE)hMod, szModule, len))
 		return false;
@@ -599,14 +599,14 @@ bool SEHCatcher::GetLogicalAddress(void* addr, char* szModule, DWORD len, DWORD&
 
 	PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION(pNtHdr);
 
-	DWORD rva = (DWORD)addr - hMod; // RVA is offset from module load address
+	uintptr_t rva = (uintptr_t)addr - hMod; // RVA is offset from module load address
 
 	// Iterate through the section table, looking for the one that encompasses
 	// the linear address.
-	for (unsigned i = 0; i < pNtHdr->FileHeader.NumberOfSections; i++, pSection++)
+	for (size_t i = 0; i < pNtHdr->FileHeader.NumberOfSections; i++, pSection++)
 	{
-		DWORD sectionStart = pSection->VirtualAddress;
-		DWORD sectionEnd = sectionStart + max(pSection->SizeOfRawData, pSection->Misc.VirtualSize);
+		uintptr_t sectionStart = pSection->VirtualAddress;
+		uintptr_t sectionEnd = sectionStart + max(pSection->SizeOfRawData, pSection->Misc.VirtualSize);
 
 		// Is the address in this section???
 		if ((rva >= sectionStart) && (rva <= sectionEnd))

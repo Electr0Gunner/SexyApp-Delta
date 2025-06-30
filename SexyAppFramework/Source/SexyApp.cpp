@@ -39,6 +39,7 @@ SexyApp::SexyApp()
 	SetString("UPDATE_CHECK_BODY", L"Contacting PopCap.com to determine if there are any updates available for this product ...");
 	char aStr[9] = { 0 };
 	strncpy(aStr, BUILD_INFO_MARKER, 8);
+	aStr[8] = 0;
 	mBuildNum = atoi(aStr);
 	if (mBuildNum != 0)
 		mBuildDate = BUILD_INFO_MARKER + 8;
@@ -399,9 +400,9 @@ void SexyApp::HandleCmdLineParam(const std::string& theParamName, const std::str
 	{
 		// Just print version info and then quit
 		std::string aVersionString =
-			"Product: " + mProdName + "rn" +
-			"Version: " + mProductVersion + "rn" +
-			"Build Num: " + StrFormat("%d", mBuildNum) + "rn" +
+			"Product: " + mProdName + "\r\n" +
+			"Version: " + mProductVersion + "\r\n" +
+			"Build Num: " + StrFormat("%d", mBuildNum) + "\r\n" +
 			"Build Date: " + mBuildDate;
 		MessageBox(NULL, aVersionString.c_str(), "Version Info", MB_ICONINFORMATION | MB_OK);
 		DoExit(0);
@@ -414,13 +415,13 @@ std::string SexyApp::GetGameSEHInfo()
 	char aGamesPlayedStr[16];
 	sprintf(aGamesPlayedStr, "%d", mTimesPlayed);
 	std::string anInfoString = SexyAppBase::GetGameSEHInfo() +
-		"Times Played: " + std::string(aGamesPlayedStr) + "rn";
-	"Build Num: " + StrFormat("%d", mBuildNum) + "rn" +
-		"Build Date: " + mBuildDate + "rn";
+		"Times Played: " + std::string(aGamesPlayedStr) + "\r\n" +
+		"Build Num: " + StrFormat("%d", mBuildNum) + "\r\n" +
+		"Build Date: " + mBuildDate + "\r\n";
 	if (mReferId.length() != 0)
 	{
 		anInfoString +=
-			"ReferId: " + mReferId + "rn";
+			"ReferId: " + mReferId + "\r\n";
 	}
 	return anInfoString;
 }
@@ -473,7 +474,7 @@ void SexyApp::Init()
 		"Have you upgraded your drivers or any software recently that "
 		"may be interfering with this program?";
 	SEHCatcher::mSubmitErrorMessage =
-		L"Failed to connect to PopCap servers.  Please check your Internet connection.n"
+		L"Failed to connect to PopCap servers.  Please check your Internet connection.\n"
 		"If you are on a dial-up connection, you may have to manually connect to your ISP.";
 	SEHCatcher::mSubmitHost = "www.popcap.com";
 	OutputDebugString(StrFormat("Product: %srn", mProdName.c_str()).c_str());
