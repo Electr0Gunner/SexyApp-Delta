@@ -328,6 +328,9 @@
     <None Include="Source\SWTri_DrawTriangleInc1.inc" />
     <None Include="Source\SWTri_DrawTriangleInc2.inc" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
