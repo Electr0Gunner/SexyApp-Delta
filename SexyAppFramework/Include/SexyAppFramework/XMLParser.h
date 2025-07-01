@@ -1,5 +1,9 @@
 #pragma once
 
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
 #include <SexyAppFramework/Common.h>
 #include <SexyAppFramework/PerfTimer.h>
 

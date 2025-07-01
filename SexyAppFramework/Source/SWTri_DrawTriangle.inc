@@ -4,19 +4,19 @@
 
 #if (TRI0==0) 
 	#define PTYPE unsigned long
-	#define PIXEL_INCLUDE "SWTri_Pixel8888.inc"
+	#define PIXEL_INCLUDE "SexyAppFramework/SWTri_Pixel8888.inc"
 	#define NAME0 8888
 #elif (TRI0==1)
 	#define PTYPE unsigned long
-	#define PIXEL_INCLUDE "SWTri_Pixel888.inc"
+	#define PIXEL_INCLUDE "SexyAppFramework/SWTri_Pixel888.inc"
 	#define NAME0 0888
 #elif (TRI0==2)
 	#define PTYPE unsigned short
-	#define PIXEL_INCLUDE "SWTri_Pixel565.inc"
+	#define PIXEL_INCLUDE "SexyAppFramework/SWTri_Pixel565.inc"
 	#define NAME0 0565
 #elif (TRI0==3)
 	#define PTYPE unsigned short
-	#define PIXEL_INCLUDE "SWTri_Pixel555.inc"
+	#define PIXEL_INCLUDE "SexyAppFramework/SWTri_Pixel555.inc"
 	#define NAME0 0555
 #endif
 
@@ -205,7 +205,7 @@ void	Sexy::funcname(SWHelper::SWVertex * pVerts, void * pFrameBuffer, const unsi
 
 				int		x0 = (lx + 0xffff) & 0xffff0000;
 				int		x1 = (sx + 0xffff) & 0xffff0000;
-				#include "SWTri_Loop.inc"
+				#include "SexyAppFramework/SWTri_Loop.inc"
 			}
 		}
 		else if (mid > v1->x)
@@ -216,7 +216,7 @@ void	Sexy::funcname(SWHelper::SWVertex * pVerts, void * pFrameBuffer, const unsi
 
 				int	x0 = (sx + 0xffff) & 0xffff0000;
 				int	x1 = (lx + 0xffff) & 0xffff0000;
-				#include "SWTri_Loop.inc"
+				#include "SexyAppFramework/SWTri_Loop.inc"
 			}
 		}
 	}
@@ -244,7 +244,7 @@ void	Sexy::funcname(SWHelper::SWVertex * pVerts, void * pFrameBuffer, const unsi
 
 			int	x0 = (lx + 0xffff) & 0xffff0000;
 			int	x1 = (sx + 0xffff) & 0xffff0000;
-			#include "SWTri_Loop.inc"
+			#include "SexyAppFramework/SWTri_Loop.inc"
 		}
 	}
 	else if (mid > v1->x)
@@ -255,7 +255,7 @@ void	Sexy::funcname(SWHelper::SWVertex * pVerts, void * pFrameBuffer, const unsi
 
 			int	x0 = (sx + 0xffff) & 0xffff0000;
 			int	x1 = (lx + 0xffff) & 0xffff0000;
-			#include "SWTri_Loop.inc"
+			#include "SexyAppFramework/SWTri_Loop.inc"
 		}
 	}
 }

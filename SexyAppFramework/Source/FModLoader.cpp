@@ -24,7 +24,7 @@ static void CheckFModFunction(unsigned int theFunc, const char* theName)
 ///////////////////////////////////////////////////////////////////////////////
 FMOD_INSTANCE::FMOD_INSTANCE(const char* dllName)
 {
-	mModule = LoadLibrary(dllName);
+	mModule = LoadLibraryA(dllName);
 	if (!mModule)
 		return;
 

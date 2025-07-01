@@ -9,8 +9,10 @@
 
 extern "C"
 {
+#define _LIB
 #include <jpeg/jerror.h>
 #include <jpeg/jpeglib.h>
+#undef _LIB
 }
 
 // #include <jpeg2000/jasper.h>

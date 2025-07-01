@@ -1,5 +1,9 @@
 #include <SexyAppFramework/SEHCatcher.h>
 
+#ifndef USE_DEPRECATED_GETVERSIONEX
+#include <VersionHelpers.h>
+#endif
+
 #include <SexyAppFramework/SexyAppBase.h>
 #include <cinttypes>
 #include <fstream>
@@ -586,20 +590,20 @@ bool SEHCatcher::GetLogicalAddress(void* addr, char* szModule, uintptr_t len, ui
 	if (!VirtualQuery(addr, &mbi, sizeof(mbi)))
 		return false;
 
-	uintptr_t hMod = (uintptr_t)mbi.AllocationBase;
+	uintptr_t hNtdll = (uintptr_t)mbi.AllocationBase;
 
-	if (!GetModuleFileNameA((HMODULE)hMod, szModule, len))
+	if (!GetModuleFileNameA((HMODULE)hNtdll, szModule, len))
 		return false;
 
 	// Point to the DOS header in memory
-	PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER)hMod;
+	PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER)hNtdll;
 
 	// From the DOS header, find the NT (PE) header
-	PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS)(hMod + pDosHdr->e_lfanew);
+	PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS)(hNtdll + pDosHdr->e_lfanew);
 
 	PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION(pNtHdr);
 
-	uintptr_t rva = (uintptr_t)addr - hMod; // RVA is offset from module load address
+	uintptr_t rva = (uintptr_t)addr - hNtdll; // RVA is offset from module load address
 
 	// Iterate through the section table, looking for the one that encompasses
 	// the linear address.
@@ -994,6 +998,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 {
 	const auto hInstance = GetModuleHandle(nullptr);
 
+#ifdef USE_DEPRECATED_GETVERSIONEX
 	OSVERSIONINFO aVersionInfo;
 	aVersionInfo.dwOSVersionInfoSize = sizeof(aVersionInfo);
 	GetVersionEx(&aVersionInfo);
@@ -1001,7 +1006,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	// Setting fonts on 98 causes weirdo crash things in GDI upon the second crash.
 	//  That's no good.
 	gUseDefaultFonts = aVersionInfo.dwPlatformId != VER_PLATFORM_WIN32_NT;
-
+#endif
 	int aHeight = -MulDiv(8, 96, 72);
 	mDialogFont = ::CreateFontA(aHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, "Tahoma");
@@ -1123,23 +1128,58 @@ std::string SEHCatcher::GetSysInfo()
 {
 	std::string aDebugDump;
 
+#ifdef USE_DEPRECATED_GETVERSIONEX
 	OSVERSIONINFOA aVersionInfo;
 	aVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionExA(&aVersionInfo);
-
 	aDebugDump += "Windows Ver: ";
 	if (aVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		aDebugDump += "NT ";
 	else
 		aDebugDump += "9x ";
+#else
+	aDebugDump += "Windows Ver: NT";
+#endif
+
+	DWORD aMajorVersion = 0;
+	DWORD aMinorVersion = 0;
+	std::string aCSDVersion;
+	DWORD aBuildNumber = 0;
+#ifdef USE_DEPRECATED_GETVERSIONEX
+	aMajorVersion = aVersionInfo.dwMajorVersion;
+	aMinorVersion = aVersionInfo.dwMinorVersion;
+	aCSDVersion = aVersionInfo.szCSDVersion;
+	aBuildNumber = aVersionInfo.dwBuildNumber;
+#else
+	HMODULE hNtdll = ::GetModuleHandleW(L"ntdll.dll");
+	typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+	if (hNtdll != nullptr)
+	{
+		RtlGetVersionPtr aRtlGetVersion = (RtlGetVersionPtr)::GetProcAddress(hNtdll, "RtlGetVersion");
+
+		if (aRtlGetVersion != nullptr)
+		{
+			RTL_OSVERSIONINFOW aVersionInfo = { 0 };
+			aVersionInfo.dwOSVersionInfoSize = sizeof(aVersionInfo);
+			if (aRtlGetVersion(&aVersionInfo) == 0)
+			{
+
+				aMajorVersion = aVersionInfo.dwMajorVersion;
+				aMinorVersion = aVersionInfo.dwMinorVersion;
+				aCSDVersion = WStringToString(aVersionInfo.szCSDVersion);
+				aBuildNumber = aVersionInfo.dwBuildNumber;
+			}
+		}
+	}
+#endif
 
 	char aVersionStr[20];
-	sprintf(aVersionStr, "%d.%d", aVersionInfo.dwMajorVersion, aVersionInfo.dwMinorVersion);
+	sprintf(aVersionStr, "%d.%d", aMajorVersion, aMinorVersion);
 	aDebugDump += aVersionStr;
 	aDebugDump += " ";
-	aDebugDump += aVersionInfo.szCSDVersion;
+	aDebugDump += aCSDVersion;
 	aDebugDump += " ";
-	sprintf(aVersionStr, "%d", aVersionInfo.dwBuildNumber);
+	sprintf(aVersionStr, "%d", aBuildNumber);
 	aDebugDump += "Build ";
 	aDebugDump += aVersionStr;
 	aDebugDump += "\r\n";

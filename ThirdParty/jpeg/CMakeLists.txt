@@ -19,6 +19,6 @@ set(LIBSOURCES ${CLIBSOURCES} ${DLIBSOURCES} ${COMSOURCES})
 add_library(jpeg STATIC ${LIBSOURCES})
 
 target_compile_definitions(jpeg PUBLIC -D_VISUALC_)
-target_compile_definitions(jpeg PUBLIC -D_LIB)
+target_compile_definitions(jpeg PRIVATE -D_LIB)
 target_include_directories(jpeg PUBLIC Include)
 target_include_directories(jpeg PRIVATE Include/jpeg)

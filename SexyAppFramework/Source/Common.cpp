@@ -1,3 +1,7 @@
+#ifndef USE_DEPRECATED_GETVERSIONEX
+#include <Windows.h>
+#include <VersionHelpers.h>
+#endif
 #include <SexyAppFramework/Common.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/MTRand.h>
@@ -39,11 +43,13 @@ void Sexy::SRand(ulong theSeed)
 
 bool Sexy::CheckFor98Mill()
 {
+	// yea, no.
 	static bool needOsCheck = true;
 	static bool is98Mill = false;
 
 	if (needOsCheck)
 	{
+#if false
 		bool invalid = false;
 		OSVERSIONINFOEXA osvi;
 		ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
@@ -58,6 +64,10 @@ bool Sexy::CheckFor98Mill()
 
 		needOsCheck = false;
 		is98Mill = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS; // let's check Win95, 98, *AND* ME.
+#else
+		needOsCheck = false;
+		is98Mill = false;
+#endif
 	}
 
 	return is98Mill;
@@ -70,6 +80,7 @@ bool Sexy::CheckForVista()
 
 	if (needOsCheck)
 	{
+#ifdef USE_DEPRECATED_GETVERSIONEX
 		bool invalid = false;
 		OSVERSIONINFOEXA osvi;
 		ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
@@ -84,6 +95,10 @@ bool Sexy::CheckForVista()
 
 		needOsCheck = false;
 		isVista = osvi.dwMajorVersion >= 6;
+#else
+		needOsCheck = false;
+		isVista = IsWindowsVistaOrGreater();
+#endif
 	}
 
 	return isVista;

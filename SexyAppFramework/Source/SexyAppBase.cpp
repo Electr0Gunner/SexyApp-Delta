@@ -3165,6 +3165,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		gLastMouseX = aMousePoint.x;
 		gLastMouseY = aMousePoint.y;
 
+#ifdef USE_DEPRECATED_GETVERSIONEX
 		// Password checking stuff for 95/98/ME
 		OSVERSIONINFO aVersion;
 		aVersion.dwOSVersionInfoSize = sizeof(aVersion);
@@ -3192,6 +3193,7 @@ static bool ScreenSaverWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				RegCloseKey(hKey);
 			}
 		}
+#endif
 		return false;
 	}
 				  break;
@@ -5994,7 +5996,7 @@ void SexyAppBase::Init()
 	}
 
 	srand(GetTickCount());
-	
+
 	const auto hInstance = GetModuleHandle(nullptr);
 
 	if (CheckFor98Mill())
