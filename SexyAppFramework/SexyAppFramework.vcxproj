@@ -95,6 +95,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)Include\;$(ProjectDir)..\ThirdParty\bass\Include;$(ProjectDir)..\ThirdParty\jpeg\Include;$(ProjectDir)..\ThirdParty\ogg\Include;$(ProjectDir)..\ThirdParty\png\Include;$(ProjectDir)..\ThirdParty\zlib\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,6 +114,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)Include\;$(ProjectDir)..\ThirdParty\bass\Include;$(ProjectDir)..\ThirdParty\jpeg\Include;$(ProjectDir)..\ThirdParty\ogg\Include;$(ProjectDir)..\ThirdParty\png\Include;$(ProjectDir)..\ThirdParty\zlib\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +131,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)Include\;$(ProjectDir)..\ThirdParty\bass\Include;$(ProjectDir)..\ThirdParty\jpeg\Include;$(ProjectDir)..\ThirdParty\ogg\Include;$(ProjectDir)..\ThirdParty\png\Include;$(ProjectDir)..\ThirdParty\zlib\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +150,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;$(ProjectDir)Include\;$(ProjectDir)..\ThirdParty\bass\Include;$(ProjectDir)..\ThirdParty\jpeg\Include;$(ProjectDir)..\ThirdParty\ogg\Include;$(ProjectDir)..\ThirdParty\png\Include;$(ProjectDir)..\ThirdParty\zlib\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
