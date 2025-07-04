@@ -11,7 +11,7 @@ static BOOL MusicPlay(HMUSIC handle, DWORD pos, DWORD flags, DWORD mask)
 	BASS_ChannelStop(handle);
 	BASS_ChannelSetPosition(handle, MAKELONG(pos, 0), BASS_POS_MUSIC_ORDER);
 	BASS_ChannelFlags(handle, flags, mask);
-	return BASS_ChannelPlay(handle, true);
+	return BASS_ChannelPlay(handle, false);
 }
 
 BassMusicInfo::BassMusicInfo()
