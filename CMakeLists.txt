@@ -9,7 +9,7 @@ endif()
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 20)
 
-project(lawn)
+project(SexyAppFramework)
 
 # Detect target architecture for MSVC
 if(CMAKE_C_COMPILER_ARCHITECTURE_ID STREQUAL "X86")
