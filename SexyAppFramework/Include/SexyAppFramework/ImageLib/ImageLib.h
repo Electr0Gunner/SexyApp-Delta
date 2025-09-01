@@ -9,6 +9,7 @@ namespace ImageLib
 	public:
 		int mWidth;
 		int mHeight;
+		int mNumChannels;
 		unsigned long* mBits;
 
 	public:
@@ -20,14 +21,11 @@ namespace ImageLib
 		unsigned long* GetBits();
 	};
 
-	bool WriteJPEGImage(const std::string& theFileName, Image* theImage);
-	bool WritePNGImage(const std::string& theFileName, Image* theImage);
-	bool WriteTGAImage(const std::string& theFileName, Image* theImage);
-	bool WriteBMPImage(const std::string& theFileName, Image* theImage);
+	bool WriteImage(const std::string& theFileName, Image* theImage, const std::string& theExtension, bool add_extension = true);
 	extern int gAlphaComposeColor;
 	extern bool gAutoLoadAlpha;
-	extern bool gIgnoreJPEG2000Alpha; // I've noticed alpha in jpeg2000's that shouldn't have alpha so this defaults to true
 
+	Image* GetImageBackend(const std::string& theFileName, const std::string& theExtension);
 	Image* GetImage(const std::string& theFileName, bool lookForAlphaImage = true);
 
 	/*void InitJPEG2000();

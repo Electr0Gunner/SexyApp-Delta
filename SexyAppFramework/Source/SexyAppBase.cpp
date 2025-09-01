@@ -1130,7 +1130,7 @@ void SexyAppBase::TakeScreenshot()
 		} while (FindNextFileA(aHandle, &aData));
 		FindClose(aHandle);
 	}
-	std::string anImageName = anImageDir + anImagePrefix + StrFormat("%d.png", aMaxId + 1);
+	std::string anImageName = anImageDir + anImagePrefix + StrFormat("%d", aMaxId + 1);
 
 	// Capture screen
 	LPDIRECTDRAWSURFACE aSurface = mDDInterface->mDrawSurface;
@@ -1153,7 +1153,8 @@ void SexyAppBase::TakeScreenshot()
 	aSaveImage.mBits = anImage.mBits;
 	aSaveImage.mWidth = anImage.mWidth;
 	aSaveImage.mHeight = anImage.mHeight;
-	ImageLib::WritePNGImage(anImageName, &aSaveImage);
+	aSaveImage.mNumChannels = anImage.mNumChannels;
+	ImageLib::WriteImage(anImageName, &aSaveImage, ".png");
 	aSaveImage.mBits = NULL;
 
 	/*
@@ -1197,6 +1198,8 @@ void SexyAppBase::TakeScreenshot()
 
 void SexyAppBase::DumpProgramInfo()
 {
+	//TODO_DELTA: Rewrite the function so it iterates all images in mResourceManager
+
 	Deltree(GetAppDataFolder() + "_dump");
 
 	for (;;)
@@ -1223,6 +1226,7 @@ void SexyAppBase::DumpProgramInfo()
 	anImageLibImage.mWidth = aThumbWidth;
 	anImageLibImage.mHeight = aThumbHeight;
 	anImageLibImage.mBits = new unsigned long[aThumbWidth * aThumbHeight];
+	anImageLibImage.mNumChannels = 4;
 
 	typedef std::multimap<int, MemoryImage*, std::greater<int>> SortedImageMap;
 
@@ -1248,9 +1252,9 @@ void SexyAppBase::DumpProgramInfo()
 
 		int aMemorySize = 0;
 		if (aMemoryImage->mBits != NULL)
-			aBitsMemory = aNumPixels * 4;
+			aBitsMemory = aNumPixels * aDDImage->mNumChannels;
 		if ((aDDImage != NULL) && (aDDImage->mSurface != NULL))
-			aSurfaceMemory = aNumPixels * 4; // Assume 32bit screen...
+			aSurfaceMemory = aNumPixels * aDDImage->mNumChannels;
 		if (aMemoryImage->mColorTable != NULL)
 			aPalletizedMemory = aNumPixels + 256 * 4;
 		if (aMemoryImage->mNativeAlphaData != NULL)
@@ -1411,7 +1415,7 @@ void SexyAppBase::DumpProgramInfo()
 				*(aThumbBitsPtr++) = aBits[aSrcX + (aSrcY * aCopiedImage.mWidth)];
 			}
 
-		ImageLib::WriteJPEGImage((GetAppDataFolder() + std::string("_dump\\") + aThumbName).c_str(), &anImageLibImage);
+		ImageLib::WriteImage((GetAppDataFolder() + std::string("_dump\\") + aThumbName).c_str(), &anImageLibImage, ".jpeg");
 
 		// Write high resolution image
 
@@ -1419,8 +1423,9 @@ void SexyAppBase::DumpProgramInfo()
 		anFullImage.mBits = aCopiedImage.GetBits();
 		anFullImage.mWidth = aCopiedImage.GetWidth();
 		anFullImage.mHeight = aCopiedImage.GetHeight();
+		anFullImage.mNumChannels = aCopiedImage.mNumChannels;
 
-		ImageLib::WritePNGImage((GetAppDataFolder() + std::string("_dump\\") + anImageName).c_str(), &anFullImage);
+		ImageLib::WriteImage((GetAppDataFolder() + std::string("_dump\\") + anImageName).c_str(), &anFullImage, ".png");
 
 		anFullImage.mBits = NULL;
 
@@ -6254,6 +6259,7 @@ Sexy::DDImage* SexyAppBase::GetImage(const std::string& theFileName, bool commit
 	anImage->mFilePath = theFileName;
 	anImage->SetBits(aLoadedImage->GetBits(), aLoadedImage->GetWidth(), aLoadedImage->GetHeight(), commitBits);
 	anImage->mFilePath = theFileName;
+	anImage->mNumChannels = aLoadedImage->mNumChannels;
 	delete aLoadedImage;
 
 	return anImage;

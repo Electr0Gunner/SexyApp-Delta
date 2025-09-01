@@ -105,6 +105,17 @@ bool DDImage::UnlockSurface()
 	return true;
 }
 
+int CountBits(DWORD mask)
+{
+    int count = 0;
+    while (mask)
+    {
+        count += mask & 1;
+        mask >>= 1;
+    }
+    return count;
+}
+
 void DDImage::SetSurface(LPDIRECTDRAWSURFACE theSurface)
 {
 	mSurfaceSet = true;
@@ -117,6 +128,31 @@ void DDImage::SetSurface(LPDIRECTDRAWSURFACE theSurface)
 	aDesc.dwSize = sizeof(aDesc);
 	aDesc.dwFlags = DDSD_HEIGHT | DDSD_WIDTH;
 	HRESULT aResult = mSurface->GetSurfaceDesc(&aDesc);
+
+	if (SUCCEEDED(aResult))
+	{
+		DWORD rbits = 0, gbits = 0, bbits = 0, abits = 0;
+		
+		if (aDesc.ddpfPixelFormat.dwFlags & DDPF_RGB)
+		{
+			rbits = CountBits(aDesc.ddpfPixelFormat.dwRBitMask);
+			gbits = CountBits(aDesc.ddpfPixelFormat.dwGBitMask);
+			bbits = CountBits(aDesc.ddpfPixelFormat.dwBBitMask);
+		}
+
+		if (aDesc.ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS)
+		{
+			abits = CountBits(aDesc.ddpfPixelFormat.dwRGBAlphaBitMask);
+		}
+
+		int numChannels = 0;
+		if (rbits) ++numChannels;
+		if (gbits) ++numChannels;
+		if (bbits) ++numChannels;
+		if (abits) ++numChannels;
+
+		mNumChannels = numChannels;
+	}
 
 	mWidth = aDesc.dwWidth;
 	mHeight = aDesc.dwHeight;

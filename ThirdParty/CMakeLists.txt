@@ -1,7 +1,4 @@
-add_subdirectory(jpeg)
 add_subdirectory(zlib)
-add_subdirectory(png)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -17,3 +14,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(ogg vorbis)
+
+add_library(misc STATIC Source/stb_image.cpp)
+target_include_directories(misc PUBLIC Include)

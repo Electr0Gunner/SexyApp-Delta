@@ -15,7 +15,7 @@ Image::Image()
 	mDrawn = false;
 }
 
-Image::Image(const Image& theImage) : mWidth(theImage.mWidth), mHeight(theImage.mHeight), mNumRows(theImage.mNumRows), mNumCols(theImage.mNumCols)
+Image::Image(const Image& theImage) : mWidth(theImage.mWidth), mHeight(theImage.mHeight), mNumChannels(theImage.mNumChannels), mNumRows(theImage.mNumRows), mNumCols(theImage.mNumCols)
 {
 	mDrawn = false;
 	if (theImage.mAnimInfo != NULL)
