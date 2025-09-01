@@ -13,8 +13,8 @@ using namespace Sexy;
 #define USE_OGG_LIB
 
 #ifdef USE_OGG_LIB
-#include "ogg/ivorbiscodec.h"
-#include "ogg/ivorbisfile.h"
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 #endif
 
 #define SOUND_FLAGS (DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLFREQUENCY)
@@ -515,7 +515,7 @@ bool DSoundManager::LoadOGGSound(unsigned int theSfxID, const std::string& theFi
 	int aNumBytes = dwBytes;
 	while (aNumBytes > 0)
 	{
-		long ret = ov_read(&vf, aPtr, aNumBytes, &current_section);
+		long ret = ov_read(&vf, aPtr, aNumBytes, 0, 2, 1, &current_section);
 		if (ret == 0)
 			break;
 		else if (ret < 0)
