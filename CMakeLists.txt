@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.22)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 20)
 
@@ -46,7 +46,7 @@ target_include_directories(SexyAppFramework
     PUBLIC Include ${BASS_INCLUDE_PATH}
     PRIVATE Include/SexyAppFramework
 )
-target_link_libraries(SexyAppFramework PRIVATE misc ogg Vorbis::vorbisfile Vorbis::vorbis ${BASS_LIB_PATH} winmm.lib Ws2_32.lib)
+target_link_libraries(SexyAppFramework PRIVATE misc ogg Vorbis::vorbisfile Vorbis::vorbis zlibstatic ${BASS_LIB_PATH} winmm.lib Ws2_32.lib)
 
 # ----- DEMO SETUP -----
 
@@ -54,4 +54,14 @@ option(ENABLE_DEMOS "Enable demos" ON)
 
 if(ENABLE_DEMOS)
 add_subdirectory(Demos)
+endif()
+
+# ----- TOOL SETUP -----
+
+option(COMPILE_TOOLS "Compile tools" OFF)
+
+if(COMPILE_TOOLS)
+find_package(wxWidgets REQUIRED COMPONENTS core base net)
+
+add_subdirectory(Tools)
 endif()

@@ -75,7 +75,7 @@ bool PakInterface::AddPakFile(const std::string& theFileName)
 
 	ulong aMagic = 0;
 	FRead(&aMagic, sizeof(ulong), 1, aFP);
-	if (aMagic != 0xBAC04AC0)
+	if (aMagic != PAK_MAGIC_WORD)
 	{
 		FClose(aFP);
 		return false;

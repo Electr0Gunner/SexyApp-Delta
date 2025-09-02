@@ -7,6 +7,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#define PAK_MAGIC_WORD 0xBAC04AC0
+
 class PakCollection;
 
 class PakRecord
