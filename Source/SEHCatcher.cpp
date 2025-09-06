@@ -9,6 +9,8 @@
 #include <fstream>
 #include <process.h>
 
+#include <AL/al.h>
+
 using namespace Sexy;
 
 LPTOP_LEVEL_EXCEPTION_FILTER SEHCatcher::mPreviousFilter;
@@ -1197,13 +1199,8 @@ std::string SEHCatcher::GetSysInfo()
 			FreeLibrary(aMod);
 		}
 
-		aMod = LoadLibraryA("dsound.dll");
-		if (aMod != NULL)
-		{
-			GetModuleFileNameA(aMod, aPath, 256);
-			aDebugDump += "DSound Ver: " + mApp->GetProductVersion(aPath) + "\r\n";
-			FreeLibrary(aMod);
-		}
+		std::string aVerOpenAL = alGetString(AL_VERSION);
+		aDebugDump += "OpenAL Ver: " + aVerOpenAL + "\r\n";
 	}
 
 	return aDebugDump;

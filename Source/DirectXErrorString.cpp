@@ -1,6 +1,5 @@
 #include <SexyAppFramework/DirectXErrorString.h>
 
-#include <SexyAppFramework/dsoundversion.h>
 #include <d3d.h>
 #include <ddraw.h>
 
@@ -10,36 +9,6 @@ std::string Sexy::GetDirectXErrorString(HRESULT theResult)
 {
 	switch (theResult)
 	{
-	case DSERR_ALLOCATED:
-		return "DSERR_ALLOCATED";
-	case DSERR_ALREADYINITIALIZED:
-		return "DSERR_ALREADYINITIALIZED";
-	case DSERR_BADFORMAT:
-		return "DSERR_BADFORMAT";
-	case DSERR_BUFFERLOST:
-		return "DSERR_BUFFERLOST";
-	case DSERR_CONTROLUNAVAIL:
-		return "DSERR_CONTROLUNAVAIL";
-	case DSERR_GENERIC:
-		return "DSERR_GENERIC";
-	case DSERR_INVALIDCALL:
-		return "DSERR_INVALIDCALL";
-		//		case DSERR_INVALIDPARAM: return "DSERR_INVALIDPARAM";
-	case DSERR_NOAGGREGATION:
-		return "DSERR_NOAGGREGATION";
-	case DSERR_NODRIVER:
-		return "DSERR_NODRIVER";
-	case DSERR_NOINTERFACE:
-		return "DSERR_NOINTERFACE";
-	case DSERR_OTHERAPPHASPRIO:
-		return "DSERR_OTHERAPPHASPRIO";
-		//		case DSERR_OUTOFMEMORY: return "DSERR_OUTOFMEMORY";
-	case DSERR_PRIOLEVELNEEDED:
-		return "DSERR_PRIOLEVELNEEDED";
-	case DSERR_UNINITIALIZED:
-		return "DSERR_UNINITIALIZED";
-		//		case DSERR_UNSUPPORTED: return "DSERR_UNSUPPORTED";
-
 	case DDERR_ALREADYINITIALIZED:
 		return "DDERR_ALREADYINITIALIZED";
 	case DDERR_BLTFASTCANTCLIP:

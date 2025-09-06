@@ -238,12 +238,9 @@ void GameApp::LoadingThreadProc()
 	// Let's load some sounds. You assign a unique unsigned integer ID to each
 	// sound. It is with this ID that you indicate which sound you
 	// want to play. Valid types of sounds to load are: 
-	// WAV, OGG, AU, and if you have FMod and enable FMod: MP3. Although
-	// you should probably not use MP3 due to patent/copyright issues
-	// unless of course that either doesn't bother you or you happen
-	// to have the legal right to do so. Like images, you don't have
-	// to specify the file extension. LoadSound returns a boolean
-	// indicating success or failure.
+	// WAV, OGG, AU, FLAC and MP3.
+	// Like images, you don't have to specify the file extension. 
+	// LoadSound returns a boolean indicating success or failure.
 	if (!mSoundManager->LoadSound(1, "sounds/timer"))
 	{
 		Popup("There was an error loading sounds/timer");

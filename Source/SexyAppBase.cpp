@@ -12,9 +12,11 @@
 #include <SexyAppFramework/DDInterface.h>
 #include <SexyAppFramework/DSoundInstance.h>
 #include <SexyAppFramework/DSoundManager.h>
+#include <SexyAppFramework/OpenALSoundInstance.h>
+#include <SexyAppFramework/OpenALSoundManager.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/Dialog.h>
-#include <SexyAppFramework/FModMusicInterface.h>
+//#include <SexyAppFramework/FModMusicInterface.h>
 #include <SexyAppFramework/HTTPTransfer.h>
 #include <SexyAppFramework/KeyCodes.h>
 #include <SexyAppFramework/MTRand.h>
@@ -239,7 +241,7 @@ SexyAppBase::SexyAppBase()
 	mDebugKeysEnabled = false;
 	mOldWndProc = 0;
 	mNoSoundNeeded = false;
-	mWantFMod = false;
+	//mWantFMod = false;
 
 	mSyncRefreshRate = 100;
 	mVSyncUpdates = false;
@@ -5912,8 +5914,8 @@ MusicInterface* SexyAppBase::CreateMusicInterface(HWND theWindow)
 {
 	if (mNoSoundNeeded)
 		return new MusicInterface;
-	else if (mWantFMod)
-		return new FModMusicInterface(mInvisHWnd);
+	//else if (mWantFMod)
+		//return new FModMusicInterface(mInvisHWnd);
 	else
 		return new BassMusicInterface(mInvisHWnd);
 }
@@ -6139,7 +6141,7 @@ void SexyAppBase::Init()
 	}
 
 	if (mSoundManager == NULL)
-		mSoundManager = new DSoundManager(mNoSoundNeeded ? NULL : mHWnd, mWantFMod);
+		mSoundManager = new OpenALSoundManager();
 
 	SetSfxVolume(mSfxVolume);
 
