@@ -4,15 +4,13 @@
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/OpenALSoundInstance.h>
 
-#define MINIAUDIO_IMPLEMENTATION
-#include <miniaudio.h>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
-using namespace Sexy;
+#define MINIAUDIO_IMPLEMENTATION
+#include <miniaudio.h>
 
-#include <thread>
-#include <atomic>
+using namespace Sexy;
 
 OpenALSoundManager::OpenALSoundManager()
 {
@@ -48,6 +46,7 @@ OpenALSoundManager::~OpenALSoundManager()
     ReleaseChannels();
 	ReleaseSounds();
 
+	alcMakeContextCurrent(nullptr);
     alcDestroyContext(mSoundContext);
     alcCloseDevice(mSoundDevice);
 
@@ -457,6 +456,8 @@ bool OpenALSoundManager::DecodeOGGFormat(unsigned int theSfxID, const std::strin
 	alBufferData(aBuffer, aFormat, aBuf, aLenBytes, anInfo->rate);
 
 	mSoundBuffers[theSfxID] = aBuffer;
+	mSourceFileNames[theSfxID] = theFilename;
+	mSourceDataSizes[theSfxID] = aLenBytes;
 
 	delete[] aBuf;
 	ov_clear(&vf);
@@ -603,6 +604,8 @@ bool OpenALSoundManager::DecodeAUFormat(unsigned int theSfxID, const std::string
     alBufferData(buffer, aFormat, decodedPCM.data(), (ALsizei)(decodedPCM.size() * sizeof(int16_t)), aSampleRate);
 
     mSoundBuffers[theSfxID] = buffer;
+	mSourceFileNames[theSfxID] = theFilename;
+	mSourceDataSizes[theSfxID] = decodedPCM.size() * sizeof(int16_t);
 
 	return true;
 }
