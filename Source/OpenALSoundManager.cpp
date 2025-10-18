@@ -52,7 +52,7 @@ OpenALSoundManager::OpenALSoundManager()
 
     mMasterVolume = 1.0;
 
-	const ALCchar* deviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+	const ALCchar* deviceName = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
     mSoundDevice = alcOpenDevice(deviceName);
     if (!mSoundDevice)
     {
