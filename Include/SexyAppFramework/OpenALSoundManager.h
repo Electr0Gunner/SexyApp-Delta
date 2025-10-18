@@ -14,6 +14,7 @@ namespace Sexy
 
 	protected:
 		ALuint mSoundBuffers[MAX_SOURCE_SOUNDS];
+		ALuint mGarbageBuffer[MAX_SOURCE_SOUNDS];
 		std::string mSourceFileNames[MAX_SOURCE_SOUNDS];
 		ulong mSourceDataSizes[MAX_SOURCE_SOUNDS];
 		double mBaseVolumes[MAX_SOURCE_SOUNDS];
@@ -40,6 +41,7 @@ namespace Sexy
 		virtual ~OpenALSoundManager();
 
 		virtual bool Initialized();
+		virtual void CollectGarbage();
 
 		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename);
 		virtual int LoadSound(const std::string& theFilename);

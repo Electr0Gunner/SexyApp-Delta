@@ -17,6 +17,7 @@ namespace Sexy
 		virtual ~SoundManager() {}
 
 		virtual bool Initialized() = NULL;
+		virtual void CollectGarbage() = 0;
 
 		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename) = NULL;
 		virtual int LoadSound(const std::string& theFilename) = NULL;

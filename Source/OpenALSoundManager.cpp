@@ -1,4 +1,5 @@
 #include <SexyAppFramework/OpenALSoundManager.h>
+#include "AL/alext.h"
 
 #include <SexyAppFramework/PakLib/PakInterface.h>
 #include <SexyAppFramework/Debug.h>
@@ -12,6 +13,28 @@
 
 using namespace Sexy;
 
+static void printALCSOFTSystemEventIsSupportedResult(LPALCEVENTISSUPPORTEDSOFT alcEventIsSupportedSOFT, ALCenum eventType, ALCenum deviceType)
+{
+    if (alcEventIsSupportedSOFT == NULL)
+    {
+        printf("ERROR (alcEventIsSupportedSOFT missing)\n");
+        return;
+    }
+    ALCenum supported = alcEventIsSupportedSOFT(eventType, deviceType);
+    if (supported == ALC_EVENT_SUPPORTED_SOFT)
+    {
+        printf("SUPPORTED\n");
+    }
+    else if (supported == ALC_EVENT_NOT_SUPPORTED_SOFT)
+    {
+        printf("NOT SUPPORTED\n");
+    }
+    else
+    {
+        printf("UNEXPECTED VALUE : %d\n", supported);
+    }
+}
+
 OpenALSoundManager::OpenALSoundManager()
 {
 	mLastReleaseTick = 0;
@@ -19,6 +42,7 @@ OpenALSoundManager::OpenALSoundManager()
 	for (int i = 0; i < MAX_SOURCE_SOUNDS; i++)
 	{
 		mSoundBuffers[i] = 0;
+		mGarbageBuffer[i] = 0;
 		mBaseVolumes[i] = 1;
 		mBasePans[i] = 0;
 	}
@@ -28,7 +52,8 @@ OpenALSoundManager::OpenALSoundManager()
 
     mMasterVolume = 1.0;
 
-    mSoundDevice = alcOpenDevice(nullptr);
+	const ALCchar* deviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+    mSoundDevice = alcOpenDevice(deviceName);
     if (!mSoundDevice)
     {
         return;
@@ -39,6 +64,21 @@ OpenALSoundManager::OpenALSoundManager()
     {
         return;
     }
+
+    ALCdevice* device = alcOpenDevice(deviceName);
+    ALCcontext* context = alcCreateContext(device, nullptr);
+    alcMakeContextCurrent(context);
+
+	if (alcIsExtensionPresent(mSoundDevice, "ALC_SOFT_system_events"))
+	{
+		LPALCEVENTISSUPPORTEDSOFT alcEventIsSupportedSOFT;
+        alcEventIsSupportedSOFT = reinterpret_cast<LPALCEVENTISSUPPORTEDSOFT>(alGetProcAddress("alcEventIsSupportedSOFT"));
+        printf("this works ig");
+	}
+	else
+	{
+		printf("huh");
+	}
 }
 
 OpenALSoundManager::~OpenALSoundManager()
@@ -248,11 +288,23 @@ int OpenALSoundManager::LoadSound(const std::string& theFilename)
 
 // ----- RELEASING -----
 
+void OpenALSoundManager::CollectGarbage()
+{
+	for (int i = 0; i < MAX_SOURCE_SOUNDS; i++)
+	{
+		if (mGarbageBuffer[i] != 0)
+		{
+			alDeleteBuffers(1, &mSoundBuffers[i]);
+			mGarbageBuffer[i] = 0;
+		}
+	}
+}
+
 void OpenALSoundManager::ReleaseSound(unsigned int theSfxID)
 {
 	if (mSoundBuffers[theSfxID] != 0)
 	{
-        alDeleteBuffers(1, &mSoundBuffers[theSfxID]);
+		mGarbageBuffer[theSfxID] = mSoundBuffers[theSfxID];
 		mSoundBuffers[theSfxID] = 0;
 		mSourceFileNames[theSfxID] = "";
 	}

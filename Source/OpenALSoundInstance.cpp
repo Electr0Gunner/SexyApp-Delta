@@ -40,6 +40,7 @@ OpenALSoundInstance::~OpenALSoundInstance()
         alSourcei(mSoundSource, AL_BUFFER, 0);
         alDeleteSources(1, &mSoundSource);
         mSoundSource = NULL;
+		mSoundManagerP->CollectGarbage();
     }
 }
 
@@ -106,7 +107,16 @@ bool OpenALSoundInstance::Play(bool looping, bool autoRelease)
 	}
 
 	alSourcei(mSoundSource, AL_LOOPING, looping);
-	alSourcePlay(mSoundSource);
+	try
+	{
+		alSourcePlay(mSoundSource);
+	}
+	catch(const std::exception& e)
+	{
+		printf(e.what());
+	}
+	
+	
 
 	return true;
 }
