@@ -50,6 +50,7 @@ namespace Sexy
 	public:
 		FontLayer(FontData* theFontData);
 		FontLayer(const FontLayer& theFontLayer);
+		CharData* GetCharData(SexyChar value);
 	};
 
 	typedef std::list<FontLayer> FontLayerList;
@@ -135,6 +136,7 @@ namespace Sexy
 		virtual void GenerateActiveFontLayers();
 		virtual void DrawStringEx(Graphics* g, int theX, int theY, const SexyString& theString, const Color& theColor, const Rect* theClipRect,
 			RectList* theDrawnAreas, int* theWidth);
+		SexyChar GetMappedChar(char value);
 
 	public:
 		ImageFont(SexyAppBase* theSexyApp, const std::string& theFontDescFileName);

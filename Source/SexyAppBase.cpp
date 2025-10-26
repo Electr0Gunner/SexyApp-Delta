@@ -10,13 +10,10 @@
 #include <SexyAppFramework/D3DTester.h>
 #include <SexyAppFramework/DDImage.h>
 #include <SexyAppFramework/DDInterface.h>
-#include <SexyAppFramework/DSoundInstance.h>
-#include <SexyAppFramework/DSoundManager.h>
 #include <SexyAppFramework/OpenALSoundInstance.h>
 #include <SexyAppFramework/OpenALSoundManager.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/Dialog.h>
-//#include <SexyAppFramework/FModMusicInterface.h>
 #include <SexyAppFramework/HTTPTransfer.h>
 #include <SexyAppFramework/KeyCodes.h>
 #include <SexyAppFramework/MTRand.h>
@@ -150,7 +147,7 @@ SexyAppBase::SexyAppBase()
 	mExitToTop = false;
 	mWidth = 640;
 	mHeight = 480;
-	mFullscreenBits = 16;
+	mFullscreenBits = 32; // the fuck is this crap
 	mIsWindowed = true;
 	mIsPhysWindowed = true;
 	mFullScreenWindow = false;
@@ -4459,27 +4456,19 @@ void SexyAppBase::MakeWindow()
 
 	const auto hInstance = GetModuleHandle(nullptr);
 
-	/*
+	
 	if ((mPlayingDemoBuffer) || (mIsWindowed && !mFullScreenWindow))
 	{
-		DWORD aWindowStyle = WS_CLIPCHILDREN | WS_POPUP | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-		if (mEnableMaximizeButton)
-			aWindowStyle |= WS_MAXIMIZEBOX;
+		mWindow = SDL_CreateWindow(mTitle.c_str(), mWidth, mHeight, SDL_WINDOW_OPENGL);
 
-		RECT aRect;
-		aRect.left = 0;
-		aRect.top = 0;
-		aRect.right = mWidth;
-		aRect.bottom = mHeight;
+		SDL_DisplayID aDisplayID = SDL_GetDisplayForWindow(mWindow);
+		SDL_Rect aDesktopRect;
+		SDL_GetDisplayBounds(aDisplayID, &aDesktopRect);
 
-		BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
+		int aWidth = mWidth;
+		int aHeight = mHeight;
 
-		int aWidth = aRect.right - aRect.left;
-		int aHeight = aRect.bottom - aRect.top;
-
-		// Get the work area of the desktop to allow us to center
-		RECT aDesktopRect;
-		::SystemParametersInfo(SPI_GETWORKAREA, NULL, &aDesktopRect, NULL);
+		SDL_GetWindowSize(mWindow, &aWidth, &aHeight);
 
 		int aPlaceX = 64;
 		int aPlaceY = 64;
@@ -4491,59 +4480,41 @@ void SexyAppBase::MakeWindow()
 
 			int aSpacing = 4;
 
-			if (aPlaceX < aDesktopRect.left + aSpacing)
-				aPlaceX = aDesktopRect.left + aSpacing;
+			if (aPlaceX < aDesktopRect.x + aSpacing)
+				aPlaceX = aDesktopRect.x + aSpacing;
 
-			if (aPlaceY < aDesktopRect.top + aSpacing)
-				aPlaceY = aDesktopRect.top + aSpacing;
+			if (aPlaceY < aDesktopRect.y + aSpacing)
+				aPlaceY = aDesktopRect.y + aSpacing;
 
-			if (aPlaceX + aWidth >= aDesktopRect.right - aSpacing)
-				aPlaceX = aDesktopRect.right - aWidth - aSpacing;
+			if (aPlaceX + aWidth >= aDesktopRect.w - aSpacing)
+				aPlaceX = aDesktopRect.w - aWidth - aSpacing;
 
-			if (aPlaceY + aHeight >= aDesktopRect.bottom - aSpacing)
-				aPlaceY = aDesktopRect.bottom - aHeight - aSpacing;
-		}
-
-		if (CheckFor98Mill())
-		{
-			mHWnd = CreateWindowExA(
-				0, "MainWindow", SexyStringToStringFast(mTitle).c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, hInstance, 0);
-		}
-		else
-		{
-			mHWnd = CreateWindowEx(0, _S("MainWindow"), mTitle.c_str(), aWindowStyle, aPlaceX, aPlaceY, aWidth, aHeight, NULL, NULL, hInstance, 0);
+			if (aPlaceY + aHeight >= aDesktopRect.h - aSpacing)
+				aPlaceY = aDesktopRect.h - aHeight - aSpacing;
 		}
 
 		if (mPreferredX == -1)
 		{
-			::MoveWindow(mHWnd, aDesktopRect.left + ((aDesktopRect.right - aDesktopRect.left) - aWidth) / 2,
-				aDesktopRect.top + (int)(((aDesktopRect.bottom - aDesktopRect.top) - aHeight) * 0.382), aWidth, aHeight, FALSE);
+			SDL_SetWindowPosition(mWindow, aDesktopRect.x + ((aDesktopRect.w - aDesktopRect.x) - aWidth) / 2, aDesktopRect.y + (int)(((aDesktopRect.h - aDesktopRect.y) - aHeight) * 0.382));
 		}
 
 		mIsPhysWindowed = true;
 	}
 	else
 	{
-		if (CheckFor98Mill())
-		{
-			mHWnd = CreateWindowExA(
-				WS_EX_TOPMOST, "MainWindow", SexyStringToStringFast(mTitle).c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, hInstance, 0);
-		}
-		else
-		{
-			mHWnd = CreateWindowEx(WS_EX_TOPMOST, _S("MainWindow"), mTitle.c_str(), WS_POPUP | WS_VISIBLE, 0, 0, mWidth, mHeight, NULL, NULL, hInstance, 0);
-		}
+		int anExtraWinFlags = (!mIsWindowed ? SDL_WINDOW_FULLSCREEN : 0);
+		mWindow = SDL_CreateWindow(mTitle.c_str(), mWidth, mHeight, SDL_WINDOW_OPENGL | anExtraWinFlags);
 
 		mIsPhysWindowed = false;
 	}
-*/
+
 	/*char aStr[256];
 	sprintf(aStr, "HWND: %d\r\n", mHWnd);
 	OutputDebugString(aStr);*/
-	mWindow = SDL_CreateWindow(mTitle.c_str(), mWidth, mHeight, 0);
+	
 	SDL_PropertiesID props = SDL_GetWindowProperties(mWindow);
 	mHWnd = (HWND)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);;
-	//SetWindowLongPtr(mHWnd, GWLP_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(mHWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 	if (mDDInterface == NULL)
 	{
@@ -4633,7 +4604,6 @@ void SexyAppBase::MakeWindow()
 	mWidgetManager->mImage = mDDInterface->GetScreenImage();
 	mWidgetManager->MarkAllDirty();
 
-	SetTimer(mHWnd, 100, mFrameTime, NULL);
 }
 
 void SexyAppBase::DeleteNativeImageData()

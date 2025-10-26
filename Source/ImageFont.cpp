@@ -113,6 +113,11 @@ FontLayer::FontLayer(const FontLayer& theFontLayer)
 		mCharData[i] = theFontLayer.mCharData[i];
 }
 
+CharData* FontLayer::GetCharData(SexyChar value)
+{
+	return &this->mCharData[value];
+}
+
 FontData::FontData()
 {
 	mInitialized = false;
@@ -1601,6 +1606,11 @@ void ImageFont::DrawStringEx(
 	}*/
 
 	g->SetColorizeImages(colorizeImages);
+}
+
+SexyChar ImageFont::GetMappedChar(char value)
+{
+	return this->mFontData->mCharMap[value];
 }
 
 void ImageFont::DrawString(Graphics* g, int theX, int theY, const SexyString& theString, const Color& theColor, const Rect& theClipRect)
