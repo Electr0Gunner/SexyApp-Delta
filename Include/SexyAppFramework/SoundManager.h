@@ -16,30 +16,30 @@ namespace Sexy
 		SoundManager() {}
 		virtual ~SoundManager() {}
 
-		virtual bool Initialized() = NULL;
+		virtual bool Initialized() = nullptr;
 		virtual void CollectGarbage() = 0;
 
-		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename) = NULL;
-		virtual int LoadSound(const std::string& theFilename) = NULL;
-		virtual void ReleaseSound(unsigned int theSfxID) = NULL;
+		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename) = nullptr;
+		virtual int LoadSound(const std::string& theFilename) = nullptr;
+		virtual void ReleaseSound(unsigned int theSfxID) = nullptr;
 
-		virtual void SetVolume(double theVolume) = NULL;
-		virtual bool SetBaseVolume(unsigned int theSfxID, double theBaseVolume) = NULL;
-		virtual bool SetBasePan(unsigned int theSfxID, int theBasePan) = NULL;
+		virtual void SetVolume(double theVolume) = nullptr;
+		virtual bool SetBaseVolume(unsigned int theSfxID, double theBaseVolume) = nullptr;
+		virtual bool SetBasePan(unsigned int theSfxID, int theBasePan) = nullptr;
 
-		virtual SoundInstance* GetSoundInstance(unsigned int theSfxID) = NULL;
+		virtual SoundInstance* GetSoundInstance(unsigned int theSfxID) = nullptr;
 
-		virtual void ReleaseSounds() = NULL;
-		virtual void ReleaseChannels() = NULL;
+		virtual void ReleaseSounds() = nullptr;
+		virtual void ReleaseChannels() = nullptr;
 
-		virtual double GetMasterVolume() = NULL;
-		virtual void SetMasterVolume(double theVolume) = NULL;
+		virtual double GetMasterVolume() = nullptr;
+		virtual void SetMasterVolume(double theVolume) = nullptr;
 
-		virtual void Flush() = NULL;
-		virtual void SetCooperativeWindow(HWND theHWnd, bool isWindowed) = NULL;
-		virtual void StopAllSounds() = NULL;
-		virtual int GetFreeSoundId() = NULL;
-		virtual int GetNumSounds() = NULL;
+		virtual void Flush() = nullptr;
+		virtual void SetCooperativeWindow(HWND theHWnd, bool isWindowed) = nullptr;
+		virtual void StopAllSounds() = nullptr;
+		virtual int GetFreeSoundId() = nullptr;
+		virtual int GetNumSounds() = nullptr;
 	};
 
 } // namespace Sexy

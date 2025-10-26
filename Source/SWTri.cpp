@@ -300,7 +300,7 @@ void SWHelper::SWDrawShape(XYZStruct* theVerts, int theNumVerts, MemoryImage* th
 	//
 	// Some notes:
 	//
-	// If mSWTexture==NULL, no texture is selected and pure white can be substituted (clipped to
+	// If mSWTexture==nullptr, no texture is selected and pure white can be substituted (clipped to
 	// the current material color).
 	//
 	// If mAlphaMode!=mAlphaModeOn, then there's no need to do any alpha rendering, period.
@@ -373,7 +373,7 @@ void SWHelper::SWDrawShape(XYZStruct* theVerts, int theNumVerts, MemoryImage* th
 	if (theImage)
 		theImage->CommitBits();
 
-	bool textured = theImage != NULL;
+	bool textured = theImage != nullptr;
 	bool talpha = (textured && (theImage->mHasAlpha || theImage->mHasTrans || blend));
 
 	for (;;)
@@ -639,7 +639,7 @@ void Sexy::SWTri_AddAllDrawTriFuncs()
 	gDrawTriFunc[127] = DrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND1;
 }
 
-#include "SWTri_DrawTriangleInc1.inc"
+#include "SWTri_DrawTriangleInc1.cpp"
 
 void SWHelper::SWDrawTriangle(bool textured, bool talpha, bool mod_argb, bool global_argb, SWVertex* pVerts, unsigned int* pFrameBuffer,
 	const unsigned int bytepitch, const SWTextureInfo* textureInfo, SWDiffuse& globalDiffuse, int thePixelFormat, bool blend)
@@ -661,12 +661,12 @@ void SWHelper::SWDrawTriangle(bool textured, bool talpha, bool mod_argb, bool gl
 		break;
 	}
 	DrawTriFunc aFunc = gDrawTriFunc[aType];
-	if (aFunc == NULL)
+	if (aFunc == nullptr)
 	{
-		DBG_ASSERT("You need to call SWTri_AddDrawTriFunc or SWTri_AddAllDrawTriFuncs" == NULL);
+		DBG_ASSERT("You need to call SWTri_AddDrawTriFunc or SWTri_AddAllDrawTriFuncs" == nullptr);
 	}
 	else
 		aFunc(pVerts, pFrameBuffer, bytepitch, textureInfo, globalDiffuse);
 
-	//	#include "SWTri_DrawTriangleInc2.inc"
+	//	#include "SWTri_DrawTriangleInc2.cpp"
 }

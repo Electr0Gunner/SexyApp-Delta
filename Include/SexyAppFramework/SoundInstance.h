@@ -10,20 +10,20 @@ namespace Sexy
 	public:
 		SoundInstance() {}
 		virtual ~SoundInstance() {}
-		virtual void Release() = NULL;
+		virtual void Release() = nullptr;
 
-		virtual void SetBaseVolume(double theBaseVolume) = NULL;
-		virtual void SetBasePan(int theBasePan) = NULL;
+		virtual void SetBaseVolume(double theBaseVolume) = nullptr;
+		virtual void SetBasePan(int theBasePan) = nullptr;
 
-		virtual void AdjustPitch(double theNumSteps) = NULL;
+		virtual void AdjustPitch(double theNumSteps) = nullptr;
 
-		virtual void SetVolume(double theVolume) = NULL;
-		virtual void SetPan(int thePosition) = NULL; //-hundredth db to +hundredth db = left to right
+		virtual void SetVolume(double theVolume) = nullptr;
+		virtual void SetPan(int thePosition) = nullptr; //-hundredth db to +hundredth db = left to right
 
-		virtual bool Play(bool looping, bool autoRelease) = NULL;
-		virtual void Stop() = NULL;
-		virtual bool IsPlaying() = NULL;
-		virtual bool IsReleased() = NULL;
-		virtual double GetVolume() = NULL;
+		virtual bool Play(bool looping, bool autoRelease) = nullptr;
+		virtual void Stop() = nullptr;
+		virtual bool IsPlaying() = nullptr;
+		virtual bool IsReleased() = nullptr;
+		virtual double GetVolume() = nullptr;
 	};
 } // namespace Sexy

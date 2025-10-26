@@ -41,12 +41,12 @@ Board::Board(GameApp* theApp)
 	mApp = theApp;
 
 
-	mButton1 = NULL;
-	mButton2 = NULL;
-	mEditWidget = NULL;
-	mCheckboxWidget = NULL;
-	mListWidget = NULL;
-	mScrollbarWidget = NULL;
+	mButton1 = nullptr;
+	mButton2 = nullptr;
+	mEditWidget = nullptr;
+	mCheckboxWidget = nullptr;
+	mListWidget = nullptr;
+	mScrollbarWidget = nullptr;
 
 	mMotionX = mUpdateFMotionX = 0;
 }
@@ -344,9 +344,9 @@ void Board::ButtonDepress(int theId)
 		// using the sound "SOUND_MUTATOR" which we set up in properties/resources.xml:
 		SoundInstance* sample = mApp->mSoundManager->GetSoundInstance(SOUND_MUTATOR);
 
-		// It's good to make sure the sample isn't NULL. It would be NULL if you
+		// It's good to make sure the sample isn't nullptr. It would be nullptr if you
 		// specified an invalid sound id. 
-		if (sample != NULL)
+		if (sample != nullptr)
 		{
 			//Now we actually adjust the pitch. Specify the number of
 			//steps to raise (positive) or lower (negative) the original sound by.
@@ -374,7 +374,7 @@ void Board::ButtonDepress(int theId)
 		// Let's do the same as we did for the left button, except make it
 		// play on the right speaker and pitch shift it down
 		SoundInstance* sample = mApp->mSoundManager->GetSoundInstance(SOUND_MUTATOR);
-		if (sample != NULL)
+		if (sample != nullptr)
 		{
 			sample->AdjustPitch(-5);
 			sample->SetPan(10000);

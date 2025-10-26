@@ -25,7 +25,7 @@ static std::string StringToUpper(const std::string& theString)
 
 PakInterface::PakInterface()
 {
-	if (GetPakPtr() == NULL)
+	if (GetPakPtr() == nullptr)
 		*gPakInterfaceP = this;
 }
 
@@ -33,22 +33,22 @@ PakInterface::~PakInterface() {}
 
 bool PakInterface::AddPakFile(const std::string& theFileName)
 {
-	HANDLE aFileHandle = CreateFile(theFileName.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	HANDLE aFileHandle = CreateFile(theFileName.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 
 	if (aFileHandle == INVALID_HANDLE_VALUE)
 		return false;
 
 	int aFileSize = GetFileSize(aFileHandle, 0);
 
-	HANDLE aFileMapping = CreateFileMapping(aFileHandle, NULL, PAGE_READONLY, 0, aFileSize, NULL);
-	if (aFileMapping == NULL)
+	HANDLE aFileMapping = CreateFileMapping(aFileHandle, nullptr, PAGE_READONLY, 0, aFileSize, nullptr);
+	if (aFileMapping == nullptr)
 	{
 		CloseHandle(aFileHandle);
 		return false;
 	}
 
 	void* aPtr = MapViewOfFile(aFileMapping, FILE_MAP_READ, 0, 0, aFileSize);
-	if (aPtr == NULL)
+	if (aPtr == nullptr)
 	{
 		CloseHandle(aFileMapping);
 		CloseHandle(aFileHandle);
@@ -70,7 +70,7 @@ bool PakInterface::AddPakFile(const std::string& theFileName)
 	aPakRecord->mSize = aFileSize;
 
 	PFILE* aFP = FOpen(theFileName.c_str(), "rb");
-	if (aFP == NULL)
+	if (aFP == nullptr)
 		return false;
 
 	ulong aMagic = 0;
@@ -196,16 +196,16 @@ PFILE* PakInterface::FOpen(const char* theFileName, const char* anAccess)
 			PFILE* aPFP = new PFILE;
 			aPFP->mRecord = &anItr->second;
 			aPFP->mPos = 0;
-			aPFP->mFP = NULL;
+			aPFP->mFP = nullptr;
 			return aPFP;
 		}
 	}
 
 	FILE* aFP = fopen(theFileName, anAccess);
-	if (aFP == NULL)
-		return NULL;
+	if (aFP == nullptr)
+		return nullptr;
 	PFILE* aPFP = new PFILE;
-	aPFP->mRecord = NULL;
+	aPFP->mRecord = nullptr;
 	aPFP->mPos = 0;
 	aPFP->mFP = aFP;
 	return aPFP;
@@ -213,7 +213,7 @@ PFILE* PakInterface::FOpen(const char* theFileName, const char* anAccess)
 
 int PakInterface::FClose(PFILE* theFile)
 {
-	if (theFile->mRecord == NULL)
+	if (theFile->mRecord == nullptr)
 		fclose(theFile->mFP);
 	delete theFile;
 	return 0;
@@ -221,7 +221,7 @@ int PakInterface::FClose(PFILE* theFile)
 
 int PakInterface::FSeek(PFILE* theFile, long theOffset, int theOrigin)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 	{
 		if (theOrigin == SEEK_SET)
 			theFile->mPos = theOffset;
@@ -239,7 +239,7 @@ int PakInterface::FSeek(PFILE* theFile, long theOffset, int theOrigin)
 
 int PakInterface::FTell(PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 		return theFile->mPos;
 	else
 		return ftell(theFile->mFP);
@@ -247,7 +247,7 @@ int PakInterface::FTell(PFILE* theFile)
 
 size_t PakInterface::FRead(void* thePtr, int theElemSize, int theCount, PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 	{
 		int aSizeBytes = min(theElemSize * theCount, theFile->mRecord->mSize - theFile->mPos);
 
@@ -264,7 +264,7 @@ size_t PakInterface::FRead(void* thePtr, int theElemSize, int theCount, PFILE* t
 
 int PakInterface::FGetC(PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 	{
 		for (;;)
 		{
@@ -281,7 +281,7 @@ int PakInterface::FGetC(PFILE* theFile)
 
 int PakInterface::UnGetC(int theChar, PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 	{
 		// This won't work if we're not pushing the same chars back in the stream
 		theFile->mPos = max(theFile->mPos - 1, 0);
@@ -293,7 +293,7 @@ int PakInterface::UnGetC(int theChar, PFILE* theFile)
 
 char* PakInterface::FGetS(char* thePtr, int theSize, PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 	{
 		int anIdx = 0;
 		while (anIdx < theSize)
@@ -301,7 +301,7 @@ char* PakInterface::FGetS(char* thePtr, int theSize, PFILE* theFile)
 			if (theFile->mPos >= theFile->mRecord->mSize)
 			{
 				if (anIdx == 0)
-					return NULL;
+					return nullptr;
 				break;
 			}
 			char aChar = *((char*)theFile->mRecord->mCollection->mDataPtr + theFile->mRecord->mStartPos + theFile->mPos++) ^ 0xF7;
@@ -319,7 +319,7 @@ char* PakInterface::FGetS(char* thePtr, int theSize, PFILE* theFile)
 
 int PakInterface::FEof(PFILE* theFile)
 {
-	if (theFile->mRecord != NULL)
+	if (theFile->mRecord != nullptr)
 		return theFile->mPos >= theFile->mRecord->mSize;
 	else
 		return feof(theFile->mFP);
@@ -363,7 +363,7 @@ bool PakInterface::PFindNext(PFindData* theFindData, LPWIN32_FIND_DATA lpFindFil
 						strcpy(lpFindFileData->cFileName, anItr->second.mFileName.c_str() + aLastSlashPos + 1);
 
 					const char* aEndStr = aFileName + strlen(aFileName) - (theFindData->mFindCriteria.length() - aStarPos) + 1;
-					if (strchr(aEndStr, '\\') != NULL)
+					if (strchr(aEndStr, '\\') != nullptr)
 						lpFindFileData->dwFileAttributes |= FILE_ATTRIBUTE_DIRECTORY;
 
 					lpFindFileData->nFileSizeLow = aPakRecord->mSize;

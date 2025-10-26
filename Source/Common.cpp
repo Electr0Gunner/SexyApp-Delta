@@ -207,7 +207,7 @@ std::wstring Sexy::StringToWString(const std::string& theString)
 
 std::string Sexy::WStringToString(const std::wstring& theString)
 {
-	size_t aRequiredLength = wcstombs(NULL, theString.c_str(), 0);
+	size_t aRequiredLength = wcstombs(nullptr, theString.c_str(), 0);
 	if (aRequiredLength < 16384)
 	{
 		char aBuffer[16384];
@@ -637,7 +637,7 @@ std::string Sexy::GetPathFrom(const std::string& theRelPath, const std::string& 
 bool Sexy::AllowAllAccess(const std::string& theFileName)
 {
 	HMODULE aLib = LoadLibraryA("advapi32.dll");
-	if (aLib == NULL)
+	if (aLib == nullptr)
 		return false;
 
 	BOOL(WINAPI * fnSetFileSecurity)(LPCTSTR lpFileName, SECURITY_INFORMATION SecurityInformation, PSECURITY_DESCRIPTOR pSecurityDescriptor);
@@ -662,7 +662,7 @@ bool Sexy::AllowAllAccess(const std::string& theFileName)
 		return false;
 	}
 
-	PSID pEveryoneSID = NULL;
+	PSID pEveryoneSID = nullptr;
 	SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
 	bool result = false;
 
@@ -682,8 +682,8 @@ bool Sexy::AllowAllAccess(const std::string& theFileName)
 		ea.Trustee.ptstrName = (LPTSTR)pEveryoneSID;
 
 		// Create a new ACL that contains the new ACEs.
-		PACL pACL = NULL;
-		if (fnSetEntriesInAcl(1, &ea, NULL, &pACL) == ERROR_SUCCESS)
+		PACL pACL = nullptr;
+		if (fnSetEntriesInAcl(1, &ea, nullptr, &pACL) == ERROR_SUCCESS)
 		{
 			// Initialize a security descriptor.
 			PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR) new char[SECURITY_DESCRIPTOR_MIN_LENGTH];
@@ -899,7 +899,7 @@ std::string Sexy::vformat(const char* fmt, va_list argPtr)
 	}
 
 	// Now use the heap.
-	char* heapBuffer = NULL;
+	char* heapBuffer = nullptr;
 
 	while (((numChars == -1) || (numChars > attemptedSize)) && (attemptedSize < maxSize))
 	{
@@ -964,7 +964,7 @@ std::wstring Sexy::vformat(const wchar_t* fmt, va_list argPtr)
 	}
 
 	// Now use the heap.
-	wchar_t* heapBuffer = NULL;
+	wchar_t* heapBuffer = nullptr;
 
 	while (((numChars == -1) || (numChars > attemptedSize)) && (attemptedSize < maxSize))
 	{

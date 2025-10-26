@@ -17,7 +17,7 @@ V12DemoApp::V12DemoApp()
 	mRegKey = "PopCap\\SexyAppFramework\\V12Demo";
 
 	mNoSoundNeeded = true;
-	mBoard = NULL;
+	mBoard = nullptr;
 
 	// Important: You now need to make this call to enable 
 	// DrawImageTransform and DrawImageMatrix to work!
@@ -40,7 +40,7 @@ void V12DemoApp::ShutdownHook()
 	// called. It just saves us a few lines of extra checking, and saves some headaches that can
 	// arise when you forget to call a parent class method.
 
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->RemoveWidget(mBoard);
 }
 

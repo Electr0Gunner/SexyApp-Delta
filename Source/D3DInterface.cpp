@@ -39,7 +39,7 @@ static void DisplayError(HRESULT theError, const char* theMsg)
 		aMsg += anError;
 
 		hadError = true;
-		int aResult = MessageBoxA(NULL, aMsg.c_str(), "Error", MB_ABORTRETRYIGNORE);
+		int aResult = MessageBoxA(nullptr, aMsg.c_str(), "Error", MB_ABORTRETRYIGNORE);
 		if (aResult == IDABORT)
 			exit(0);
 		else if (aResult == IDRETRY)
@@ -72,16 +72,16 @@ bool D3DInterface::CheckDXError(HRESULT theError, const char* theMsg)
 ///////////////////////////////////////////////////////////////////////////////
 D3DInterface::D3DInterface()
 {
-	mHWnd = NULL;
+	mHWnd = nullptr;
 	mWidth = 640;
 	mHeight = 480;
-	mDD = NULL;
-	mDDSDrawSurface = NULL;
-	mZBuffer = NULL;
+	mDD = nullptr;
+	mDDSDrawSurface = nullptr;
+	mZBuffer = nullptr;
 
-	mD3D = NULL;
-	mD3DDevice = NULL;
-	// mD3DViewport = NULL;
+	mD3D = nullptr;
+	mD3DDevice = nullptr;
+	// mD3DViewport = nullptr;
 	mSceneBegun = false;
 	mIsWindowed = true;
 
@@ -277,7 +277,7 @@ bool D3DInterface::InitD3D()
 		gMaxTextureAspectRatio = 65536;
 
 	gSupportedPixelFormats = 0;
-	mD3DDevice->EnumTextureFormats(PixelFormatsCallback, NULL);
+	mD3DDevice->EnumTextureFormats(PixelFormatsCallback, nullptr);
 	/*	if (!(gSupportedPixelFormats & PixelFormat_A8R8G8B8))
 		{
 			mErrorString = "A8R8G8B8 texture format not supported.";
@@ -304,14 +304,14 @@ bool D3DInterface::InitD3D()
 
 	/*
 	// Create z-buffer
-	if( CheckDXError(mDD->CreateSurface( &ddsd, &mZBuffer, NULL ) ) )
+	if( CheckDXError(mDD->CreateSurface( &ddsd, &mZBuffer, nullptr ) ) )
 		return false;
 
 	// Attach the z-buffer to the back buffer.
 	if( CheckDXError( mDDSDrawSurface->AddAttachedSurface( mZBuffer ) ) )
 		return false;*/
 
-	mD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L);
+	mD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L);
 	return true;
 }
 
@@ -354,7 +354,7 @@ bool D3DInterface::PreDraw()
 		else
 			gD3DInterfacePreDrawError = false;
 
-		//		mD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET ,0xff000000, 1.0f, 0L);
+		//		mD3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET ,0xff000000, 1.0f, 0L);
 
 		hr = mD3DDevice->BeginScene();
 
@@ -395,8 +395,8 @@ bool D3DInterface::PreDraw()
 ///////////////////////////////////////////////////////////////////////////////
 static LPDIRECTDRAWSURFACE7 CreateTextureSurface(LPDIRECT3DDEVICE7 theDevice, LPDIRECTDRAW7 theDraw, int theWidth, int theHeight, PixelFormat theFormat)
 {
-	if (D3DInterface::CheckDXError(theDevice->SetTexture(0, NULL), "SetTexture NULL"))
-		return NULL;
+	if (D3DInterface::CheckDXError(theDevice->SetTexture(0, nullptr), "SetTexture nullptr"))
+		return nullptr;
 
 	DDSURFACEDESC2 aDesc;
 	LPDIRECTDRAWSURFACE7 aSurface;
@@ -417,12 +417,12 @@ static LPDIRECTDRAWSURFACE7 CreateTextureSurface(LPDIRECT3DDEVICE7 theDevice, LP
 	D3DInterface::MakeDDPixelFormat(theFormat, &aDesc.ddpfPixelFormat);
 	//	D3DXMakeDDPixelFormat(theFormat, &aDesc.ddpfPixelFormat);
 
-	HRESULT hr = theDraw->CreateSurface(&aDesc, &aSurface, NULL);
+	HRESULT hr = theDraw->CreateSurface(&aDesc, &aSurface, nullptr);
 
 	if (FAILED(hr))
 	{
 		std::string anError = GetDirectXErrorString(hr);
-		return NULL;
+		return nullptr;
 	}
 
 	return aSurface;
@@ -433,7 +433,7 @@ static LPDIRECTDRAWSURFACE7 CreateTextureSurface(LPDIRECT3DDEVICE7 theDevice, LP
 static void CopyImageToTexture8888(void* theDest, DWORD theDestPitch, MemoryImage* theImage, int offx, int offy, int theWidth, int theHeight, bool rightPad)
 {
 
-	if (theImage->mColorTable == NULL)
+	if (theImage->mColorTable == nullptr)
 	{
 		DWORD* srcRow = theImage->GetBits() + offy * theImage->GetWidth() + offx;
 		char* dstRow = (char*)theDest;
@@ -500,7 +500,7 @@ static void CopyTexture8888ToImage(void* theDest, DWORD theDestPitch, MemoryImag
 ///////////////////////////////////////////////////////////////////////////////
 static void CopyImageToTexture4444(void* theDest, DWORD theDestPitch, MemoryImage* theImage, int offx, int offy, int theWidth, int theHeight, bool rightPad)
 {
-	if (theImage->mColorTable == NULL)
+	if (theImage->mColorTable == nullptr)
 	{
 		DWORD* srcRow = theImage->GetBits() + offy * theImage->GetWidth() + offx;
 		char* dstRow = (char*)theDest;
@@ -574,7 +574,7 @@ static void CopyTexture4444ToImage(void* theDest, DWORD theDestPitch, MemoryImag
 ///////////////////////////////////////////////////////////////////////////////
 static void CopyImageToTexture565(void* theDest, DWORD theDestPitch, MemoryImage* theImage, int offx, int offy, int theWidth, int theHeight, bool rightPad)
 {
-	if (theImage->mColorTable == NULL)
+	if (theImage->mColorTable == nullptr)
 	{
 		DWORD* srcRow = theImage->GetBits() + offy * theImage->GetWidth() + offx;
 		char* dstRow = (char*)theDest;
@@ -697,12 +697,12 @@ static void CopyTexturePalette8ToImage(
 ///////////////////////////////////////////////////////////////////////////////
 static void CopyImageToTexture(LPDIRECTDRAWSURFACE7 theTexture, MemoryImage* theImage, int offx, int offy, int texWidth, int texHeight, PixelFormat theFormat)
 {
-	if (theTexture == NULL)
+	if (theTexture == nullptr)
 		return;
 
 	DDSURFACEDESC2 aDesc;
 	aDesc.dwSize = sizeof(aDesc);
-	if (D3DInterface::CheckDXError(theTexture->Lock(NULL, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL), "Lock Texture"))
+	if (D3DInterface::CheckDXError(theTexture->Lock(nullptr, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr), "Lock Texture"))
 		return;
 
 	int aWidth = min(texWidth, (theImage->GetWidth() - offx));
@@ -738,7 +738,7 @@ static void CopyImageToTexture(LPDIRECTDRAWSURFACE7 theTexture, MemoryImage* the
 		}
 	}
 
-	D3DInterface::CheckDXError(theTexture->Unlock(NULL), "Texture Unlock");
+	D3DInterface::CheckDXError(theTexture->Unlock(nullptr), "Texture Unlock");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -856,7 +856,7 @@ TextureData::TextureData()
 	mTexPieceWidth = 64;
 	mTexPieceHeight = 64;
 
-	mPalette = NULL;
+	mPalette = nullptr;
 	mPixelFormat = PixelFormat_Unknown;
 	mImageFlags = 0;
 }
@@ -875,7 +875,7 @@ void TextureData::ReleaseTextures()
 	for (int i = 0; i < (int)mTextures.size(); i++)
 	{
 		LPDIRECTDRAWSURFACE7 aSurface = mTextures[i].mTexture;
-		if (aSurface != NULL)
+		if (aSurface != nullptr)
 			aSurface->Release();
 	}
 
@@ -883,10 +883,10 @@ void TextureData::ReleaseTextures()
 
 	mTexMemSize = 0;
 
-	if (mPalette != NULL)
+	if (mPalette != nullptr)
 	{
 		mPalette->Release();
-		mPalette = NULL;
+		mPalette = nullptr;
 	}
 }
 
@@ -938,7 +938,7 @@ void TextureData::CreateTextureDimensions(MemoryImage* theImage)
 	for (i = 0; i < (int)mTextures.size(); i++)
 	{
 		TextureDataPiece& aPiece = mTextures[i];
-		aPiece.mTexture = NULL;
+		aPiece.mTexture = nullptr;
 		aPiece.mWidth = mTexPieceWidth;
 		aPiece.mHeight = mTexPieceHeight;
 	}
@@ -986,8 +986,8 @@ void TextureData::CreateTextures(MemoryImage* theImage, LPDIRECT3DDEVICE7 theDev
 			aFormat = PixelFormat_R5G6B5;
 	}
 
-	LPDIRECTDRAWPALETTE aDDPalette = NULL;
-	if (theImage->mColorIndices != NULL && (gSupportedPixelFormats & PixelFormat_Palette8))
+	LPDIRECTDRAWPALETTE aDDPalette = nullptr;
+	if (theImage->mColorIndices != nullptr && (gSupportedPixelFormats & PixelFormat_Palette8))
 	{
 		PALETTEENTRY aPalette[256];
 		for (int i = 0; i < 256; i++)
@@ -995,7 +995,7 @@ void TextureData::CreateTextures(MemoryImage* theImage, LPDIRECT3DDEVICE7 theDev
 			DWORD aPixel = theImage->mColorTable[i];
 			*(DWORD*)(aPalette + i) = (aPixel & 0xFF00FF00) | ((aPixel >> 16) & 0xFF) | ((aPixel << 16) & 0xFF0000);
 		}
-		HRESULT aResult = theDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALPHA | DDPCAPS_ALLOW256, aPalette, &aDDPalette, NULL);
+		HRESULT aResult = theDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALPHA | DDPCAPS_ALLOW256, aPalette, &aDDPalette, nullptr);
 		if (SUCCEEDED(aResult))
 			aFormat = PixelFormat_Palette8;
 		else
@@ -1030,7 +1030,7 @@ void TextureData::CreateTextures(MemoryImage* theImage, LPDIRECT3DDEVICE7 theDev
 	int aHeight = theImage->GetHeight();
 	int aWidth = theImage->GetWidth();
 
-	if (mPalette != NULL)
+	if (mPalette != nullptr)
 		mTexMemSize += 256 * 4;
 
 	int aFormatSize = 4;
@@ -1050,13 +1050,13 @@ void TextureData::CreateTextures(MemoryImage* theImage, LPDIRECT3DDEVICE7 theDev
 			if (createTextures)
 			{
 				aPiece.mTexture = CreateTextureSurface(theDevice, theDraw, aPiece.mWidth, aPiece.mHeight, aFormat);
-				if (aPiece.mTexture == NULL) // create texture failure
+				if (aPiece.mTexture == nullptr) // create texture failure
 				{
 					mPixelFormat = PixelFormat_Unknown;
 					return;
 				}
 
-				if (mPalette != NULL)
+				if (mPalette != nullptr)
 					aPiece.mTexture->SetPalette(mPalette);
 
 				mTexMemSize += aPiece.mWidth * aPiece.mHeight * aFormatSize;
@@ -1490,7 +1490,7 @@ void TextureData::BltTransformed(LPDIRECT3DDEVICE7 theDevice, const SexyMatrix3&
 			}
 
 			bool clipped = false;
-			if (theClipRect != NULL)
+			if (theClipRect != nullptr)
 			{
 				int left = theClipRect->mX;
 				int right = left + theClipRect->mWidth;
@@ -1525,7 +1525,7 @@ void TextureData::BltTransformed(LPDIRECT3DDEVICE7 theDevice, const SexyMatrix3&
 				//				DrawPolyClipped(theDevice, theClipRect, aVertex+1, 3);
 			}
 
-			//			D3DInterface::CheckDXError(theDevice->SetTexture(0, NULL),"SetTexture NULL");
+			//			D3DInterface::CheckDXError(theDevice->SetTexture(0, nullptr),"SetTexture nullptr");
 
 			srcX += aWidth;
 			dstX += aWidth;
@@ -1669,7 +1669,7 @@ void TextureData::BltTriangles(LPDIRECT3DDEVICE7 theDevice, const TriVertex theV
 						D3DInterface::CheckDXError(
 							theDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, gVertexType, &aList[0], aList.size(), 0), "DrawPrimitive (Tri) 4");
 
-						/*				CheckDXError(theDevice->SetTexture(0, NULL),"SetTexture NULL");
+						/*				CheckDXError(theDevice->SetTexture(0, nullptr),"SetTexture nullptr");
 										theDevice->SetRenderState(D3DRENDERSTATE_FILLMODE, D3DFILL_WIREFRAME);
 										CheckDXError(theDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, gVertexType, &aList[0], aList.size(),
 						   D3DDP_WAIT),"DrawPrimitive (Tri)"); theDevice->SetRenderState(D3DRENDERSTATE_FILLMODE, D3DFILL_SOLID);*/
@@ -1686,7 +1686,7 @@ bool D3DInterface::CreateImageTexture(MemoryImage* theImage)
 {
 	bool wantPurge = false;
 
-	if (theImage->mD3DData == NULL)
+	if (theImage->mD3DData == nullptr)
 	{
 		theImage->mD3DData = new TextureData();
 
@@ -1710,7 +1710,7 @@ bool D3DInterface::CreateImageTexture(MemoryImage* theImage)
 ///////////////////////////////////////////////////////////////////////////////
 bool D3DInterface::RecoverBits(MemoryImage* theImage)
 {
-	if (theImage->mD3DData == NULL)
+	if (theImage->mD3DData == nullptr)
 		return false;
 
 	TextureData* aData = (TextureData*)theImage->mD3DData;
@@ -1725,7 +1725,7 @@ bool D3DInterface::RecoverBits(MemoryImage* theImage)
 
 			DDSURFACEDESC2 aDesc;
 			aDesc.dwSize = sizeof(aDesc);
-			if (D3DInterface::CheckDXError(aPiece->mTexture->Lock(NULL, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_READONLY, NULL), "Lock Texture"))
+			if (D3DInterface::CheckDXError(aPiece->mTexture->Lock(nullptr, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_READONLY, nullptr), "Lock Texture"))
 				return false;
 
 			int offx = aPieceCol * aData->mTexPieceWidth;
@@ -1749,7 +1749,7 @@ bool D3DInterface::RecoverBits(MemoryImage* theImage)
 				break;
 			}
 
-			D3DInterface::CheckDXError(aPiece->mTexture->Unlock(NULL), "Texture Unlock");
+			D3DInterface::CheckDXError(aPiece->mTexture->Unlock(nullptr), "Texture Unlock");
 		}
 	}
 
@@ -1760,9 +1760,9 @@ bool D3DInterface::RecoverBits(MemoryImage* theImage)
 ///////////////////////////////////////////////////////////////////////////////
 void D3DInterface::SetCurTexture(MemoryImage* theImage)
 {
-	if (theImage == NULL)
+	if (theImage == nullptr)
 	{
-		mD3DDevice->SetTexture(0, NULL);
+		mD3DDevice->SetTexture(0, nullptr);
 		return;
 	}
 
@@ -1798,10 +1798,10 @@ void D3DInterface::PopTransform()
 ///////////////////////////////////////////////////////////////////////////////
 void D3DInterface::RemoveMemoryImage(MemoryImage* theImage)
 {
-	if (theImage->mD3DData != NULL)
+	if (theImage->mD3DData != nullptr)
 	{
 		delete (TextureData*)theImage->mD3DData;
-		theImage->mD3DData = NULL;
+		theImage->mD3DData = nullptr;
 
 		AutoCrit aCrit(gSexyAppBase->mDDInterface->mCritSect); // Make images thread safe
 		mImageSet.erase(theImage);
@@ -1819,33 +1819,33 @@ void D3DInterface::Cleanup()
 	{
 		MemoryImage* anImage = *anItr;
 		delete (TextureData*)anImage->mD3DData;
-		anImage->mD3DData = NULL;
+		anImage->mD3DData = nullptr;
 	}
 
 	mImageSet.clear();
 
-	if (mD3DDevice != NULL)
+	if (mD3DDevice != nullptr)
 	{
 		mD3DDevice->Release();
-		mD3DDevice = NULL;
+		mD3DDevice = nullptr;
 	}
 
-	if (mD3D != NULL)
+	if (mD3D != nullptr)
 	{
 		mD3D->Release();
-		mD3D = NULL;
+		mD3D = nullptr;
 	}
 
-	if (mDDSDrawSurface != NULL)
+	if (mDDSDrawSurface != nullptr)
 	{
 		mDDSDrawSurface->Release();
-		mDDSDrawSurface = NULL;
+		mDDSDrawSurface = nullptr;
 	}
 
-	if (mZBuffer != NULL)
+	if (mZBuffer != nullptr)
 	{
 		mZBuffer->Release();
-		mZBuffer = NULL;
+		mZBuffer = nullptr;
 	}
 }
 
@@ -1855,7 +1855,7 @@ void D3DInterface::SetupDrawMode(int theDrawMode, const Color& theColor, Image* 
 {
 	if (theDrawMode == Graphics::DRAWMODE_NORMAL)
 	{
-		/*		if (theImage != NULL)
+		/*		if (theImage != nullptr)
 				{
 					MemoryImage *anImage = (MemoryImage*)theImage;
 					mD3DDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, (anImage->mHasAlpha || anImage->mHasTrans || theColor.mAlpha<255)?TRUE:FALSE);
@@ -1887,7 +1887,7 @@ void D3DInterface::Blt(Image* theImage, float theX, float theY, const Rect& theS
 {
 	if (!mTransformStack.empty())
 	{
-		BltClipF(theImage, theX, theY, theSrcRect, NULL, theColor, theDrawMode);
+		BltClipF(theImage, theX, theY, theSrcRect, nullptr, theColor, theDrawMode);
 		return;
 	}
 
@@ -1917,7 +1917,7 @@ void D3DInterface::BltMirror(Image* theImage, float theX, float theY, const Rect
 	aTransform.Scale(-1, 1);
 	aTransform.Translate(theX, theY);
 
-	BltTransformed(theImage, NULL, theColor, theDrawMode, theSrcRect, aTransform, linearFilter);
+	BltTransformed(theImage, nullptr, theColor, theDrawMode, theSrcRect, aTransform, linearFilter);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2016,7 +2016,7 @@ void D3DInterface::DrawLine(double theStartX, double theStartY, double theEndX, 
 	if (!PreDraw())
 		return;
 
-	SetupDrawMode(theDrawMode, theColor, NULL);
+	SetupDrawMode(theDrawMode, theColor, nullptr);
 
 	float x1, y1, x2, y2;
 	DWORD aColor = RGBA_MAKE(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
@@ -2043,7 +2043,7 @@ void D3DInterface::DrawLine(double theStartX, double theStartY, double theEndX, 
 
 	D3DTLVERTEX aVertex[3] = { { x1, y1, 0, 1, aColor, 0, 0, 0 }, { x2, y2, 0, 1, aColor, 0, 0, 0 }, { x2 + 0.5f, y2 + 0.5f, 0, 1, aColor, 0, 0, 0 } };
 
-	D3DInterface::CheckDXError(mD3DDevice->SetTexture(0, NULL), "SetTexture NULL");
+	D3DInterface::CheckDXError(mD3DDevice->SetTexture(0, nullptr), "SetTexture nullptr");
 	D3DInterface::CheckDXError(mD3DDevice->DrawPrimitive(D3DPT_LINESTRIP, gVertexType, aVertex, 3, 0), "DrawPrimitive (Line)");
 }
 
@@ -2054,7 +2054,7 @@ void D3DInterface::FillRect(const Rect& theRect, const Color& theColor, int theD
 	if (!PreDraw())
 		return;
 
-	SetupDrawMode(theDrawMode, theColor, NULL);
+	SetupDrawMode(theDrawMode, theColor, nullptr);
 
 	DWORD aColor = RGBA_MAKE(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
 	float x = theRect.mX - 0.5f;
@@ -2080,7 +2080,7 @@ void D3DInterface::FillRect(const Rect& theRect, const Color& theColor, int theD
 		}
 	}
 
-	CheckDXError(mD3DDevice->SetTexture(0, NULL), "SetTexture NULL");
+	CheckDXError(mD3DDevice->SetTexture(0, nullptr), "SetTexture nullptr");
 	CheckDXError(mD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, gVertexType, aVertex, 4, 0), "DrawPrimitive (Rect)");
 }
 
@@ -2091,13 +2091,13 @@ void D3DInterface::DrawTriangle(const TriVertex& p1, const TriVertex& p2, const 
 	if (!PreDraw())
 		return;
 
-	SetupDrawMode(theDrawMode, theColor, NULL);
+	SetupDrawMode(theDrawMode, theColor, nullptr);
 
 	DWORD aColor = RGBA_MAKE(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
 	D3DTLVERTEX aVertex[3] = { { p1.x, p1.y, 0, 1, GetColorFromTriVertex(p1, aColor), 0, 0, 0 },
 		{ p2.x, p2.y, 0, 1, GetColorFromTriVertex(p2, aColor), 0, 0, 0 }, { p3.x, p3.y, 0, 1, GetColorFromTriVertex(p3, aColor), 0, 0, 0 } };
 
-	CheckDXError(mD3DDevice->SetTexture(0, NULL), "SetTexture NULL");
+	CheckDXError(mD3DDevice->SetTexture(0, nullptr), "SetTexture nullptr");
 	CheckDXError(mD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, gVertexType, aVertex, 3, 0), "DrawPrimitive (Tri) 5");
 }
 
@@ -2111,10 +2111,10 @@ void D3DInterface::FillPoly(const Point theVertices[], int theNumVertices, const
 	if (!PreDraw())
 		return;
 
-	SetupDrawMode(theDrawMode, theColor, NULL);
+	SetupDrawMode(theDrawMode, theColor, nullptr);
 	DWORD aColor = RGBA_MAKE(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
 
-	CheckDXError(mD3DDevice->SetTexture(0, NULL), "SetTexture NULL");
+	CheckDXError(mD3DDevice->SetTexture(0, nullptr), "SetTexture nullptr");
 
 	VertexList aList;
 	for (int i = 0; i < theNumVertices; i++)
@@ -2131,7 +2131,7 @@ void D3DInterface::FillPoly(const Point theVertices[], int theNumVertices, const
 		aList.push_back(vert);
 	}
 
-	if (theClipRect != NULL)
+	if (theClipRect != nullptr)
 		DrawPolyClipped(mD3DDevice, theClipRect, aList);
 	else
 		D3DInterface::CheckDXError(mD3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, gVertexType, &aList[0], aList.size(), 0), "DrawPrimitive (FillPoly)");

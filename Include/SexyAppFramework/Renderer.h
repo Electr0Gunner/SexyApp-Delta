@@ -4,12 +4,24 @@
 #include <SexyAppFramework/Image.h>
 #include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/CritSect.h>
+#include <SexyAppFramework/Graphics.h>
 #include <memory>
 
 namespace Sexy
 {
     class SexyAppBase;
 
+    enum BlendMode
+    {
+        BLENDMODE_NONE = 0,
+        BLENDMODE_BLEND,
+        BLENDMODE_BLEND_PREMULTIPLIED,
+        BLENDMODE_ADD,
+        BLENDMODE_ADD_PREMULTIPLIED,
+        BLENDMODE_MOD,
+        BLENDMODE_MUL,
+        BLENDMODE_LAST,
+    };
 
     struct ImageData
     {
@@ -68,15 +80,13 @@ namespace Sexy
 
         GPUImage *mScreenImage;
     public:
-        Renderer() = default;
+        Renderer(SexyAppBase* theApp) {};
         ~Renderer() = default;	
         virtual void Cleanup() = 0;
 
         virtual void AddImage(Image *theImage) = 0;
         virtual void RemoveImage(Image *theImage) = 0;
         virtual void Remove3DData(GPUImage *theImage) = 0;
-
-        virtual void GetOutputSize(int *outWidth, int *outHeight) = 0;
 
         virtual GPUImage *NewGPUImage() = 0;
 
@@ -96,6 +106,18 @@ namespace Sexy
 
         virtual bool CreateImageTexture(GPUImage *theImage) = 0;
         virtual bool RecoverBits(GPUImage *theImage) = 0;
+
+        virtual BlendMode ChooseBlendMode(int theDrawMode)
+        {
+            switch (theDrawMode)
+            {
+                case Graphics::DRAWMODE_ADDITIVE:
+                    return BLENDMODE_ADD;
+                case Graphics::DRAWMODE_NORMAL:
+                default:
+                    return BLENDMODE_BLEND;
+            }
+        }
 
         // Draw Funcs
         virtual void Blt(Image *theImage, int theX, int theY, const Rect &theSrcRect, const Color &theColor,

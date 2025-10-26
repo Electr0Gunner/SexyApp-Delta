@@ -15,7 +15,7 @@ struct ModPointer
 	const char *mStrPtr;
 	int mLineNum;
 
-	ModPointer() : mStrPtr(NULL), mLineNum(0) {}
+	ModPointer() : mStrPtr(nullptr), mLineNum(0) {}
 	ModPointer(const char *theStrPtr, int theLineNum) : mStrPtr(theStrPtr), mLineNum(theLineNum) {}
 };
 
@@ -34,7 +34,7 @@ typedef std::map<std::string, FileMod> FileModMap;
 
 static StringToIntMap gStringToIntMap;
 time_t gLastFileTime = 0;
-const char *gSampleString = NULL; // for finding the others
+const char *gSampleString = nullptr; // for finding the others
 
 static FileModMap &GetFileModMap()
 {
@@ -44,24 +44,24 @@ static FileModMap &GetFileModMap()
 
 static const char *FindFileInStringTable(const std::string &theSearch, const char *theMem, DWORD theLength, const char *theStartPos)
 {
-	const char *aFind = NULL;
+	const char *aFind = nullptr;
 	try
 	{
 		aFind = std::search(theStartPos, theMem + theLength, theSearch.c_str(), theSearch.c_str() + theSearch.length());
 		if (aFind >= theMem + theLength)
-			return NULL;
+			return nullptr;
 		else
 			return aFind;
 	}
 	catch (...)
 	{
-		return NULL;
+		return nullptr;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-static bool ParseModValString(std::string &theStr, int *theCounter = NULL, int *theLineNum = NULL)
+static bool ParseModValString(std::string &theStr, int *theCounter = nullptr, int *theLineNum = nullptr)
 {
 	int aPos = theStr.length() - 1;
 	bool foundComma = false;
@@ -105,7 +105,7 @@ static bool FindModValsInMemoryHelper(const char *theMem, DWORD theLength)
 	while (true)
 	{
 		aPtr = FindFileInStringTable(aSearchStr, theMem, theLength, aPtr);
-		if (aPtr == NULL)
+		if (aPtr == nullptr)
 			break;
 
 		int aCounter, aLineNum;
@@ -127,7 +127,7 @@ static void FindModValsInMemory()
 	MEMORY_BASIC_INFORMATION mbi;
 	PVOID pvAddress = 0;
 
-	const char *aMem = NULL;
+	const char *aMem = nullptr;
 	DWORD aMemLength = 0;
 
 	int aFound = 0;
@@ -139,13 +139,13 @@ static void FindModValsInMemory()
 		if (mbi.State == MEM_COMMIT && mbi.Type == MEM_IMAGE)
 		{
 			aTotal++;
-			if (aMem != NULL && aMem + aMemLength == anAddress) // compact these two
+			if (aMem != nullptr && aMem + aMemLength == anAddress) // compact these two
 			{
 				aMemLength += mbi.RegionSize;
 				continue;
 			}
 
-			if (aMem != NULL) // do find in old section
+			if (aMem != nullptr) // do find in old section
 			{
 				if (FindModValsInMemoryHelper(aMem, aMemLength))
 				{
@@ -153,7 +153,7 @@ static void FindModValsInMemory()
 					return;
 				}
 
-				aMem = NULL;
+				aMem = nullptr;
 			}
 
 			aMem = anAddress;
@@ -161,7 +161,7 @@ static void FindModValsInMemory()
 		}
 	}
 
-	if (aMem != NULL)
+	if (aMem != nullptr)
 	{
 		if (FindModValsInMemoryHelper(aMem, aMemLength))
 			aFound++;
@@ -185,7 +185,7 @@ static ModStorage *CreateFileModsHelper(const char *theFileName)
 
 static ModStorage *CreateFileMods(const char *theFileName)
 {
-	if (gSampleString == NULL)
+	if (gSampleString == nullptr)
 		gSampleString = theFileName;
 
 	std::string aFileName = theFileName + 15; // skip SEXY_SEXYMODVAL
@@ -438,7 +438,7 @@ bool Sexy::ReparseModValues()
 	if (gLastFileTime == 0)
 	{
 		char anEXEName[256];
-		GetModuleFileNameA(NULL, anEXEName, 256);
+		GetModuleFileNameA(nullptr, anEXEName, 256);
 		gLastFileTime = GetFileDate(anEXEName);
 
 		FindModValsInMemory();
@@ -518,7 +518,7 @@ bool Sexy::ReparseModValues()
 
 								char aStr[512];
 								sprintf(aStr, "ERROR in %s on line %d: Error parsing quotes", aFileName.c_str(), aLineNum);
-								MessageBoxA(NULL, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
+								MessageBoxA(nullptr, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
 								return false;
 							}
 						}
@@ -553,7 +553,7 @@ bool Sexy::ReparseModValues()
 
 									char aStr[512];
 									sprintf(aStr, "ERROR in %s on line %d: Error parsing c++ comment", aFileName.c_str(), aLineNum);
-									MessageBoxA(NULL, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
+									MessageBoxA(nullptr, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
 									return false;
 								}
 							}
@@ -582,7 +582,7 @@ bool Sexy::ReparseModValues()
 
 									char aStr[512];
 									sprintf(aStr, "ERROR in %s on line %d: Error parsing c comment", aFileName.c_str(), aLineNum);
-									MessageBoxA(NULL, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
+									MessageBoxA(nullptr, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
 									return false;
 								}
 							}
@@ -638,7 +638,7 @@ bool Sexy::ReparseModValues()
 								{
 									char aStr[512];
 									sprintf(aStr, "ERROR in %s on line %d.  Parsing Error.", aFileName.c_str(), aLineNum);
-									MessageBoxA(NULL, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
+									MessageBoxA(nullptr, aStr, "MODVAL ERROR", MB_OK | MB_ICONERROR);
 
 									return false;
 								}
@@ -658,7 +658,7 @@ bool Sexy::ReparseModValues()
 		}
 		else
 		{
-			MessageBoxA(NULL, (std::string("ERROR: Unable to open ") + aFileName + " for reparsing.").c_str(), "MODVAL ERROR!", MB_OK | MB_ICONERROR);
+			MessageBoxA(nullptr, (std::string("ERROR: Unable to open ") + aFileName + " for reparsing.").c_str(), "MODVAL ERROR!", MB_OK | MB_ICONERROR);
 			return false;
 		}
 	}
@@ -667,7 +667,7 @@ bool Sexy::ReparseModValues()
 	{
 		if (aFileList.length() == 0)
 			aFileList = "none";
-		MessageBoxA(NULL, (std::string("WARNING: No file changes detected.  Files parsed: \r\n  ") + aFileList).c_str(), "MODVAL WARNING!", MB_OK | MB_ICONWARNING);
+		MessageBoxA(nullptr, (std::string("WARNING: No file changes detected.  Files parsed: \r\n  ") + aFileList).c_str(), "MODVAL WARNING!", MB_OK | MB_ICONWARNING);
 		return false;
 	}
 

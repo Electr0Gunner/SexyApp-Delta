@@ -78,7 +78,7 @@ Board::Board(V12DemoApp* theApp)
 	mCurtainButton->Resize(mDemoButton->mX + 20 + mDemoButton->mWidth, 10, w + 10, 50);
 	AddWidget(mCurtainButton);
 
-	mDemoWidget = NULL;
+	mDemoWidget = nullptr;
 
 	// Position and set up our pulsing rectangle, as well as the location of the lost focus text.
 	mRect = Rect(mApp->mWidth / 2 - 1, mApp->mHeight / 2 - 1, 2, 2);
@@ -103,7 +103,7 @@ Board::~Board()
 	delete mDialogButton;
 	delete mCurtainButton;
 
-	if (mDemoWidget != NULL)
+	if (mDemoWidget != nullptr)
 		mApp->mWidgetManager->RemoveWidget(mDemoWidget);
 
 	delete mDemoWidget;

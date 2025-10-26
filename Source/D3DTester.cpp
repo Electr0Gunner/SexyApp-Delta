@@ -14,7 +14,7 @@ static bool gD3DTestHas32BitTexture = false;
 ///////////////////////////////////////////////////////////////////////////////
 D3DTestImage::D3DTestImage()
 {
-	mBits = NULL;
+	mBits = nullptr;
 	mWidth = 0;
 	mHeight = 0;
 }
@@ -23,7 +23,7 @@ D3DTestImage::D3DTestImage()
 ///////////////////////////////////////////////////////////////////////////////
 D3DTestImage::D3DTestImage(int theWidth, int theHeight)
 {
-	mBits = NULL;
+	mBits = nullptr;
 	mWidth = 0;
 	mHeight = 0;
 
@@ -114,7 +114,7 @@ void D3DTestImage::CopyToTexture8888(LPDIRECTDRAWSURFACE7 theTexture, int offx, 
 {
 	DDSURFACEDESC2 aDesc;
 	aDesc.dwSize = sizeof(aDesc);
-	D3DTester::CheckDXError(theTexture->Lock(NULL, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL), "Lock Texture");
+	D3DTester::CheckDXError(theTexture->Lock(nullptr, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr), "Lock Texture");
 
 	int aWidth = min(texWidth, (GetWidth() - offx));
 	int aHeight = min(texHeight, (GetHeight() - offy));
@@ -139,7 +139,7 @@ void D3DTestImage::CopyToTexture8888(LPDIRECTDRAWSURFACE7 theTexture, int offx, 
 		}
 	}
 
-	D3DTester::CheckDXError(theTexture->Unlock(NULL), "Texture Unlock");
+	D3DTester::CheckDXError(theTexture->Unlock(nullptr), "Texture Unlock");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ void D3DTestImage::CopyToTexture4444(LPDIRECTDRAWSURFACE7 theTexture, int offx, 
 
 	DDSURFACEDESC2 aDesc;
 	aDesc.dwSize = sizeof(aDesc);
-	D3DTester::CheckDXError(theTexture->Lock(NULL, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL), "Lock Texture");
+	D3DTester::CheckDXError(theTexture->Lock(nullptr, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr), "Lock Texture");
 
 	int aWidth = min(texWidth, (GetWidth() - offx));
 	int aHeight = min(texHeight, (GetHeight() - offy));
@@ -177,7 +177,7 @@ void D3DTestImage::CopyToTexture4444(LPDIRECTDRAWSURFACE7 theTexture, int offx, 
 		}
 	}
 
-	D3DTester::CheckDXError(theTexture->Unlock(NULL), "Texture Unlock");
+	D3DTester::CheckDXError(theTexture->Unlock(nullptr), "Texture Unlock");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ void D3DTestImage::DrawPieceToDevice(
 
 	D3DTester::CheckDXError(theDevice->SetTexture(0, theTexture), "SetTexture theTexture");
 	D3DTester::CheckDXError(theDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, D3DFVF_TLVERTEX, aVertex, 4, D3DDP_WAIT), "DrawPrimitive");
-	D3DTester::CheckDXError(theDevice->SetTexture(0, NULL), "SetTexture NULL");
+	D3DTester::CheckDXError(theDevice->SetTexture(0, nullptr), "SetTexture nullptr");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -410,13 +410,13 @@ static void D3DTestPixelConvert24(D3DTestImage& theImage, DDSURFACEDESC2& theDes
 ///////////////////////////////////////////////////////////////////////////////
 D3DTester::D3DTester()
 {
-	mDD7 = NULL;
-	mPrimarySurface = NULL;
-	mTextureSurface = NULL;
-	mTextureSurface2 = NULL;
-	mD3D7 = NULL;
-	mD3DDevice7 = NULL;
-	mRegKey = NULL;
+	mDD7 = nullptr;
+	mPrimarySurface = nullptr;
+	mTextureSurface = nullptr;
+	mTextureSurface2 = nullptr;
+	mD3D7 = nullptr;
+	mD3DDevice7 = nullptr;
+	mRegKey = nullptr;
 	memset(&mDisplayGUID, 0, sizeof(GUID));
 
 	mMinVidMemory = 0;
@@ -442,7 +442,7 @@ bool D3DTester::CheckRegistry()
 
 	DWORD aSize, aType;
 
-	if (mRegKey == NULL)
+	if (mRegKey == nullptr)
 		return false;
 
 	// Check Test Version
@@ -519,7 +519,7 @@ void D3DTester::WriteToRegistry()
 {
 	DWORD aSize, aType;
 
-	if (mRegKey == NULL)
+	if (mRegKey == nullptr)
 		return;
 
 	// Write Test Version
@@ -564,7 +564,7 @@ bool D3DTester::FileContains(FILE* theFile, const char* theString)
 	char aBuf[4096];
 	while (!feof(theFile))
 	{
-		if (fgets(aBuf, 4000, theFile) == NULL)
+		if (fgets(aBuf, 4000, theFile) == nullptr)
 			break;
 
 		std::string aStr = Trim(aBuf);
@@ -584,7 +584,7 @@ bool D3DTester::IsSupportedCard(const char* theDisplayDesc)
 {
 	// Look for 'bad' exception list
 	FILE* aFile = fopen("vhwb.dat", "r");
-	if (aFile != NULL)
+	if (aFile != nullptr)
 	{
 		bool found = FileContains(aFile, theDisplayDesc);
 		fclose(aFile);
@@ -594,7 +594,7 @@ bool D3DTester::IsSupportedCard(const char* theDisplayDesc)
 
 	// Look for 'good' supported list
 	aFile = fopen("vhw.dat", "r");
-	if (aFile == NULL) // default checks
+	if (aFile == nullptr) // default checks
 	{
 		if (mDriverYear >= 2002)
 			return true;
@@ -626,22 +626,22 @@ bool D3DTester::Init(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 	if (mCheckRegistry)
 	{
 		std::string aKey = RemoveTrailingSlash("SOFTWARE\\" + gSexyAppBase->mRegKey) + "\\Test3D";
-		RegCreateKeyExA(HKEY_CURRENT_USER, aKey.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &mRegKey, NULL);
+		RegCreateKeyExA(HKEY_CURRENT_USER, aKey.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, nullptr, &mRegKey, nullptr);
 	}
 
 	try
 	{
 
-		if (theDDraw == NULL)
+		if (theDDraw == nullptr)
 		{
 			extern HMODULE gDDrawDLL;
 
 			typedef HRESULT(WINAPI * DirectDrawCreateExFunc)(GUID FAR * lpGUID, LPVOID * lplpDD, REFIID iid, IUnknown FAR * pUnkOuter);
 			DirectDrawCreateExFunc aDirectDrawCreateExFunc = (DirectDrawCreateExFunc)GetProcAddress(gDDrawDLL, "DirectDrawCreateEx");
-			if (aDirectDrawCreateExFunc == NULL)
+			if (aDirectDrawCreateExFunc == nullptr)
 				return Fail("No DirectDrawCreateEx");
 
-			CheckDXError(aDirectDrawCreateExFunc(NULL, (LPVOID*)&mDD7, IID_IDirectDraw7, NULL), "DirectDrawCreateEx");
+			CheckDXError(aDirectDrawCreateExFunc(nullptr, (LPVOID*)&mDD7, IID_IDirectDraw7, nullptr), "DirectDrawCreateEx");
 		}
 		else
 		{
@@ -665,11 +665,11 @@ bool D3DTester::Init(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 		ZeroMemory(&ddsCaps, sizeof(ddsCaps));
 		ddsCaps.dwCaps = DDSCAPS_VIDEOMEMORY;
 
-		HDC aDC = GetDC(NULL);
+		HDC aDC = GetDC(nullptr);
 		int aWidth = GetDeviceCaps(aDC, HORZRES);
 		int aHeight = GetDeviceCaps(aDC, VERTRES);
 		int aBPP = GetDeviceCaps(aDC, BITSPIXEL);
-		ReleaseDC(NULL, aDC);
+		ReleaseDC(nullptr, aDC);
 
 		HRESULT aResult = mDD7->GetAvailableVidMem(&ddsCaps, &dwTotal, &dwFree);
 		if (!SUCCEEDED(aResult))
@@ -709,11 +709,11 @@ bool D3DTester::Init(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 
 		FILETIME aFileTime;
 		memset(&aFileTime, 0, sizeof(aFileTime));
-		HANDLE aFileHandle = CreateFileA(aPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		HANDLE aFileHandle = CreateFileA(aPath.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 		if (aFileHandle != INVALID_HANDLE_VALUE)
 		{
 			SYSTEMTIME aSystemTime;
-			if (GetFileTime(aFileHandle, NULL, NULL, &aFileTime) && FileTimeToSystemTime(&aFileTime, &aSystemTime))
+			if (GetFileTime(aFileHandle, nullptr, nullptr, &aFileTime) && FileTimeToSystemTime(&aFileTime, &aSystemTime))
 				mDriverYear = aSystemTime.wYear;
 
 			CloseHandle(aFileHandle);
@@ -736,7 +736,7 @@ bool D3DTester::Init(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
 		ddsd.dwWidth = 100;
 		ddsd.dwHeight = 100;
-		CheckDXError(mDD7->CreateSurface(&ddsd, &mPrimarySurface, NULL), "CreateSurface (Primary)");
+		CheckDXError(mDD7->CreateSurface(&ddsd, &mPrimarySurface, nullptr), "CreateSurface (Primary)");
 		mTestImage.Create(ddsd.dwWidth, ddsd.dwHeight);
 
 		CheckDXError(mD3D7->CreateDevice(IID_IDirect3DHALDevice, mPrimarySurface, &mD3DDevice7), "CreateDevice");
@@ -785,8 +785,8 @@ bool D3DTester::Init(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 			aDesc.ddpfPixelFormat.dwBBitMask = 0x000F;
 		}
 
-		CheckDXError(mDD7->CreateSurface(&aDesc, &mTextureSurface, NULL), "CreateSurface (TextureSurface1)");
-		CheckDXError(mDD7->CreateSurface(&aDesc, &mTextureSurface2, NULL), "CreateSurface (TextureSurfacd2)");
+		CheckDXError(mDD7->CreateSurface(&aDesc, &mTextureSurface, nullptr), "CreateSurface (TextureSurface1)");
+		CheckDXError(mDD7->CreateSurface(&aDesc, &mTextureSurface2, nullptr), "CreateSurface (TextureSurfacd2)");
 	}
 	catch (TestException& ex)
 	{
@@ -812,43 +812,43 @@ void D3DTester::Cleanup()
 	if (mDD7)
 	{
 		mDD7->Release();
-		mDD7 = NULL;
+		mDD7 = nullptr;
 	}
 
 	if (mD3D7)
 	{
 		mD3D7->Release();
-		mD3D7 = NULL;
+		mD3D7 = nullptr;
 	}
 
 	if (mD3DDevice7)
 	{
 		mD3DDevice7->Release();
-		mD3DDevice7 = NULL;
+		mD3DDevice7 = nullptr;
 	}
 
 	if (mPrimarySurface)
 	{
 		mPrimarySurface->Release();
-		mPrimarySurface = NULL;
+		mPrimarySurface = nullptr;
 	}
 
 	if (mTextureSurface)
 	{
 		mTextureSurface->Release();
-		mTextureSurface = NULL;
+		mTextureSurface = nullptr;
 	}
 
 	if (mTextureSurface2)
 	{
 		mTextureSurface2->Release();
-		mTextureSurface2 = NULL;
+		mTextureSurface2 = nullptr;
 	}
 
 	if (mRegKey)
 	{
 		RegCloseKey(mRegKey);
-		mRegKey = NULL;
+		mRegKey = nullptr;
 	}
 }
 
@@ -895,7 +895,7 @@ void D3DTester::CopyPrimaryToTestImage()
 	memset(&aDesc, 0, sizeof(aDesc));
 	aDesc.dwSize = sizeof(aDesc);
 
-	D3DTester::CheckDXError(mPrimarySurface->Lock(NULL, &aDesc, DDLOCK_WAIT, NULL), "CopyPrimary Lock");
+	D3DTester::CheckDXError(mPrimarySurface->Lock(nullptr, &aDesc, DDLOCK_WAIT, nullptr), "CopyPrimary Lock");
 
 	if (aDesc.ddpfPixelFormat.dwRGBBitCount == 32)
 		D3DTestPixelConvert<DWORD>(mTestImage, aDesc, 0);
@@ -906,11 +906,11 @@ void D3DTester::CopyPrimaryToTestImage()
 	//		D3DTestPixelConvert24(mTestImage,aDesc);
 	else
 	{
-		mPrimarySurface->Unlock(NULL);
+		mPrimarySurface->Unlock(nullptr);
 		throw TestException("Invalid Color Depth");
 	}
 
-	mPrimarySurface->Unlock(NULL);
+	mPrimarySurface->Unlock(nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -920,7 +920,7 @@ bool D3DTester::TestAlphaBlend()
 	try
 	{
 		CheckDXError(mD3DDevice7->BeginScene());
-		CheckDXError(mD3DDevice7->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
+		CheckDXError(mD3DDevice7->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
 
 		SafeSetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		SafeSetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -965,7 +965,7 @@ bool D3DTester::TestAdditiveBlend()
 	try
 	{
 		CheckDXError(mD3DDevice7->BeginScene());
-		CheckDXError(mD3DDevice7->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
+		CheckDXError(mD3DDevice7->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
 
 		SafeSetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		SafeSetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
@@ -1010,7 +1010,7 @@ bool D3DTester::TestAlphaAddBlend()
 	try
 	{
 		CheckDXError(mD3DDevice7->BeginScene());
-		CheckDXError(mD3DDevice7->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
+		CheckDXError(mD3DDevice7->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
 
 		SafeSetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		SafeSetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -1055,7 +1055,7 @@ bool D3DTester::TestAlphaModulate()
 	try
 	{
 		CheckDXError(mD3DDevice7->BeginScene());
-		CheckDXError(mD3DDevice7->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
+		CheckDXError(mD3DDevice7->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
 
 		SafeSetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		SafeSetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -1101,7 +1101,7 @@ bool D3DTester::TestClipProblem()
 	try
 	{
 		CheckDXError(mD3DDevice7->BeginScene());
-		CheckDXError(mD3DDevice7->Clear(0, NULL, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
+		CheckDXError(mD3DDevice7->Clear(0, nullptr, D3DCLEAR_TARGET, 0xff000000, 1.0f, 0L), "Clear");
 
 		SafeSetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		SafeSetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -1177,7 +1177,7 @@ void D3DTester::TestD3D(HWND theHWND, LPDIRECTDRAW7 theDDraw)
 		{
 			if ((mCheckRegistry) && (!mShouldWriteToRegistry))
 			{
-				mResultsChanged = RegQueryValueExA(mRegKey, "FailureReason", 0, NULL, NULL, NULL) != ERROR_SUCCESS;
+				mResultsChanged = RegQueryValueExA(mRegKey, "FailureReason", 0, nullptr, nullptr, nullptr) != ERROR_SUCCESS;
 				mShouldWriteToRegistry = true;
 			}
 		}

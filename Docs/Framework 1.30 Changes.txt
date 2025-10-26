@@ -153,14 +153,14 @@ Widget related
 ===============
 * Fixed default values for fast stretch and linear blend in FlushDeferredOverlayWidgets.
 * added ability to have draw overlay pass in the priority at which it's calling the function
-* made Widget::ShowFinger check if mWidgetManager == NULL: previously it did this:
+* made Widget::ShowFinger check if mWidgetManager == nullptr: previously it did this:
 
 if (on)
      mWidgetManager->mApp->SetCursor(CURSOR_HAND);
 else
      mWidgetManager->mApp->SetCursor(CURSOR_POINTER);
 
-which will crash if the widget manager is NULL.
+which will crash if the widget manager is nullptr.
 
 ResourceManager
 ===============

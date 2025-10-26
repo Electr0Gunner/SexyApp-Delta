@@ -36,8 +36,8 @@ GameApp::GameApp()
 	// for testing purposes.
 	mAutoEnable3D = true;
 
-	mBoard = NULL;
-	mTitleScreen = NULL;
+	mBoard = nullptr;
+	mTitleScreen = nullptr;
 
 	// Enable smooth motion via UpdateF
 	mVSyncUpdates = true;
@@ -51,12 +51,12 @@ GameApp::GameApp()
 //////////////////////////////////////////////////////////////////////////
 GameApp::~GameApp()
 {	
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->RemoveWidget(mBoard);
 
 	delete mBoard;
 
-	if (mTitleScreen != NULL)
+	if (mTitleScreen != nullptr)
 		mWidgetManager->RemoveWidget(mTitleScreen);
 	delete mTitleScreen;
 
@@ -196,7 +196,7 @@ void GameApp::LoadingThreadCompleted()
 void GameApp::TitleScreenIsFinished()
 {
 
-	mTitleScreen = NULL;
+	mTitleScreen = nullptr;
 	mBoard = new Board(this);
 	mResourceManager->DeleteResources("TitleScreen");
 

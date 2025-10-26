@@ -57,8 +57,8 @@ GameApp::GameApp()
 	// for testing purposes.
 	mAutoEnable3D = true;
 
-	mBoard = NULL;
-	mTitleScreen = NULL;
+	mBoard = nullptr;
+	mTitleScreen = nullptr;
 
 }
 
@@ -74,7 +74,7 @@ GameApp::~GameApp()
 	// it, you will get an assert. Because our board might not have been
 	// added (if you shut down the app before closing the loading screen),
 	// only remove it if it isn't null.
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->RemoveWidget(mBoard);
 
 	// Take a look at TitleScreen::ButtonDepress if you haven't already.
@@ -89,7 +89,7 @@ GameApp::~GameApp()
 	// If you shut down the app before closing the loading screen, then
 	// it will need to be removed here. The rational for the next two
 	// steps is the same as for Board:
-	if (mTitleScreen != NULL)
+	if (mTitleScreen != nullptr)
 		mWidgetManager->RemoveWidget(mTitleScreen);
 	delete mTitleScreen;
 
@@ -329,7 +329,7 @@ void GameApp::LoadingThreadCompleted()
 //////////////////////////////////////////////////////////////////////////
 void GameApp::TitleScreenIsFinished()
 {
-	mTitleScreen = NULL;
+	mTitleScreen = nullptr;
 	mBoard = new Board(this);
 
 	// Now that the title screen is done, we don't need its resources
@@ -401,11 +401,11 @@ void GameApp::SwitchScreenMode(bool wantWindowed, bool is3d)
 
 	// We can see if the options dialog is up with a call to
 	// GetDialog. You pass GetDialog the unique ID of the dialog box,
-	// and if it exists it is returned to you, otherwise NULL is returned.
+	// and if it exists it is returned to you, otherwise nullptr is returned.
 	DemoDialog* d = (DemoDialog*) GetDialog(DemoDialog::DIALOG_ID);
 
 	// Set the checkbox state to our windowed state
-	if ((d != NULL) && (d->mFSCheckbox != NULL))
+	if ((d != nullptr) && (d->mFSCheckbox != nullptr))
 		d->mFSCheckbox->SetChecked(!wantWindowed);
 
 }
@@ -422,6 +422,6 @@ void GameApp::ButtonPress(int theId)
 //////////////////////////////////////////////////////////////////////////
 void GameApp::SetFocusToBoard()
 {
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->SetFocus(mBoard);
 }

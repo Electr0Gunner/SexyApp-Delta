@@ -21,7 +21,7 @@ using namespace Sexy;
 TitleScreen::TitleScreen(GameApp *pApp)
 {
 	mApp = pApp;		
-	mContinueLink = NULL;
+	mContinueLink = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void TitleScreen::ButtonDepress(int theId)
 		mApp->mWidgetManager->RemoveWidget(mContinueLink);
 		mApp->SafeDeleteWidget(this);
 		mApp->SafeDeleteWidget(mContinueLink);
-		mContinueLink = NULL;
+		mContinueLink = nullptr;
 
 		// Now let's tell the game app that it's ok to add the board widget:
 		mApp->TitleScreenIsFinished();

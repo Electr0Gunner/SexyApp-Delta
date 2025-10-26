@@ -53,8 +53,8 @@ GameApp::GameApp()
 	// for testing purposes.
 	mAutoEnable3D = true;
 
-	mBoard = NULL;
-	mTitleScreen = NULL;
+	mBoard = nullptr;
+	mTitleScreen = nullptr;
 
 	// See Board::UpdateF for a very lengthy explanation of this and smooth motion
 	mVSyncUpdates = true;
@@ -72,7 +72,7 @@ GameApp::~GameApp()
 	// it, you will get an assert. Because our board might not have been
 	// added (if you shut down the app before closing the loading screen),
 	// only remove it if it isn't null.
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->RemoveWidget(mBoard);
 
 	// Take a look at TitleScreen::ButtonDepress if you haven't already.
@@ -87,7 +87,7 @@ GameApp::~GameApp()
 	// If you shut down the app before closing the loading screen, then
 	// it will need to be removed here. The rational for the next two
 	// steps is the same as for Board:
-	if (mTitleScreen != NULL)
+	if (mTitleScreen != nullptr)
 		mWidgetManager->RemoveWidget(mTitleScreen);
 	delete mTitleScreen;
 
@@ -334,9 +334,9 @@ void GameApp::TitleScreenIsFinished()
 	// on the hyperlink widget to continue. At this point, the title screen
 	// has already removed itself and its widgets and we should set up our
 	// Board class and begin the game. Let's also set our title screen
-	// pointer to NULL, since it will be safely deleted automatically at a
+	// pointer to nullptr, since it will be safely deleted automatically at a
 	// later point, and we don't want to delete it twice.
-	mTitleScreen = NULL;
+	mTitleScreen = nullptr;
 	mBoard = new Board(this);
 
 	// Now that the title screen is done, we don't need its resources

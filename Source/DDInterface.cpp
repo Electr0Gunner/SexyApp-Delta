@@ -18,21 +18,21 @@ typedef HRESULT(WINAPI* DirectDrawCreateFunc)(GUID FAR* lpGUID, LPDIRECTDRAW FAR
 typedef HRESULT(WINAPI* DirectDrawCreateExFunc)(GUID FAR* lpGUID, LPVOID* lplpDD, REFIID iid, IUnknown FAR* pUnkOuter);
 
 extern HMODULE gDDrawDLL;
-static DirectDrawCreateFunc gDirectDrawCreateFunc = NULL;
-static DirectDrawCreateExFunc gDirectDrawCreateExFunc = NULL;
+static DirectDrawCreateFunc gDirectDrawCreateFunc = nullptr;
+static DirectDrawCreateExFunc gDirectDrawCreateExFunc = nullptr;
 
 DDInterface::DDInterface(SexyAppBase* theApp)
 {
 	mApp = theApp;
-	mPrimarySurface = NULL;
-	mDrawSurface = NULL;
-	mSecondarySurface = NULL;
-	mScreenImage = NULL;
-	mDD = NULL;
-	mDD7 = NULL;
-	mRedAddTable = NULL;
-	mGreenAddTable = NULL;
-	mBlueAddTable = NULL;
+	mPrimarySurface = nullptr;
+	mDrawSurface = nullptr;
+	mSecondarySurface = nullptr;
+	mScreenImage = nullptr;
+	mDD = nullptr;
+	mDD7 = nullptr;
+	mRedAddTable = nullptr;
+	mGreenAddTable = nullptr;
+	mBlueAddTable = nullptr;
 	mInitialized = false;
 	mVideoOnlyDraw = false;
 	mScanLineFailCount = 0;
@@ -47,14 +47,14 @@ DDInterface::DDInterface(SexyAppBase* theApp)
 	// mCursorHeight = 54;
 	mCursorWidth = 64;
 	mCursorHeight = 64;
-	mCursorImage = NULL;
-	mOldCursorArea = NULL;
-	mNewCursorArea = NULL;
+	mCursorImage = nullptr;
+	mOldCursorArea = nullptr;
+	mNewCursorArea = nullptr;
 	mHasOldCursorArea = false;
-	mOldCursorArea = NULL;
-	mNewCursorArea = NULL;
-	mNewCursorAreaImage = NULL;
-	mOldCursorAreaImage = NULL;
+	mOldCursorArea = nullptr;
+	mNewCursorArea = nullptr;
+	mNewCursorAreaImage = nullptr;
+	mOldCursorAreaImage = nullptr;
 	mInitCount = 0;
 	mRefreshRate = 60;
 	mMillisecondsPerFrame = 1000 / mRefreshRate;
@@ -62,7 +62,7 @@ DDInterface::DDInterface(SexyAppBase* theApp)
 	mD3DInterface = new D3DInterface;
 	mIs3D = false;
 
-	mD3DTester = NULL;
+	mD3DTester = nullptr;
 
 	gDirectDrawCreateFunc = (DirectDrawCreateFunc)GetProcAddress(gDDrawDLL, "DirectDrawCreate");
 	gDirectDrawCreateExFunc = (DirectDrawCreateExFunc)GetProcAddress(gDDrawDLL, "DirectDrawCreateEx");
@@ -125,10 +125,10 @@ HRESULT DDInterface::CreateSurface(DDSURFACEDESC2* theDesc, LPDIRECTDRAWSURFACE*
 {
 	AutoCrit aCrit(mCritSect);
 	HRESULT aResult;
-	if (mDD7 != NULL)
+	if (mDD7 != nullptr)
 	{
 		LPDIRECTDRAWSURFACE7 aSurface;
-		aResult = mDD7->CreateSurface(theDesc, &aSurface, NULL);
+		aResult = mDD7->CreateSurface(theDesc, &aSurface, nullptr);
 		if (!SUCCEEDED(aResult))
 			return aResult;
 
@@ -155,7 +155,7 @@ HRESULT DDInterface::CreateSurface(DDSURFACEDESC2* theDesc, LPDIRECTDRAWSURFACE*
 		aDesc.ddpfPixelFormat = theDesc->ddpfPixelFormat;
 		aDesc.ddsCaps.dwCaps = theDesc->ddsCaps.dwCaps;
 
-		aResult = mDD->CreateSurface(&aDesc, theSurface, NULL);
+		aResult = mDD->CreateSurface(&aDesc, theSurface, nullptr);
 		if (!SUCCEEDED(aResult))
 			return aResult;
 	}
@@ -176,7 +176,7 @@ HRESULT DDInterface::CreateSurface(DDSURFACEDESC2* theDesc, LPDIRECTDRAWSURFACE*
 	if (aNumBits != 16 && aNumBits != 32)
 	{
 		(*theSurface)->Release();
-		*theSurface = NULL;
+		*theSurface = nullptr;
 		return DDERR_INVALIDPIXELFORMAT;
 	}
 
@@ -190,7 +190,7 @@ void DDInterface::ClearSurface(LPDIRECTDRAWSURFACE theSurface)
 		DDSURFACEDESC desc;
 		memset(&desc, 0, sizeof desc);
 		desc.dwSize = sizeof desc;
-		HRESULT hr = theSurface->Lock(NULL, &desc, DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL);
+		HRESULT hr = theSurface->Lock(nullptr, &desc, DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr);
 		if (DD_OK == hr)
 		{
 			DWORD pixelSize = desc.ddpfPixelFormat.dwRGBBitCount / 8;
@@ -200,14 +200,14 @@ void DDInterface::ClearSurface(LPDIRECTDRAWSURFACE theSurface)
 				memset(p, 0, pixelSize * desc.dwWidth);
 				p += desc.lPitch;
 			}
-			theSurface->Unlock(NULL);
+			theSurface->Unlock(nullptr);
 		}
 	}
 }
 
 bool DDInterface::Do3DTest(HWND theHWND)
 {
-	if (mD3DTester == NULL)
+	if (mD3DTester == nullptr)
 	{
 		if (mApp->mTest3D || mApp->mAutoEnable3D)
 		{
@@ -244,7 +244,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	{
 		DDImage* aDDImage = *anItr;
 
-		if ((aDDImage->mSurface != NULL) || aDDImage->mWantDDSurface || !aDDImage->mKeepBits)
+		if ((aDDImage->mSurface != nullptr) || aDDImage->mWantDDSurface || !aDDImage->mKeepBits)
 		{
 			aDDImage->DeleteDDSurface();
 			aReleasedImageSet.insert(aDDImage);
@@ -258,9 +258,9 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	HRESULT aResult;
 	DDSURFACEDESC2 aDesc;
 
-	if (gDirectDrawCreateExFunc != NULL)
+	if (gDirectDrawCreateExFunc != nullptr)
 	{
-		aResult = gDirectDrawCreateExFunc(NULL, (LPVOID*)&mDD7, IID_IDirectDraw7, NULL);
+		aResult = gDirectDrawCreateExFunc(nullptr, (LPVOID*)&mDD7, IID_IDirectDraw7, nullptr);
 		if (GotDXError(aResult, "DirectDrawCreateEx"))
 			return RESULT_DD_CREATE_FAIL;
 
@@ -270,7 +270,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	}
 	else
 	{
-		aResult = gDirectDrawCreateFunc(NULL, &mDD, NULL);
+		aResult = gDirectDrawCreateFunc(nullptr, &mDD, nullptr);
 	}
 
 	if (Do3DTest(theWindow))
@@ -368,7 +368,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 			aDesc.ddsCaps.dwCaps |= DDSCAPS_3DDEVICE;
 
 		aDesc.dwBackBufferCount = 1;
-		aResult = CreateSurface(&aDesc, &mPrimarySurface, NULL);
+		aResult = CreateSurface(&aDesc, &mPrimarySurface, nullptr);
 		if (aResult == DDERR_INVALIDPIXELFORMAT) // check for non 16 or 32 bit primary surface
 			return RESULT_INVALID_COLORDEPTH;
 		else if (GotDXError(aResult, "CreateSurface Windowed Primary"))
@@ -384,12 +384,12 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 		aDesc.dwWidth = mWidth;
 		aDesc.dwHeight = mHeight;
 
-		aResult = CreateSurface(&aDesc, &mDrawSurface, NULL);
+		aResult = CreateSurface(&aDesc, &mDrawSurface, nullptr);
 		if (GotDXError(aResult, "CreateSurface Windowed DrawSurface"))
 			return RESULT_SURFACE_FAIL;
 
 		IDirectDrawClipper* aClipper;
-		aResult = mDD->CreateClipper(0, &aClipper, NULL);
+		aResult = mDD->CreateClipper(0, &aClipper, nullptr);
 		if (GotDXError(aResult, "CreateClipper Windowed"))
 			return RESULT_FAIL;
 
@@ -458,7 +458,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 		if (mIs3D)
 			aDesc.ddsCaps.dwCaps |= DDSCAPS_3DDEVICE;
 
-		aResult = CreateSurface(&aDesc, &mPrimarySurface, NULL);
+		aResult = CreateSurface(&aDesc, &mPrimarySurface, nullptr);
 		if (GotDXError(aResult, "CreateSurface FullScreen Primary"))
 			return RESULT_SURFACE_FAIL;
 
@@ -486,12 +486,12 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 		aDesc.dwWidth = mWidth;
 		aDesc.dwHeight = mHeight;
 
-		aResult = CreateSurface(&aDesc, &mDrawSurface, NULL);
+		aResult = CreateSurface(&aDesc, &mDrawSurface, nullptr);
 		if (GotDXError(aResult, "CreateSurface FullScreen DrawSurface"))
 			return RESULT_SURFACE_FAIL;
 
 		IDirectDrawClipper* aClipper;
-		aResult = mDD->CreateClipper(0, &aClipper, NULL);
+		aResult = mDD->CreateClipper(0, &aClipper, nullptr);
 		if (GotDXError(aResult, "CreateClipper FullScreen"))
 			return RESULT_FAIL;
 
@@ -535,11 +535,11 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	aDesc.dwWidth = mCursorWidth;
 	aDesc.dwHeight = mCursorHeight;
 
-	aResult = CreateSurface(&aDesc, &mOldCursorArea, NULL);
+	aResult = CreateSurface(&aDesc, &mOldCursorArea, nullptr);
 	if (GotDXError(aResult, "CreateSurface OldCursorArea"))
 		return RESULT_SURFACE_FAIL;
 
-	aResult = CreateSurface(&aDesc, &mNewCursorArea, NULL);
+	aResult = CreateSurface(&aDesc, &mNewCursorArea, nullptr);
 	if (GotDXError(aResult, "CreateSurface NewCursorArea"))
 		return RESULT_SURFACE_FAIL;
 
@@ -552,7 +552,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	mNewCursorAreaImage->SetImageMode(false, false);
 
 	// Get data from the primary surface
-	if (mPrimarySurface != NULL)
+	if (mPrimarySurface != nullptr)
 	{
 		DDSURFACEDESC aDesc;
 
@@ -671,7 +671,7 @@ void DDInterface::SetVideoOnlyDraw(bool videoOnlyDraw)
 
 	mVideoOnlyDraw = videoOnlyDraw;
 
-	if (mSecondarySurface == NULL)
+	if (mSecondarySurface == nullptr)
 	{
 		DDSURFACEDESC2 aDesc;
 
@@ -682,7 +682,7 @@ void DDInterface::SetVideoOnlyDraw(bool videoOnlyDraw)
 		aDesc.dwWidth = mWidth;
 		aDesc.dwHeight = mHeight;
 
-		HRESULT aResult = CreateSurface(&aDesc, &mSecondarySurface, NULL);
+		HRESULT aResult = CreateSurface(&aDesc, &mSecondarySurface, nullptr);
 
 		if (FAILED(aResult))
 			mVideoOnlyDraw = false;
@@ -755,65 +755,65 @@ void DDInterface::Cleanup()
 	mInitialized = false;
 	mD3DInterface->Cleanup();
 
-	if (mOldCursorAreaImage != NULL)
+	if (mOldCursorAreaImage != nullptr)
 	{
 		delete mOldCursorAreaImage;
-		mOldCursorAreaImage = NULL;
+		mOldCursorAreaImage = nullptr;
 	}
 
-	if (mNewCursorAreaImage != NULL)
+	if (mNewCursorAreaImage != nullptr)
 	{
 		delete mNewCursorAreaImage;
-		mNewCursorAreaImage = NULL;
+		mNewCursorAreaImage = nullptr;
 	}
 
-	if (mOldCursorArea != NULL)
+	if (mOldCursorArea != nullptr)
 	{
 		mOldCursorArea->Release();
-		mOldCursorArea = NULL;
+		mOldCursorArea = nullptr;
 	}
 
-	if (mNewCursorArea != NULL)
+	if (mNewCursorArea != nullptr)
 	{
 		mNewCursorArea->Release();
-		mNewCursorArea = NULL;
+		mNewCursorArea = nullptr;
 	}
 
-	if (mScreenImage != NULL)
+	if (mScreenImage != nullptr)
 	{
 		delete mScreenImage;
-		mScreenImage = NULL;
+		mScreenImage = nullptr;
 	}
 
-	if (mDrawSurface != NULL)
+	if (mDrawSurface != nullptr)
 	{
 		mDrawSurface->Release();
-		mDrawSurface = NULL;
+		mDrawSurface = nullptr;
 	}
 
-	if (mSecondarySurface != NULL)
+	if (mSecondarySurface != nullptr)
 	{
 		mSecondarySurface->Release();
-		mSecondarySurface = NULL;
+		mSecondarySurface = nullptr;
 	}
 
-	if (mPrimarySurface != NULL)
+	if (mPrimarySurface != nullptr)
 	{
 		mPrimarySurface->Release();
-		mPrimarySurface = NULL;
+		mPrimarySurface = nullptr;
 	}
 
-	if (mDD != NULL)
+	if (mDD != nullptr)
 	{
 		mDD->SetCooperativeLevel(mHWnd, DDSCL_NORMAL);
 		mDD->Release();
-		mDD = NULL;
+		mDD = nullptr;
 	}
 
-	if (mDD7 != NULL)
+	if (mDD7 != nullptr)
 	{
 		mDD7->Release();
-		mDD7 = NULL;
+		mDD7 = nullptr;
 	}
 }
 
@@ -823,7 +823,7 @@ bool DDInterface::CopyBitmap(LPDIRECTDRAWSURFACE theSurface, HBITMAP theBitmap, 
 
 	HRESULT hr;
 
-	if (theBitmap == NULL || theSurface == NULL)
+	if (theBitmap == nullptr || theSurface == nullptr)
 		return false;
 
 	// Make sure this surface is restored.
@@ -844,8 +844,8 @@ bool DDInterface::CopyBitmap(LPDIRECTDRAWSURFACE theSurface, HBITMAP theBitmap, 
 		return false;
 
 	// Create memory DC
-	HDC hdcImage = CreateCompatibleDC(NULL);
-	if (hdcImage != NULL)
+	HDC hdcImage = CreateCompatibleDC(nullptr);
+	if (hdcImage != nullptr)
 	{
 		// Select bitmap into memory DC
 		HBITMAP anOldBitmap = (HBITMAP)SelectObject(hdcImage, theBitmap);
@@ -909,7 +909,7 @@ bool DDInterface::Redraw(Rect* theClipRect)
 
 	RECT aDestRect;
 	RECT aSrcRect;
-	if (NULL == theClipRect || mIsWidescreen)
+	if (nullptr == theClipRect || mIsWidescreen)
 	{
 		// ClipRect cannot be supported when the draw surface and
 		// primary surface are not the same size in widescreen mode.
@@ -935,8 +935,8 @@ bool DDInterface::Redraw(Rect* theClipRect)
 	DDSURFACEDESC aDesc;
 	ZeroMemory(&aDesc, sizeof(&aDesc));
 	aDesc.dwSize = sizeof(aDesc);
-	mDrawSurface->Lock(NULL, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_READONLY, 0);
-	mDrawSurface->Unlock(NULL);
+	mDrawSurface->Lock(nullptr, &aDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT | DDLOCK_READONLY, 0);
+	mDrawSurface->Unlock(nullptr);
 
 	if (mIsWindowed)
 	{
@@ -1096,7 +1096,7 @@ bool DDInterface::Redraw(Rect* theClipRect)
 
 			DrawCursorTo(mSecondarySurface, true);
 
-			HRESULT aResult = mPrimarySurface->Flip(NULL, DDFLIP_WAIT);
+			HRESULT aResult = mPrimarySurface->Flip(nullptr, DDFLIP_WAIT);
 
 			mInRedraw = false;
 			return !GotDXError(aResult, "Redraw FullScreen Flip");
@@ -1113,7 +1113,7 @@ bool DDInterface::Redraw(Rect* theClipRect)
 
 void DDInterface::RestoreOldCursorAreaFrom(LPDIRECTDRAWSURFACE theSurface, bool adjust)
 {
-	if ((mHasOldCursorArea) && (mPrimarySurface != NULL))
+	if ((mHasOldCursorArea) && (mPrimarySurface != nullptr))
 	{
 		Rect aSexyScreenRect(mCursorX - (mCursorWidth / 2), mCursorY - (mCursorHeight / 2), mCursorWidth, mCursorHeight);
 
@@ -1145,7 +1145,7 @@ void DDInterface::RestoreOldCursorAreaFrom(LPDIRECTDRAWSURFACE theSurface, bool 
 
 void DDInterface::DrawCursorTo(LPDIRECTDRAWSURFACE theSurface, bool adjust)
 {
-	if ((mCursorImage != NULL) && (mPrimarySurface != NULL))
+	if ((mCursorImage != nullptr) && (mPrimarySurface != nullptr))
 	{
 		DDSURFACEDESC aDesc;
 		ZeroMemory(&aDesc, sizeof(aDesc));
@@ -1226,7 +1226,7 @@ void DDInterface::MoveCursorTo(LPDIRECTDRAWSURFACE theSurface, bool adjust, int 
 {
 	DBG_ASSERT(mHasOldCursorArea);
 
-	if ((mCursorImage != NULL) && (mPrimarySurface != NULL))
+	if ((mCursorImage != nullptr) && (mPrimarySurface != nullptr))
 	{
 		DDSURFACEDESC aDesc;
 		ZeroMemory(&aDesc, sizeof(aDesc));

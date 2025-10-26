@@ -185,7 +185,7 @@ Board::Board(GameApp* theApp)
 
 	mLevelupEffect = new LevelupEffect();
 	mGameOverEffect = new GameOverEffect();
-	mOptionsBtn = NULL;
+	mOptionsBtn = nullptr;
 
 
 	// The shorting out, electrical sound of the beams moving. We use a SoundInstance pointer

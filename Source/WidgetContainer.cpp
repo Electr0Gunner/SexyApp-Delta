@@ -13,8 +13,8 @@ WidgetContainer::WidgetContainer()
 	mY = 0;
 	mWidth = 0;
 	mHeight = 0;
-	mParent = NULL;
-	mWidgetManager = NULL;
+	mParent = nullptr;
+	mWidgetManager = nullptr;
 	mUpdateIteratorModified = false;
 	mUpdateIterator = mWidgets.end();
 	mLastWMUpdateCount = 0;
@@ -29,7 +29,7 @@ WidgetContainer::WidgetContainer()
 WidgetContainer::~WidgetContainer()
 {
 	// call RemoveWidget before you delete it!
-	DBG_ASSERT(mParent == NULL);
+	DBG_ASSERT(mParent == nullptr);
 	DBG_ASSERT(mWidgets.empty());
 }
 
@@ -65,7 +65,7 @@ void WidgetContainer::AddWidget(Widget* theWidget)
 		theWidget->mWidgetManager = mWidgetManager;
 		theWidget->mParent = this;
 
-		if (mWidgetManager != NULL)
+		if (mWidgetManager != nullptr)
 		{
 			theWidget->AddedToManager(mWidgetManager);
 			theWidget->MarkDirtyFull();
@@ -87,7 +87,7 @@ void WidgetContainer::RemoveWidget(Widget* theWidget)
 	if (anItr != mWidgets.end())
 	{
 		theWidget->WidgetRemovedHelper();
-		theWidget->mParent = NULL;
+		theWidget->mParent = nullptr;
 
 		bool erasedCur = (anItr == mUpdateIterator);
 		mWidgets.erase(anItr++);
@@ -121,7 +121,7 @@ Widget* WidgetContainer::GetWidgetAtHelper(int x, int y, int theFlags, bool* fou
 			{
 				bool childFound;
 				Widget* aCheckWidget = aWidget->GetWidgetAtHelper(x - aWidget->mX, y - aWidget->mY, aCurFlags, &childFound, theWidgetX, theWidgetY);
-				if ((aCheckWidget != NULL) || (childFound))
+				if ((aCheckWidget != nullptr) || (childFound))
 				{
 					*found = true;
 					return aCheckWidget;
@@ -149,7 +149,7 @@ Widget* WidgetContainer::GetWidgetAtHelper(int x, int y, int theFlags, bool* fou
 	}
 
 	*found = false;
-	return NULL;
+	return nullptr;
 }
 
 bool WidgetContainer::IsBelowHelper(Widget* theWidget1, Widget* theWidget2, bool* found)
@@ -317,7 +317,7 @@ void WidgetContainer::PutInfront(Widget* theWidget, Widget* theRefWidget)
 
 Point WidgetContainer::GetAbsPos() // relative to top level
 {
-	if (mParent == NULL)
+	if (mParent == nullptr)
 		return Point(mX, mY);
 	else
 		return Point(mX, mY) + mParent->GetAbsPos();
@@ -346,16 +346,16 @@ void WidgetContainer::RemovedFromManager(WidgetManager* theWidgetManager)
 
 		theWidgetManager->DisableWidget(aWidget);
 		aWidget->RemovedFromManager(theWidgetManager);
-		aWidget->mWidgetManager = NULL;
+		aWidget->mWidgetManager = nullptr;
 	}
 
 	if (theWidgetManager->mPopupCommandWidget == this)
-		theWidgetManager->mPopupCommandWidget = NULL;
+		theWidgetManager->mPopupCommandWidget = nullptr;
 }
 
 void WidgetContainer::MarkDirty()
 {
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		mParent->MarkDirty(this);
 	else
 		mDirty = true;
@@ -363,7 +363,7 @@ void WidgetContainer::MarkDirty()
 
 void WidgetContainer::MarkDirtyFull()
 {
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		mParent->MarkDirtyFull(this);
 	else
 		mDirty = true;
@@ -380,7 +380,7 @@ void WidgetContainer::MarkDirtyFull(WidgetContainer* theWidget)
 
 	// Top-level windows are treated differently, as marking a child dirty always
 	//  causes a parent redraw which always causes all children to redraw
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		return;
 
 	WidgetList::iterator aFoundWidgetItr = std::find(mWidgets.begin(), mWidgets.end(), theWidget);
@@ -447,7 +447,7 @@ void WidgetContainer::MarkDirty(WidgetContainer* theWidget)
 
 	// Top-level windows are treated differently, as marking a child dirty always
 	//  causes a parent redraw which always causes all children to redraw
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		return;
 
 	if (theWidget->mHasAlpha)
@@ -486,7 +486,7 @@ void WidgetContainer::UpdateAll(ModalFlags* theFlags)
 
 	// Can update?
 	WidgetManager* aWidgetManager = mWidgetManager;
-	if (aWidgetManager == NULL)
+	if (aWidgetManager == nullptr)
 		return;
 
 	if (theFlags->GetFlags() & WIDGETFLAGS_UPDATE)

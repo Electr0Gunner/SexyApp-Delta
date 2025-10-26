@@ -89,10 +89,10 @@ ImageFont* SysFont::CreateImageFont()
 	aHeader.biBitCount = 32;
 	aHeader.biCompression = BI_RGB;
 
-	HDC aDC = CreateCompatibleDC(NULL);
+	HDC aDC = CreateCompatibleDC(nullptr);
 
-	DWORD* aBits = NULL;
-	HBITMAP aBitmap = CreateDIBSection(aDC, &aBitmapInfo, DIB_RGB_COLORS, (void**)&aBits, NULL, 0);
+	DWORD* aBits = nullptr;
+	HBITMAP aBitmap = CreateDIBSection(aDC, &aBitmapInfo, DIB_RGB_COLORS, (void**)&aBits, nullptr, 0);
 
 	HBITMAP anOldBitmap = (HBITMAP)SelectObject(aDC, aBitmap);
 	HFONT anOldFont = (HFONT)SelectObject(aDC, mHFont);
@@ -171,7 +171,7 @@ int SysFont::StringWidth(const SexyString& theString)
 #endif
 	{
 		RECT aRect = { 0, 0, 0, 0 };
-		DrawTextEx(aDC, (SexyChar*)theString.c_str(), theString.length(), &aRect, DT_CALCRECT | DT_NOPREFIX, NULL);
+		DrawTextEx(aDC, (SexyChar*)theString.c_str(), theString.length(), &aRect, DT_CALCRECT | DT_NOPREFIX, nullptr);
 		aWidth = aRect.right;
 	}
 
@@ -185,15 +185,15 @@ void SysFont::DrawString(Graphics* g, int theX, int theY, const SexyString& theS
 {
 	DDImage* aDDImage = dynamic_cast<DDImage*>(g->mDestImage);
 
-	if (aDDImage != NULL)
+	if (aDDImage != nullptr)
 	{
 		LPDIRECTDRAWSURFACE aSurface = aDDImage->GetSurface();
-		if (aSurface != NULL)
+		if (aSurface != nullptr)
 		{
 			HDC aDC;
 
 			if (aDDImage->mLockCount > 0)
-				aDDImage->mSurface->Unlock(NULL);
+				aDDImage->mSurface->Unlock(nullptr);
 
 			if ((g->mDestImage == gSexyAppBase->mWidgetManager->mImage) && (gSexyAppBase->Is3DAccelerated()))
 				gSexyAppBase->mDDInterface->mD3DInterface->Flush();
@@ -222,12 +222,12 @@ void SysFont::DrawString(Graphics* g, int theX, int theY, const SexyString& theS
 			}
 
 			if (aDDImage->mLockCount > 0)
-				aDDImage->mSurface->Lock(NULL, &aDDImage->mLockedSurfaceDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
+				aDDImage->mSurface->Lock(nullptr, &aDDImage->mLockedSurfaceDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, nullptr);
 		}
 	}
 	else if (g->mDestImage != &Graphics::mStaticImage) // DrawString can be called when not drawing onto an image.
 	{
-		HDC aDC = CreateCompatibleDC(NULL);
+		HDC aDC = CreateCompatibleDC(nullptr);
 		HFONT anOldFont = (HFONT)SelectObject(aDC, mHFont);
 
 		int aWidth = StringWidth(theString);
@@ -244,8 +244,8 @@ void SysFont::DrawString(Graphics* g, int theX, int theY, const SexyString& theS
 		bih.biSize = sizeof(BITMAPINFOHEADER);
 
 		ulong *whiteBits, *blackBits;
-		HBITMAP whiteBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&whiteBits, NULL, 0);
-		HBITMAP blackBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&blackBits, NULL, 0);
+		HBITMAP whiteBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&whiteBits, nullptr, 0);
+		HBITMAP blackBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&blackBits, nullptr, 0);
 
 		RECT rc = { 0, 0, aWidth, aHeight };
 

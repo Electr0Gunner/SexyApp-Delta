@@ -2,11 +2,11 @@
 
 	#if defined(TEXTURED)
 	{
-		#include "SWTri_GetTexel.inc"
+		#include "SWTri_GetTexel.cpp"
 		
 		if (alpha > 0x08)
 		{
-			#include "SWTri_TexelARGB.inc"
+			#include "SWTri_TexelARGB.cpp"
 				
 			#if defined(GLOBAL_ARGB) || defined (TEX_ALPHA) || defined(MOD_ARGB)
 			{
@@ -81,5 +81,7 @@
 			
 			*pix = ((finalAlpha-1)<<24) | tr | tg | tb;
 		}
+		else
+			_asm nop;
 	}
 	#endif

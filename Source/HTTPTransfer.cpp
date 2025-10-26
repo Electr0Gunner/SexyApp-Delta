@@ -139,7 +139,7 @@ void HTTPTransfer::GetThreadProc()
 		if (anAddr == INADDR_NONE)
 		{
 			HOSTENT* aHostEnt = gethostbyname(mHost.c_str());
-			if (aHostEnt != NULL)
+			if (aHostEnt != nullptr)
 				memcpy(&anAddr, aHostEnt->h_addr_list[0], 4);
 		}
 
@@ -320,7 +320,7 @@ void HTTPTransfer::GetThreadProc()
 	}
 
 	closesocket(mSocket);
-	mSocket = NULL;
+	mSocket = nullptr;
 	WSACleanup();
 
 	if (mAborted)
@@ -385,7 +385,7 @@ void HTTPTransfer::StartTransfer()
 	mTransferPending = true;
 
 	// Don't really start the transfer while in demo playing mode
-	if ((gSexyAppBase != NULL) && (gSexyAppBase->mPlayingDemoBuffer))
+	if ((gSexyAppBase != nullptr) && (gSexyAppBase->mPlayingDemoBuffer))
 		return;
 
 	mThreadRunning = true;
@@ -496,7 +496,7 @@ void HTTPTransfer::UpdateStatus()
 	// This will save the result data in demo recording mode and load it in (if available)
 	//  in demo playback mode
 
-	if (gSexyAppBase != NULL)
+	if (gSexyAppBase != nullptr)
 	{
 		if (gSexyAppBase->mPlayingDemoBuffer)
 		{

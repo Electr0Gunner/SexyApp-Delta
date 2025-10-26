@@ -19,7 +19,7 @@ Image::Image()
 	mWidth = 0;
 	mHeight = 0;
 	mNumChannels = 0;
-	mBits = NULL;
+	mBits = nullptr;
 }
 
 Image::~Image()
@@ -165,7 +165,7 @@ Image* ImageLib::GetImage(const std::string& theFilename, bool lookForAlphaImage
 	else
 		aFilename = theFilename;
 
-	Image* anImage = NULL;
+	Image* anImage = nullptr;
 
 	if (!anExt.empty())
 	{
@@ -186,7 +186,7 @@ Image* ImageLib::GetImage(const std::string& theFilename, bool lookForAlphaImage
 	}
 
 	// Check for alpha images
-	Image* anAlphaImage = NULL;
+	Image* anAlphaImage = nullptr;
 	if (lookForAlphaImage)
 	{
 		// Check _ImageName
@@ -194,14 +194,14 @@ Image* ImageLib::GetImage(const std::string& theFilename, bool lookForAlphaImage
 			GetImage(theFilename.substr(0, aLastSlashPos + 1) + "_" + theFilename.substr(aLastSlashPos + 1, theFilename.length() - aLastSlashPos - 1), false);
 
 		// Check ImageName_
-		if (anAlphaImage == NULL)
+		if (anAlphaImage == nullptr)
 			anAlphaImage = GetImage(theFilename + "_", false);
 	}
 
 	// Compose alpha channel with image
-	if (anAlphaImage != NULL)
+	if (anAlphaImage != nullptr)
 	{
-		if (anImage != NULL)
+		if (anImage != nullptr)
 		{
 			if ((anImage->mWidth == anAlphaImage->mWidth) && (anImage->mHeight == anAlphaImage->mHeight))
 			{

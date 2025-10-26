@@ -73,7 +73,7 @@ namespace Sexy
 
 		void Blt(LPDIRECT3DDEVICE7 theDevice, float theX, float theY, const Rect& theSrcRect, const Color& theColor);
 		void BltTransformed(LPDIRECT3DDEVICE7 theDevice, const SexyMatrix3& theTrans, const Rect& theSrcRect, const Color& theColor,
-			const Rect* theClipRect = NULL, float theX = 0, float theY = 0, bool center = false);
+			const Rect* theClipRect = nullptr, float theX = 0, float theY = 0, bool center = false);
 		void BltTriangles(LPDIRECT3DDEVICE7 theDevice, const TriVertex theVertices[][3], int theNumTriangles, DWORD theColor, float tx = 0, float ty = 0);
 	};
 

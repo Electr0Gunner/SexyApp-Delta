@@ -22,13 +22,13 @@ void DialogButton::Draw(Graphics* g)
 	if (mBtnNoDraw)
 		return;
 
-	if (mComponentImage == NULL)
+	if (mComponentImage == nullptr)
 	{
 		ButtonWidget::Draw(g);
 		return;
 	}
 
-	if ((mFont == NULL) && (mLabel.length() > 0))
+	if ((mFont == nullptr) && (mLabel.length() > 0))
 		mFont = new SysFont(mWidgetManager->mApp, "Arial Unicode MS", 12, true);
 
 	bool doTranslate = IsButtonDown();
@@ -65,7 +65,7 @@ void DialogButton::Draw(Graphics* g)
 			g->Translate(mTranslateX, mTranslateY);
 	}
 
-	if (mFont != NULL)
+	if (mFont != nullptr)
 	{
 		g->SetFont(mFont);
 

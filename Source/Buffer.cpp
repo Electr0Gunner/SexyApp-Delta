@@ -550,7 +550,7 @@ void Buffer::ReadBuffer(ByteVector* theByteVector) const
 const uchar* Buffer::GetDataPtr() const
 {
 	if (mData.size() == 0)
-		return NULL;
+		return nullptr;
 	return &mData[0];
 }
 

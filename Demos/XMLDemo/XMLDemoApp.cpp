@@ -14,8 +14,8 @@ XMLDemoApp::XMLDemoApp()
 	mTitle = StringToSexyStringFast("SexyAppFramework: " + mProdName + " - " + mProductVersion);
 	mRegKey = "PopCap\\SexyAppFramework\\XMLDemo";
 
-	mBoard = NULL;
-	mParser = NULL;
+	mBoard = nullptr;
+	mParser = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ XMLDemoApp::~XMLDemoApp()
 //////////////////////////////////////////////////////////////////////////
 void XMLDemoApp::ShutdownHook()
 {
-	if (mBoard != NULL)
+	if (mBoard != nullptr)
 		mWidgetManager->RemoveWidget(mBoard);
 }
 

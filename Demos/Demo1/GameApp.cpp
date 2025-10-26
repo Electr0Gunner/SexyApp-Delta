@@ -30,7 +30,7 @@ GameApp::GameApp()
 	mWidth = 640;
 	mHeight = 480;
 
-	mBoard = NULL;
+	mBoard = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

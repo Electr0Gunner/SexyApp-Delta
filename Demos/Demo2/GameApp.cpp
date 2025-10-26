@@ -49,13 +49,13 @@ GameApp::GameApp()
 	mWidth = 800;
 	mHeight = 600;
 
-	mBoard = NULL;
+	mBoard = nullptr;
 
-	mTextFont = NULL;
-	mNumberFont = NULL;
-	mTurbotImg = NULL;
-	mMoonImg = NULL;
-	mOpaqueBeamImg = NULL;
+	mTextFont = nullptr;
+	mNumberFont = nullptr;
+	mTurbotImg = nullptr;
+	mMoonImg = nullptr;
+	mOpaqueBeamImg = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,10 +133,10 @@ void GameApp::LoadingThreadProc()
 	mOpaqueBeamImg = (DDImage*) GetImage("images/beam_opaque");
 
 	// If the file was not found or couldn't be loaded (i.e. due to an
-	// incompatible file format) the returned value will be NULL.
+	// incompatible file format) the returned value will be nullptr.
 	// You should always check this, and if it occurs, display an error
 	// message, then set mLoadingFailed to true, and then immediately return.
-	if (mOpaqueBeamImg == NULL)
+	if (mOpaqueBeamImg == nullptr)
 	{
 
 		// The PopUp method displays a standard Windows message box.
@@ -151,7 +151,7 @@ void GameApp::LoadingThreadProc()
 
 	// Now load the other two images
 	mMoonImg = (DDImage*) GetImage("images/moon");
-	if (mMoonImg == NULL)
+	if (mMoonImg == nullptr)
 	{
 		Popup("There was an error loading the file: images/moon");
 		mLoadingFailed = true;
@@ -159,7 +159,7 @@ void GameApp::LoadingThreadProc()
 	}
 
 	mTurbotImg = (DDImage*) GetImage("images/turbot_worry");
-	if (mTurbotImg == NULL)
+	if (mTurbotImg == nullptr)
 	{
 		Popup("There was an error loading the file: images/turbot_worry");
 		mLoadingFailed = true;

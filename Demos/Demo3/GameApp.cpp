@@ -61,7 +61,7 @@ GameApp::GameApp()
 	// real-time flipping/mirroring, etc.
 	mAutoEnable3D = true;
 
-	mBoard = NULL;
+	mBoard = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -134,10 +134,10 @@ void GameApp::LoadingThreadProc()
 	mTurbotImg = (DDImage*) GetImage("images/turbot_worry");
 
 	// If the file was not found or couldn't be loaded (i.e. due to an
-	// incompatible file format) the returned value will be NULL.
+	// incompatible file format) the returned value will be nullptr.
 	// You should always check this, and if it occurs, display an error
 	// message, then set mLoadingFailed to true, and then immediately return.
-	if (mTurbotImg == NULL)
+	if (mTurbotImg == nullptr)
 	{
 		mLoadingFailed = true;
 
@@ -151,7 +151,7 @@ void GameApp::LoadingThreadProc()
 	}
 
 	mLightningImg = (DDImage*) GetImage("images/lightning");
-	if (mLightningImg == NULL)
+	if (mLightningImg == nullptr)
 	{
 		mLoadingFailed = true;
 		Popup("There was an error loading the file: images/lightning");

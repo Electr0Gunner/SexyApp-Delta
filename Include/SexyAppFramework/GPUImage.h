@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MemoryImage.h"
+#include <SexyAppFramework/MemoryImage.h>
 
 namespace Sexy
 {

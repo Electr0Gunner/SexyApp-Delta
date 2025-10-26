@@ -44,7 +44,7 @@ Board::Board(GameApp* theApp)
 	mApp = theApp;
 
 
-	mButton = NULL;
+	mButton = nullptr;
 
 	// Set up our parallaxing layers
 	for (int i = 0; i < 3; i++)

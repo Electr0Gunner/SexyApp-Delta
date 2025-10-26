@@ -16,7 +16,7 @@ ListWidget::ListWidget(int theId, Font *theFont, ListListener *theListListener)
 	mHiliteIdx = -1;
 	mSelectIdx = -1;
 
-	if (theFont != NULL)
+	if (theFont != nullptr)
 		mItemHeight = theFont->GetHeight();
 	else
 		mItemHeight = -1;
@@ -26,9 +26,9 @@ ListWidget::ListWidget(int theId, Font *theFont, ListListener *theListListener)
 	mId = theId;
 	mFont = theFont;
 	mListListener = theListListener;
-	mParent = NULL;
-	mChild = NULL;
-	mScrollbar = NULL;
+	mParent = nullptr;
+	mChild = nullptr;
+	mScrollbar = nullptr;
 	mPosition = 0;
 	mPageSize = 0;
 	mSortFromChild = false;
@@ -60,7 +60,7 @@ SexyString ListWidget::GetSortKey(int theIdx)
 		return mChild->GetSortKey(theIdx) + aString;
 	else
 	{
-		if (mChild == NULL)
+		if (mChild == nullptr)
 			return aString;
 		else
 			return aString + mChild->GetSortKey(theIdx);
@@ -99,10 +99,10 @@ void ListWidget::Sort(bool ascending)
 		}
 
 	ListWidget *aListWidget = this;
-	while (aListWidget->mParent != NULL)
+	while (aListWidget->mParent != nullptr)
 		aListWidget = aListWidget->mParent;
 
-	while (aListWidget != NULL)
+	while (aListWidget != nullptr)
 	{
 		SexyStringVector aNewLines;
 		ColorVector aNewLineColors;
@@ -142,7 +142,7 @@ void ListWidget::Resize(int theX, int theY, int theWidth, int theHeight)
 
 	mPageSize = aPageSize;
 
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 		mScrollbar->SetPageSize(aPageSize);
 }
 
@@ -160,10 +160,10 @@ int ListWidget::AddLine(const SexyString &theLine, bool alphabetical)
 
 				ListWidget *aListWidget = this;
 
-				while (aListWidget->mParent != NULL)
+				while (aListWidget->mParent != nullptr)
 					aListWidget = aListWidget->mParent;
 
-				while (aListWidget != NULL)
+				while (aListWidget != nullptr)
 				{
 					if (aListWidget == this)
 						aListWidget->mLines.insert(aListWidget->mLines.begin() + i, theLine);
@@ -187,10 +187,10 @@ int ListWidget::AddLine(const SexyString &theLine, bool alphabetical)
 
 		ListWidget *aListWidget = this;
 
-		while (aListWidget->mParent != NULL)
+		while (aListWidget->mParent != nullptr)
 			aListWidget = aListWidget->mParent;
 
-		while (aListWidget != NULL)
+		while (aListWidget != nullptr)
 		{
 			if (aListWidget == this)
 				aListWidget->mLines.push_back(theLine);
@@ -204,7 +204,7 @@ int ListWidget::AddLine(const SexyString &theLine, bool alphabetical)
 		}
 	}
 
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 		mScrollbar->SetMaxValue(mLines.size());
 
 	return anIdx;
@@ -247,10 +247,10 @@ void ListWidget::SetLineColor(int theIdx, const Color &theColor)
 	{
 		ListWidget *aListWidget = this;
 
-		while (aListWidget->mParent != NULL)
+		while (aListWidget->mParent != nullptr)
 			aListWidget = aListWidget->mParent;
 
-		while (aListWidget != NULL)
+		while (aListWidget != nullptr)
 		{
 			aListWidget->mLineColors[theIdx] = theColor;
 			aListWidget->MarkDirty();
@@ -266,10 +266,10 @@ void ListWidget::RemoveLine(int theIdx)
 	{
 		ListWidget *aListWidget = this;
 
-		while (aListWidget->mParent != NULL)
+		while (aListWidget->mParent != nullptr)
 			aListWidget = aListWidget->mParent;
 
-		while (aListWidget != NULL)
+		while (aListWidget != nullptr)
 		{
 			aListWidget->mLines.erase(aListWidget->mLines.begin() + theIdx);
 			aListWidget->mLineColors.erase(aListWidget->mLineColors.begin() + theIdx);
@@ -279,7 +279,7 @@ void ListWidget::RemoveLine(int theIdx)
 		}
 	}
 
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 		mScrollbar->SetMaxValue(mLines.size());
 }
 
@@ -287,10 +287,10 @@ void ListWidget::RemoveAll()
 {
 	ListWidget *aListWidget = this;
 
-	while (aListWidget->mParent != NULL)
+	while (aListWidget->mParent != nullptr)
 		aListWidget = aListWidget->mParent;
 
-	while (aListWidget != NULL)
+	while (aListWidget != nullptr)
 	{
 		aListWidget->mLines.clear();
 		aListWidget->mLineColors.clear();
@@ -301,7 +301,7 @@ void ListWidget::RemoveAll()
 		aListWidget = aListWidget->mChild;
 	}
 
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 		mScrollbar->SetMaxValue(mLines.size());
 }
 
@@ -326,9 +326,9 @@ void ListWidget::OrderInManagerChanged()
 {
 	Widget::OrderInManagerChanged();
 
-	if (mChild != NULL)
+	if (mChild != nullptr)
 		gSexyAppBase->mWidgetManager->PutInfront(mChild, this);
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 		gSexyAppBase->mWidgetManager->PutInfront(mScrollbar, this);
 }
 
@@ -404,7 +404,7 @@ void ListWidget::Draw(Graphics *g)
 
 void ListWidget::ScrollPosition(int theId, double thePosition)
 {
-	if (mChild != NULL)
+	if (mChild != nullptr)
 		mChild->ScrollPosition(theId, thePosition);
 
 	mPosition = thePosition;
@@ -415,7 +415,7 @@ void ListWidget::SetHilite(int theHiliteIdx, bool notifyListener)
 {
 	int anOldIdx = mHiliteIdx;
 	mHiliteIdx = theHiliteIdx;
-	if (anOldIdx != mHiliteIdx && notifyListener && mListListener != NULL)
+	if (anOldIdx != mHiliteIdx && notifyListener && mListListener != nullptr)
 		mListListener->ListHiliteChanged(mId, anOldIdx, mHiliteIdx);
 }
 
@@ -431,10 +431,10 @@ void ListWidget::MouseMove(int x, int y)
 	{
 		ListWidget *aListWidget = this;
 
-		while (aListWidget->mParent != NULL)
+		while (aListWidget->mParent != nullptr)
 			aListWidget = aListWidget->mParent;
 
-		while (aListWidget != NULL)
+		while (aListWidget != nullptr)
 		{
 			aListWidget->SetHilite(aNewHilite, true);
 			aListWidget->MarkDirty();
@@ -450,7 +450,7 @@ void ListWidget::MouseMove(int x, int y)
 
 void ListWidget::MouseDown(int x, int y, int theBtnNum, int theClickCount)
 {
-	if ((mHiliteIdx != -1) && (mListListener != NULL))
+	if ((mHiliteIdx != -1) && (mListListener != nullptr))
 		mListListener->ListClicked(mId, mHiliteIdx, theClickCount);
 }
 
@@ -458,10 +458,10 @@ void ListWidget::MouseLeave()
 {
 	ListWidget *aListWidget = this;
 
-	while (aListWidget->mParent != NULL)
+	while (aListWidget->mParent != nullptr)
 		aListWidget = aListWidget->mParent;
 
-	while (aListWidget != NULL)
+	while (aListWidget != nullptr)
 	{
 		aListWidget->SetHilite(-1, true);
 		aListWidget->MarkDirty();
@@ -475,10 +475,10 @@ void ListWidget::SetSelect(int theSelectIdx)
 {
 	ListWidget *aListWidget = this;
 
-	while (aListWidget->mParent != NULL)
+	while (aListWidget->mParent != nullptr)
 		aListWidget = aListWidget->mParent;
 
-	while (aListWidget != NULL)
+	while (aListWidget != nullptr)
 	{
 		aListWidget->mSelectIdx = theSelectIdx;
 		aListWidget->MarkDirty();
@@ -488,7 +488,7 @@ void ListWidget::SetSelect(int theSelectIdx)
 
 void ListWidget::MouseWheel(int theDelta)
 {
-	if (mScrollbar != NULL)
+	if (mScrollbar != nullptr)
 	{
 		int aScrollAmount = 5;
 		if (theDelta > 0)

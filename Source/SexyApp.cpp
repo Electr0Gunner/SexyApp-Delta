@@ -5,7 +5,7 @@
 
 using namespace Sexy;
 
-SexyApp* Sexy::gSexyApp = NULL;
+SexyApp* Sexy::gSexyApp = nullptr;
 
 // Groups of 80-byte data
 const char DYNAMIC_DATA_BLOCK[400] =
@@ -34,7 +34,7 @@ SexyApp::SexyApp()
 	mCompanyName = "PopCap";
 	mFullCompanyName = "PopCap Games";
 	mInternetManager = /*new InternetManager()*/ nullptr;
-	mBetaSupport = NULL;
+	mBetaSupport = nullptr;
 	mBetaValidate = false;
 	SetString("UPDATE_CHECK_BODY", L"Contacting PopCap.com to determine if there are any updates available for this product ...");
 	char aStr[9] = { 0 };
@@ -102,7 +102,7 @@ void SexyApp::ReadFromRegistry()
 			strcat(aFileName, "\\");
 		strcat(aFileName, "popcinfo.dat");
 		FILE* fp = fopen(aFileName, "rb");
-		if (fp != NULL)
+		if (fp != nullptr)
 		{
 			for (;;)
 			{
@@ -193,7 +193,7 @@ void SexyApp::WriteToRegistry()
 
 		strcat(aFileName, "popcinfo.dat");
 		FILE* fp = fopen(aFileName, "r+b");
-		if (fp != NULL)
+		if (fp != nullptr)
 		{
 			for (;;)
 			{
@@ -216,7 +216,7 @@ void SexyApp::WriteToRegistry()
 		}
 		else
 			fp = fopen(aFileName, "wb");
-		if (fp != NULL)
+		if (fp != nullptr)
 		{
 			ushort aLen = mProdName.length();
 			fwrite(&aLen, 1, sizeof(short), fp);
@@ -249,7 +249,7 @@ bool SexyApp::OpenHTMLTemplate(const std::string& theTemplateFile, const Defines
 
 	WIN32_FIND_DATA aFindData;
 	HANDLE aHandle = FindFirstFile("temp\\tpl*.html", &aFindData);
-	if (aHandle != NULL)
+	if (aHandle != nullptr)
 	{
 		do
 		{
@@ -349,7 +349,7 @@ bool SexyApp::CheckSignature(const Buffer& theBuffer, const std::string& theFile
 		return true;
 	char aSigStr[25];
 	FILE* aFP = fopen((theFileName + ".sig").c_str(), "rb");
-	if (aFP == NULL)
+	if (aFP == nullptr)
 		return false;
 	fread(aSigStr, 1, 24, aFP);
 	aSigStr[24] = 0;
@@ -404,7 +404,7 @@ void SexyApp::HandleCmdLineParam(const std::string& theParamName, const std::str
 			"Version: " + mProductVersion + "\r\n" +
 			"Build Num: " + StrFormat("%d", mBuildNum) + "\r\n" +
 			"Build Date: " + mBuildDate;
-		MessageBox(NULL, aVersionString.c_str(), "Version Info", MB_ICONINFORMATION | MB_OK);
+		MessageBox(nullptr, aVersionString.c_str(), "Version Info", MB_ICONINFORMATION | MB_OK);
 		DoExit(0);
 	}
 	else

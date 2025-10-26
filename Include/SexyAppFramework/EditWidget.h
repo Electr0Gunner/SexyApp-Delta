@@ -58,7 +58,7 @@ namespace Sexy
 		void UpdateCaretPos();
 
 	public:
-		virtual void SetFont(Font *theFont, Font *theWidthCheckFont = NULL);
+		virtual void SetFont(Font *theFont, Font *theWidthCheckFont = nullptr);
 		virtual void SetText(const SexyString &theText, bool leftPosToZero = true);
 		virtual bool IsPartOfWord(SexyChar theChar);
 		virtual int GetCharAt(int x, int y);

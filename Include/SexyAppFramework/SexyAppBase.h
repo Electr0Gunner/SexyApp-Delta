@@ -20,9 +20,9 @@ namespace ImageLib
 namespace Sexy
 {
 	class WidgetManager;
-	class DDInterface;
+	class Renderer;
 	class Image;
-	class DDImage;
+	class GPUImage;
 	class Widget;
 	class SoundManager;
 	class MusicInterface;
@@ -154,6 +154,7 @@ namespace Sexy
 		bool mBetaValidate;
 		uchar mAdd8BitMaxTable[512];
 		WidgetManager* mWidgetManager;
+		Renderer* mRenderer;
 		DialogMap mDialogMap;
 		DialogList mDialogList;
 		DWORD mPrimaryThreadId;
@@ -168,16 +169,13 @@ namespace Sexy
 		bool mInitialized;
 		bool mProcessInTimer;
 		DWORD mTimeLoaded;
-		HWND mHWnd;
 		SDL_Window* mWindow;
-		HWND mInvisHWnd;
 		bool mIsScreenSaver;
 		bool mAllowMonitorPowersave;
 		WindowsMessageList mDeferredMessages;
 		bool mNoDefer;
 		bool mFullScreenPageFlip;
 		bool mTabletPC;
-		DDInterface* mDDInterface;
 		bool mAlphaDisabled;
 		MusicInterface* mMusicInterface;
 		bool mReadFromRegistry;
@@ -406,8 +404,8 @@ namespace Sexy
 
 		virtual void Start();
 		virtual void Init();
-		virtual void PreDDInterfaceInitHook();
-		virtual void PostDDInterfaceInitHook();
+		virtual void PreRendererInitHook();
+		virtual void PostRendererInitHook();
 		virtual bool ChangeDirHook(const char* theIntendedPath);
 		virtual void PlaySample(int theSoundNum);
 		virtual void PlaySample(int theSoundNum, int thePan);
@@ -432,8 +430,8 @@ namespace Sexy
 		void SetCursor(int theCursorNum);
 		int GetCursor();
 		void EnableCustomCursors(bool enabled);
-		virtual DDImage* GetImage(const std::string& theFileName, bool commitBits = true);
-		virtual SharedImageRef GetSharedImage(const std::string& theFileName, const std::string& theVariant = "", bool* isNew = NULL);
+		virtual GPUImage* GetImage(const std::string& theFileName, bool commitBits = true);
+		virtual SharedImageRef GetSharedImage(const std::string& theFileName, const std::string& theVariant = "", bool* isNew = nullptr);
 
 		void CleanSharedImages();
 		void PrecacheAdditive(MemoryImage* theImage);
@@ -441,11 +439,11 @@ namespace Sexy
 		void PrecacheNative(MemoryImage* theImage);
 		void SetCursorImage(int theCursorNum, Image* theImage);
 
-		DDImage* CreateCrossfadeImage(Image* theImage1, const Rect& theRect1, Image* theImage2, const Rect& theRect2, double theFadeFactor);
+		GPUImage* CreateCrossfadeImage(Image* theImage1, const Rect& theRect1, Image* theImage2, const Rect& theRect2, double theFadeFactor);
 		void ColorizeImage(Image* theImage, const Color& theColor);
-		DDImage* CreateColorizedImage(Image* theImage, const Color& theColor);
-		DDImage* CopyImage(Image* theImage, const Rect& theRect);
-		DDImage* CopyImage(Image* theImage);
+		GPUImage* CreateColorizedImage(Image* theImage, const Color& theColor);
+		GPUImage* CopyImage(Image* theImage, const Rect& theRect);
+		GPUImage* CopyImage(Image* theImage);
 		void MirrorImage(Image* theImage);
 		void FlipImage(Image* theImage);
 		void RotateImageHue(Sexy::MemoryImage* theImage, int theDelta);
@@ -559,7 +557,7 @@ namespace Sexy
 		virtual void DoMainLoop();
 		virtual bool UpdateAppStep(bool* updated);
 		virtual bool UpdateApp();
-		int InitDDInterface();
+		int InitRenderer();
 		void ClearUpdateBacklog(bool relaxForASecond = false);
 		bool IsScreenSaver();
 		virtual bool AppCanRestore();

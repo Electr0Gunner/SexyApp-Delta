@@ -40,7 +40,7 @@ Board::Board(GameApp* theApp)
 	// Start off drawing the first frame of mLightningImg
 	mAnimFrame = 0;
 
-	mButton = NULL;
+	mButton = nullptr;
 	
 	mMouseX = mMouseY = 0;
 	mLeftDown = mRightDown = mMiddleDown = false;

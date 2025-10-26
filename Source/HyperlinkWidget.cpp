@@ -17,7 +17,7 @@ HyperlinkWidget::HyperlinkWidget(int theId, ButtonListener* theButtonListener)
 
 void HyperlinkWidget::Draw(Graphics* g)
 {
-	if (mFont == NULL)
+	if (mFont == nullptr)
 		mFont = new SysFont(mWidgetManager->mApp, "Arial Unicode MS", 10); // baz changed
 
 	int aFontX = (mWidth - mFont->StringWidth(mLabel)) / 2;

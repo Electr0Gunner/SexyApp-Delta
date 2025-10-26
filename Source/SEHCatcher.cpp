@@ -14,28 +14,28 @@
 using namespace Sexy;
 
 LPTOP_LEVEL_EXCEPTION_FILTER SEHCatcher::mPreviousFilter;
-SexyAppBase* SEHCatcher::mApp = NULL;
-HFONT SEHCatcher::mDialogFont = NULL;
-HFONT SEHCatcher::mBoldFont = NULL;
+SexyAppBase* SEHCatcher::mApp = nullptr;
+HFONT SEHCatcher::mDialogFont = nullptr;
+HFONT SEHCatcher::mBoldFont = nullptr;
 bool SEHCatcher::mHasDemoFile = false;
 bool SEHCatcher::mDebugError = false;
 std::string SEHCatcher::mErrorTitle;
 std::string SEHCatcher::mErrorText;
 std::string SEHCatcher::mUserText;
 std::string SEHCatcher::mUploadFileName;
-HWND SEHCatcher::mYesButtonWindow = NULL;
-HWND SEHCatcher::mNoButtonWindow = NULL;
-HWND SEHCatcher::mDebugButtonWindow = NULL;
-HWND SEHCatcher::mEditWindow = NULL;
-HMODULE SEHCatcher::mImageHelpLib = NULL;
-SYMINITIALIZEPROC SEHCatcher::mSymInitialize = NULL;
-SYMSETOPTIONSPROC SEHCatcher::mSymSetOptions = NULL;
-UNDECORATESYMBOLNAMEPROC SEHCatcher::mUnDecorateSymbolName = NULL;
-SYMCLEANUPPROC SEHCatcher::mSymCleanup = NULL;
-STACKWALKPROC SEHCatcher::mStackWalk = NULL;
-SYMFUNCTIONTABLEACCESSPROC SEHCatcher::mSymFunctionTableAccess = NULL;
-SYMGETMODULEBASEPROC SEHCatcher::mSymGetModuleBase = NULL;
-SYMGETSYMFROMADDRPROC SEHCatcher::mSymGetSymFromAddr = NULL;
+HWND SEHCatcher::mYesButtonWindow = nullptr;
+HWND SEHCatcher::mNoButtonWindow = nullptr;
+HWND SEHCatcher::mDebugButtonWindow = nullptr;
+HWND SEHCatcher::mEditWindow = nullptr;
+HMODULE SEHCatcher::mImageHelpLib = nullptr;
+SYMINITIALIZEPROC SEHCatcher::mSymInitialize = nullptr;
+SYMSETOPTIONSPROC SEHCatcher::mSymSetOptions = nullptr;
+UNDECORATESYMBOLNAMEPROC SEHCatcher::mUnDecorateSymbolName = nullptr;
+SYMCLEANUPPROC SEHCatcher::mSymCleanup = nullptr;
+STACKWALKPROC SEHCatcher::mStackWalk = nullptr;
+SYMFUNCTIONTABLEACCESSPROC SEHCatcher::mSymFunctionTableAccess = nullptr;
+SYMGETMODULEBASEPROC SEHCatcher::mSymGetModuleBase = nullptr;
+SYMGETSYMFROMADDRPROC SEHCatcher::mSymGetSymFromAddr = nullptr;
 HTTPTransfer SEHCatcher::mSubmitReportTransfer;
 bool SEHCatcher::mExiting = false;
 bool SEHCatcher::mShowUI = true;
@@ -66,7 +66,7 @@ SEHCatcher::~SEHCatcher()
 
 long __stdcall SEHCatcher::UnhandledExceptionFilter(LPEXCEPTION_POINTERS lpExceptPtr)
 {
-	if (mApp != NULL)
+	if (mApp != nullptr)
 		mApp->SEHOccured();
 
 	DoHandleDebugEvent(lpExceptPtr);
@@ -119,18 +119,18 @@ bool SEHCatcher::LoadImageHelp()
 
 	// Get image filename of the main executable
 	char filepath[MAX_PATH], * lastdir, * pPath;
-	DWORD filepathlen = GetModuleFileNameA(NULL, filepath, sizeof(filepath));
+	DWORD filepathlen = GetModuleFileNameA(nullptr, filepath, sizeof(filepath));
 
 	lastdir = strrchr(filepath, '/');
-	if (lastdir == NULL)
+	if (lastdir == nullptr)
 		lastdir = strrchr(filepath, '\\');
-	if (lastdir != NULL)
+	if (lastdir != nullptr)
 		lastdir[0] = '\0';
 
 	// Initialize the symbol table routines, supplying a pointer to the path
 	pPath = filepath;
 	if (strlen(filepath) == 0)
-		pPath = NULL;
+		pPath = nullptr;
 
 	if (!mSymInitialize(GetCurrentProcess(), pPath, TRUE))
 		return false;
@@ -140,7 +140,7 @@ bool SEHCatcher::LoadImageHelp()
 
 void SEHCatcher::UnloadImageHelp()
 {
-	if (mImageHelpLib != NULL)
+	if (mImageHelpLib != nullptr)
 		FreeLibrary(mImageHelpLib);
 }
 
@@ -313,7 +313,7 @@ void SEHCatcher::GetSymbolsFromMapFile(std::string& theDebugDump)
 		}
 	}
 
-	//	MessageBox(NULL,StrFormat("%d",GetTickCount()-aTick).c_str(),"Time",MB_OK);
+	//	MessageBox(nullptr,StrFormat("%d",GetTickCount()-aTick).c_str(),"Time",MB_OK);
 }
 
 void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
@@ -327,7 +327,7 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 
 	///////////////////////////
 	// first name the exception
-	const char* szName = NULL;
+	const char* szName = nullptr;
 	for (int i = 0; gMsgTable[i].dwExceptionCode != 0xFFFFFFFF; i++)
 	{
 		if (gMsgTable[i].dwExceptionCode == lpEP->ExceptionRecord->ExceptionCode)
@@ -337,7 +337,7 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 		}
 	}
 
-	if (szName != NULL)
+	if (szName != nullptr)
 	{
 		sprintf(aBuffer, "Exception: %s (code 0x%x) at address %08p in thread %X\r\n", szName, lpEP->ExceptionRecord->ExceptionCode,
 			lpEP->ExceptionRecord->ExceptionAddress, GetCurrentThreadId());
@@ -403,7 +403,7 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 	aDebugDump += "\r\n";
 	aDebugDump += GetSysInfo();
 
-	if (mApp != NULL)
+	if (mApp != nullptr)
 	{
 		std::string aGameSEHInfo = mApp->GetGameSEHInfo();
 		if (aGameSEHInfo.length() > 0)
@@ -420,7 +420,7 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 
 	WriteToFile(aDebugDump);
 
-	if (mApp != NULL)
+	if (mApp != nullptr)
 	{
 		if (mApp->mRecordingDemoBuffer)
 		{
@@ -448,7 +448,7 @@ void SEHCatcher::DoHandleDebugEvent(LPEXCEPTION_POINTERS lpEP)
 	if (mShowUI)
 		ShowErrorDialog(anErrorTitle, aDebugDump);
 
-	//::MessageBox(NULL, aDebugDump.c_str(), "ERROR", MB_ICONERROR);
+	//::MessageBox(nullptr, aDebugDump.c_str(), "ERROR", MB_ICONERROR);
 
 	UnloadImageHelp();
 }
@@ -530,7 +530,7 @@ std::string SEHCatcher::ImageHelpWalk(PCONTEXT theContext, int theSkipCount)
 
 	for (;;)
 	{
-		if (!mStackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &sf, NULL /*theContext*/, NULL, mSymFunctionTableAccess,
+		if (!mStackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &sf, nullptr /*theContext*/, nullptr, mSymFunctionTableAccess,
 			mSymGetModuleBase, 0))
 		{
 			DWORD lastErr = GetLastError();
@@ -641,7 +641,7 @@ std::string SEHCatcher::GetFilename(const std::string& thePath)
 		return thePath;
 }
 
-HWND gEditWindow = NULL;
+HWND gEditWindow = nullptr;
 int aCount = 0;
 
 static LRESULT CALLBACK SEHProgressWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -710,12 +710,12 @@ static void CreateProgressWindow()
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
-	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
+	wc.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+	wc.hIcon = ::LoadIcon(nullptr, IDI_ERROR);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SEHProgressWindowProc;
 	wc.lpszClassName = "SEHProgressWindow";
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = nullptr;
 	RegisterClassA(&wc);
 
 	RECT aRect;
@@ -729,22 +729,22 @@ static void CreateProgressWindow()
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd = CreateWindowA(
-		"SEHProgressWindow", "Submitting Report", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
+		"SEHProgressWindow", "Submitting Report", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, nullptr, nullptr, hInstance, 0);
 
 	// Check every 20ms to see if the transfer has completed
-	SetTimer(aHWnd, 0, 20, NULL);
+	SetTimer(aHWnd, 0, 20, nullptr);
 
 	// Every second we should change the edit text
-	SetTimer(aHWnd, 1, 1000, NULL);
+	SetTimer(aHWnd, 1, 1000, nullptr);
 
 	gEditWindow = CreateWindowA("EDIT", "Please Wait",
 
-		WS_VISIBLE | WS_CHILD | ES_READONLY, 24, 10, 240 - 8 - 8, 24, aHWnd, NULL, hInstance, 0);
+		WS_VISIBLE | WS_CHILD | ES_READONLY, 24, 10, 240 - 8 - 8, 24, aHWnd, nullptr, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(gEditWindow, WM_SETFONT, (WPARAM)SEHCatcher::mBoldFont, 0);
 
 	SEHCatcher::mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, (240 - 96) / 2, 64 - 22 - 6, 96, 22, aHWnd, NULL, hInstance, 0);
+		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, (240 - 96) / 2, 64 - 22 - 6, 96, 22, aHWnd, nullptr, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(SEHCatcher::mNoButtonWindow, WM_SETFONT, (WPARAM)SEHCatcher::mDialogFont, 0);
 
@@ -928,12 +928,12 @@ void SEHCatcher::ShowSubmitInfoDialog()
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
-	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
+	wc.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+	wc.hIcon = ::LoadIcon(nullptr, IDI_ERROR);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SubmitInfoWindowProc;
 	wc.lpszClassName = "SubmitInfoWindow";
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = nullptr;
 	RegisterClassA(&wc);
 
 	RECT aRect;
@@ -947,11 +947,11 @@ void SEHCatcher::ShowSubmitInfoDialog()
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd = CreateWindowA(
-		"SubmitInfoWindow", "Error Details", aWindowStyle, 64 + 16, 64 + 16, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
+		"SubmitInfoWindow", "Error Details", aWindowStyle, 64 + 16, 64 + 16, aRect.right - aRect.left, aRect.bottom - aRect.top, nullptr, nullptr, hInstance, 0);
 
 	HWND aLabelWindow = CreateWindowW(L"EDIT", mSubmitMessage.c_str(),
 
-		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, hInstance, 0);
+		WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, nullptr, hInstance, 0);
 
 	HDC aDC = ::GetDC(aLabelWindow);
 	int aFontHeight = -MulDiv(9, 96, 72);
@@ -963,7 +963,7 @@ void SEHCatcher::ShowSubmitInfoDialog()
 		SendMessage(aLabelWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	mEditWindow = CreateWindowA(
-		"EDIT", "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL, 8, 300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, hInstance, 0);
+		"EDIT", "", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL, 8, 300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, nullptr, hInstance, 0);
 
 	aDC = ::GetDC(mEditWindow);
 	aFontHeight = -MulDiv(8, 96, 72);
@@ -979,17 +979,17 @@ void SEHCatcher::ShowSubmitInfoDialog()
 
 	aWindowStyle = WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON;
 
-	if (mApp == NULL)
+	if (mApp == nullptr)
 		aWindowStyle |= WS_DISABLED;
 
-	mYesButtonWindow = CreateWindowA("BUTTON", "Continue", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
+	mYesButtonWindow = CreateWindowA("BUTTON", "Continue", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, nullptr, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(mYesButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	aCurX += aButtonWidth + 8;
 
 	mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
+		"BUTTON", "Abort", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, nullptr, hInstance, 0);
 	if (!gUseDefaultFonts)
 		SendMessage(mNoButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -1017,7 +1017,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	mBoldFont = ::CreateFontA(aHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, "Tahoma");
 
-	::SetCursor(::LoadCursor(NULL, IDC_ARROW));
+	::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 
 	mErrorTitle = theErrorTitle;
 	mErrorText = theErrorText;
@@ -1027,12 +1027,12 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hbrBackground = ::GetSysColorBrush(COLOR_BTNFACE);
-	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wc.hIcon = ::LoadIcon(NULL, IDI_ERROR);
+	wc.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+	wc.hIcon = ::LoadIcon(nullptr, IDI_ERROR);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = SEHWindowProc;
 	wc.lpszClassName = "SEHWindow";
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = nullptr;
 	RegisterClassA(&wc);
 
 	RECT aRect;
@@ -1046,10 +1046,10 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	BOOL worked = AdjustWindowRect(&aRect, aWindowStyle, FALSE);
 
 	HWND aHWnd =
-		CreateWindowW(L"SEHWindow", L"Fatal Error!", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, NULL, NULL, hInstance, 0);
+		CreateWindowW(L"SEHWindow", L"Fatal Error!", aWindowStyle, 64, 64, aRect.right - aRect.left, aRect.bottom - aRect.top, nullptr, nullptr, hInstance, 0);
 
 	HWND aLabelWindow =
-		CreateWindowW(L"EDIT", mCrashMessage.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, NULL, hInstance, 0);
+		CreateWindowW(L"EDIT", mCrashMessage.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_READONLY, 8, 8, 400 - 8 - 8, 84, aHWnd, nullptr, hInstance, 0);
 
 	int aFontHeight = -MulDiv(9, 96, 72);
 	HFONT aBoldArialFont = CreateFontA(aFontHeight, 0, 0, 0, FW_BOLD, 0, 0, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -1059,7 +1059,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 		SendMessage(aLabelWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
 	HWND anEditWindow = CreateWindowA("EDIT", theErrorText.c_str(), WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL | ES_READONLY, 8,
-		300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, NULL, hInstance, 0);
+		300 - 168 - 24 - 8 - 8, 400 - 8 - 8, 168, aHWnd, nullptr, hInstance, 0);
 
 	aFontHeight = -MulDiv(8, 96, 72);
 	HFONT aCourierNewFont = CreateFontA(aFontHeight, 0, 0, 0, FW_NORMAL, 0, 0, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -1069,7 +1069,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 
 	aWindowStyle = WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON;
 
-	if (mApp == NULL)
+	if (mApp == nullptr)
 		aWindowStyle |= WS_DISABLED;
 
 #ifdef _DEBUG
@@ -1087,7 +1087,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 
 	if (canSubmit)
 	{
-		mYesButtonWindow = CreateWindowA("BUTTON", "Send Report", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
+		mYesButtonWindow = CreateWindowA("BUTTON", "Send Report", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, nullptr, hInstance, 0);
 		if (!gUseDefaultFonts)
 			SendMessage(mYesButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -1096,7 +1096,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 
 	if (doDebugButton)
 	{
-		mDebugButtonWindow = CreateWindowA("BUTTON", "Debug", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
+		mDebugButtonWindow = CreateWindowA("BUTTON", "Debug", aWindowStyle, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, nullptr, hInstance, 0);
 		if (!gUseDefaultFonts)
 			SendMessage(mDebugButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
 
@@ -1104,7 +1104,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	}
 
 	mNoButtonWindow = CreateWindowA(
-		"BUTTON", "Close Now", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, NULL, hInstance, 0);
+		"BUTTON", "Close Now", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON, aCurX, 300 - 24 - 8, aButtonWidth, 24, aHWnd, nullptr, hInstance, 0);
 
 	if (!gUseDefaultFonts)
 		SendMessage(mNoButtonWindow, WM_SETFONT, (WPARAM)aBoldArialFont, 0);
@@ -1112,7 +1112,7 @@ void SEHCatcher::ShowErrorDialog(const std::string& theErrorTitle, const std::st
 	ShowWindow(aHWnd, SW_NORMAL);
 
 	MSG msg;
-	while ((GetMessage(&msg, NULL, 0, 0) > 0) && (!mExiting))
+	while ((GetMessage(&msg, nullptr, 0, 0) > 0) && (!mExiting))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -1189,10 +1189,10 @@ std::string SEHCatcher::GetSysInfo()
 	HMODULE aMod;
 	char aPath[256];
 
-	if (mApp != NULL)
+	if (mApp != nullptr)
 	{
 		aMod = LoadLibraryA("ddraw.dll");
-		if (aMod != NULL)
+		if (aMod != nullptr)
 		{
 			GetModuleFileNameA(aMod, aPath, 256);
 			aDebugDump += "DDraw Ver: " + mApp->GetProductVersion(aPath) + "\r\n";

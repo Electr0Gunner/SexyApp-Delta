@@ -11,7 +11,7 @@
 extern bool gInAssert = false;
 extern bool gSexyDumpLeakedMem = false;
 
-static FILE* gTraceFile = NULL;
+static FILE* gTraceFile = nullptr;
 static int gTraceFileLen = 0;
 static int gTraceFileNum = 1;
 
@@ -51,13 +51,13 @@ static SexyAllocMap gSexyAllocMap;
 ///////////////////////////////////////////////////////////////////////////////
 void SexyTrace(const char* theStr)
 {
-	if (gTraceFile == NULL)
+	if (gTraceFile == nullptr)
 	{
 		gTraceFileNum = (gTraceFileNum + 1) % 2;
 		char aBuf[50];
 		sprintf(aBuf, "trace%d.txt", gTraceFileNum + 1);
 		gTraceFile = fopen(aBuf, "w");
-		if (gTraceFile == NULL)
+		if (gTraceFile == nullptr)
 			return;
 	}
 
@@ -68,7 +68,7 @@ void SexyTrace(const char* theStr)
 	if (gTraceFileLen > 100000)
 	{
 		fclose(gTraceFile);
-		gTraceFile = NULL;
+		gTraceFile = nullptr;
 		gTraceFileLen = 0;
 	}
 }
@@ -84,13 +84,13 @@ void SexyTraceFmt(const SexyChar* fmt...)
 	std::string result = SexyStringToStringFast(vformat(fmt, argList));
 	va_end(argList);
 
-	if (gTraceFile == NULL)
+	if (gTraceFile == nullptr)
 	{
 		gTraceFileNum = (gTraceFileNum + 1) % 2;
 		char aBuf[50];
 		sprintf(aBuf, "trace%d.txt", gTraceFileNum + 1);
 		gTraceFile = fopen(aBuf, "w");
-		if (gTraceFile == NULL)
+		if (gTraceFile == nullptr)
 			return;
 	}
 
@@ -101,7 +101,7 @@ void SexyTraceFmt(const SexyChar* fmt...)
 	if (gTraceFileLen > 100000)
 	{
 		fclose(gTraceFile);
-		gTraceFile = NULL;
+		gTraceFile = nullptr;
 		gTraceFileLen = 0;
 	}
 }
@@ -158,7 +158,7 @@ void SexyDumpUnfreed()
 	if (!f)
 		return;
 
-	time_t aTime = time(NULL);
+	time_t aTime = time(nullptr);
 	sprintf(buf, "Memory Leak Report for %s\n", asctime(localtime(&aTime)));
 	fprintf(f, buf);
 	OutputDebugString("\n");

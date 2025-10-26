@@ -15,7 +15,7 @@ using namespace Sexy;
 
 static void printALCSOFTSystemEventIsSupportedResult(LPALCEVENTISSUPPORTEDSOFT alcEventIsSupportedSOFT, ALCenum eventType, ALCenum deviceType)
 {
-    if (alcEventIsSupportedSOFT == NULL)
+    if (alcEventIsSupportedSOFT == nullptr)
     {
         printf("ERROR (alcEventIsSupportedSOFT missing)\n");
         return;
@@ -94,7 +94,7 @@ OpenALSoundManager::~OpenALSoundManager()
 
 bool OpenALSoundManager::Initialized()
 {
-	return (mSoundContext != NULL && mSoundDevice != NULL);
+	return (mSoundContext != nullptr && mSoundDevice != nullptr);
 }
 
 // ----- Property control -----
@@ -113,7 +113,7 @@ void OpenALSoundManager::SetVolume(double theVolume)
 	mMasterVolume = theVolume;
 
 	for (int i = 0; i < MAX_CHANNELS; i++)
-		if (mPlayingSounds[i] != NULL)
+		if (mPlayingSounds[i] != nullptr)
 			mPlayingSounds[i]->RehupVolume();
 }
 
@@ -165,7 +165,7 @@ int OpenALSoundManager::GetFreeSoundId()
 {
 	for (int i = 0; i < MAX_SOURCE_SOUNDS; i++)
 	{
-		if (mSoundBuffers[i] == NULL)
+		if (mSoundBuffers[i] == nullptr)
 			return i;
 	}
 
@@ -195,13 +195,13 @@ int OpenALSoundManager::FindFreeChannel()
 
 	for (int i = 0; i < MAX_CHANNELS; i++)
 	{
-		if (mPlayingSounds[i] == NULL)
+		if (mPlayingSounds[i] == nullptr)
 			return i;
 
 		if (mPlayingSounds[i]->IsReleased())
 		{
 			delete mPlayingSounds[i];
-			mPlayingSounds[i] = NULL;
+			mPlayingSounds[i] = nullptr;
 			return i;
 		}
 	}
@@ -221,7 +221,7 @@ SoundInstance* OpenALSoundManager::GetSoundInstance(unsigned int theSfxID)
 	if (aFreeChannel < 0)
 		return nullptr;
 
-	if (mSoundBuffers[theSfxID] == NULL)
+	if (mSoundBuffers[theSfxID] == nullptr)
 		return nullptr;
 
 	mPlayingSounds[aFreeChannel] = new OpenALSoundInstance(this, mSoundBuffers[theSfxID]);
@@ -274,7 +274,7 @@ int OpenALSoundManager::LoadSound(const std::string& theFilename)
 
 	for (i = MAX_SOURCE_SOUNDS - 1; i >= 0; i--)
 	{
-		if (mSoundBuffers[i] == NULL)
+		if (mSoundBuffers[i] == nullptr)
 		{
 			if (!LoadSound(i, theFilename))
 				return -1;
@@ -319,27 +319,27 @@ void OpenALSoundManager::ReleaseSounds()
 void OpenALSoundManager::ReleaseChannels()
 {
 	for (int i = 0; i < MAX_CHANNELS; i++)
-		if (mPlayingSounds[i] != NULL)
+		if (mPlayingSounds[i] != nullptr)
 		{
 			delete mPlayingSounds[i];
-			mPlayingSounds[i] = NULL;
+			mPlayingSounds[i] = nullptr;
 		}
 }
 
 void OpenALSoundManager::ReleaseFreeChannels()
 {
 	for (int i = 0; i < MAX_CHANNELS; i++)
-		if (mPlayingSounds[i] != NULL && mPlayingSounds[i]->IsReleased())
+		if (mPlayingSounds[i] != nullptr && mPlayingSounds[i]->IsReleased())
 		{
 			delete mPlayingSounds[i];
-			mPlayingSounds[i] = NULL;
+			mPlayingSounds[i] = nullptr;
 		}
 }
 
 void OpenALSoundManager::StopAllSounds()
 {
 	for (int i = 0; i < MAX_CHANNELS; i++)
-		if (mPlayingSounds[i] != NULL)
+		if (mPlayingSounds[i] != nullptr)
 		{
 			bool isAutoRelease = mPlayingSounds[i]->mAutoRelease;
 			mPlayingSounds[i]->Stop();
@@ -375,7 +375,7 @@ bool OpenALSoundManager::DecodeSound(unsigned int theSfxID, const std::string& t
 		p_fclose(fp);
 
 		ma_decoder decoder;
-		ma_result result = ma_decoder_init_memory(data, fileSize, NULL, &decoder);
+		ma_result result = ma_decoder_init_memory(data, fileSize, nullptr, &decoder);
 
         if (result != MA_SUCCESS)
 		{
@@ -458,7 +458,7 @@ bool OpenALSoundManager::DecodeOGGFormat(unsigned int theSfxID, const std::strin
 	if (!aFile)
 		return false;
 
-	if (ov_pak_open(aFile, &vf, NULL, 0) < 0)
+	if (ov_pak_open(aFile, &vf, nullptr, 0) < 0)
 	{
 		p_fclose(aFile);
 		return false;

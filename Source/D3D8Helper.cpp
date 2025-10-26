@@ -218,24 +218,24 @@ DECLARE_INTERFACE_(IDirect3D8, IUnknown)
 		IDirect3DDevice8 * *ppReturnedDeviceInterface) PURE;
 };
 
-HMODULE gD3D8Lib = NULL;
-LPDIRECT3D8 gD3D8 = NULL;
+HMODULE gD3D8Lib = nullptr;
+LPDIRECT3D8 gD3D8 = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static bool GetD3D8AdapterInfo2(GUID& theGUID, std::string& theDriver, std::string& theDescription)
 {
 	gD3D8Lib = LoadLibraryA("d3d8.dll");
-	if (gD3D8Lib == NULL)
+	if (gD3D8Lib == nullptr)
 		return false;
 
 	typedef IDirect3D8*(WINAPI * Direct3DCreate8Func)(UINT SDKVersion);
 	Direct3DCreate8Func aDirect3DCreate8Func = (Direct3DCreate8Func)GetProcAddress(gD3D8Lib, "Direct3DCreate8");
-	if (aDirect3DCreate8Func == NULL)
+	if (aDirect3DCreate8Func == nullptr)
 		return false;
 
 	gD3D8 = aDirect3DCreate8Func(D3D_SDK_VERSION);
-	if (gD3D8 == NULL)
+	if (gD3D8 == nullptr)
 		return false;
 
 	D3DADAPTER_IDENTIFIER8 anId;
@@ -254,21 +254,21 @@ static bool GetD3D8AdapterInfo2(GUID& theGUID, std::string& theDriver, std::stri
 ///////////////////////////////////////////////////////////////////////////////
 bool Sexy::GetD3D8AdapterInfo(GUID& theGUID, std::string& theDriver, std::string& theDescription)
 {
-	gD3D8 = NULL;
-	gD3D8Lib = NULL;
+	gD3D8 = nullptr;
+	gD3D8Lib = nullptr;
 
 	bool aResult = GetD3D8AdapterInfo2(theGUID, theDriver, theDescription);
 
 	if (gD3D8)
 	{
 		gD3D8->Release();
-		gD3D8 = NULL;
+		gD3D8 = nullptr;
 	}
 
 	if (gD3D8Lib)
 	{
 		FreeLibrary(gD3D8Lib);
-		gD3D8Lib = NULL;
+		gD3D8Lib = nullptr;
 	}
 
 	return aResult;

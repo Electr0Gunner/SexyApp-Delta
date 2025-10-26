@@ -20,8 +20,8 @@ BassMusicInfo::BassMusicInfo()
 	mVolumeAdd = 0.0;
 	mVolumeCap = 1.0;
 	mStopOnFade = false;
-	mHMusic = NULL;
-	mHStream = NULL;
+	mHMusic = nullptr;
+	mHStream = nullptr;
 }
 
 BassMusicInterface::BassMusicInterface(HWND theHWnd)
@@ -60,7 +60,7 @@ BassMusicInterface::BassMusicInterface(HWND theHWnd)
 
 	BOOL success;
 
-	success = BASS_Init(-1, 44100, 0, theHWnd, NULL);
+	success = BASS_Init(-1, 44100, 0, theHWnd, nullptr);
 	BASS_SetConfig(BASS_CONFIG_BUFFER, 2000);
 
 	mixerSetControlDetails(phmx, &mcd, 0L);
@@ -82,8 +82,8 @@ BassMusicInterface::~BassMusicInterface()
 
 bool BassMusicInterface::LoadMusic(int theSongId, const std::string& theFileName)
 {
-	HMUSIC aHMusic = NULL;
-	HSTREAM aStream = NULL;
+	HMUSIC aHMusic = nullptr;
+	HSTREAM aStream = nullptr;
 
 	std::string anExt;
 	int aDotPos = theFileName.find_last_of('.');
@@ -95,7 +95,7 @@ bool BassMusicInterface::LoadMusic(int theSongId, const std::string& theFileName
 	else
 	{
 		PFILE* aFP = p_fopen(theFileName.c_str(), "rb");
-		if (aFP == NULL)
+		if (aFP == nullptr)
 			return false;
 
 		p_fseek(aFP, 0, SEEK_END);
@@ -111,7 +111,7 @@ bool BassMusicInterface::LoadMusic(int theSongId, const std::string& theFileName
 		delete aData;
 	}
 
-	if (aHMusic == NULL && aStream == NULL)
+	if (aHMusic == nullptr && aStream == nullptr)
 		return false;
 
 	BassMusicInfo aMusicInfo;
