@@ -24,7 +24,23 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
-FetchContent_MakeAvailable(ogg vorbis zlib openal)
+FetchContent_Declare(
+    sdl
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL
+    GIT_TAG main
+)
 
-add_library(misc STATIC Source/stb_image.cpp)
-target_include_directories(misc PUBLIC Include)
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm
+  GIT_TAG master
+)
+
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
+set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(ogg vorbis zlib openal sdl glm)
+
+add_library(ThirdParty STATIC Source/stb_image.cpp)
+target_link_libraries(ThirdParty PUBLIC glm SDL3::SDL3-static OpenAL ogg Vorbis::vorbisfile Vorbis::vorbis zlibstatic )
+target_include_directories(ThirdParty PUBLIC Include)

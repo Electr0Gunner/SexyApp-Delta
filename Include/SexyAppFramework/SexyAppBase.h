@@ -10,6 +10,7 @@
 #include <SexyAppFramework/Rect.h>
 #include <SexyAppFramework/SharedImage.h>
 #include <SexyAppFramework/WidgetManager.h>
+#include <SDL3/SDL_video.h>
 
 namespace ImageLib
 {
@@ -168,6 +169,7 @@ namespace Sexy
 		bool mProcessInTimer;
 		DWORD mTimeLoaded;
 		HWND mHWnd;
+		SDL_Window* mWindow;
 		HWND mInvisHWnd;
 		bool mIsScreenSaver;
 		bool mAllowMonitorPowersave;
