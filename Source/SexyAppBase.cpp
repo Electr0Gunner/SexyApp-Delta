@@ -2286,7 +2286,7 @@ bool SexyAppBase::DrawDirtyStuff()
 {
 	SEXY_AUTO_PERF("SexyAppBase::DrawDirtyStuff");
 	MTAutoDisallowRand aDisallowRand;
-	mRenderer->PreDraw();
+
 	if (gIsFailing) // just try to reinit
 	{
 		Redraw(nullptr);

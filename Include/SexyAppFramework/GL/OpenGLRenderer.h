@@ -27,6 +27,16 @@ namespace Sexy
         glm::vec4 mColor;
     };
 
+    struct GLDrawCommand
+    {
+        GLenum mPrimitiveType;
+        GLuint mTextureID;
+        BlendMode mBlendMode;
+        std::vector<GLVertex> mVertices;
+        GLShader *mShader = nullptr;
+        const Rect *mClipRect = nullptr;
+    };
+
     typedef std::set<GLImage* > GLImageSet;
 
     inline const std::unordered_map<BlendMode, GLBlendFunc> gGLBlendModeFuncs = {
@@ -60,6 +70,7 @@ namespace Sexy
         GLShader* mDefaultShader;
         GLImageSet mImageSet;
         glm::mat4 mProjection;
+        std::vector<GLDrawCommand> mCommandBuffer;
     public:
         OpenGLRenderer(SexyAppBase* theApp);
         ~OpenGLRenderer();
@@ -118,6 +129,8 @@ namespace Sexy
         virtual void DrawTriangle(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor,
                                 int theDrawMode);
 
+        virtual void DrawTriangleClipped(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, const Rect *theClipRect, int theDrawMode);
+
         virtual void DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor,
                                     int theDrawMode, Image *theTexture, bool blend = true);
 
@@ -137,6 +150,7 @@ namespace Sexy
         //Renderer specific
         GLImage* SetupImage(Image *theImage);
         void ApplyBlendMode(BlendMode theMode);
+        void AddCommand(const GLDrawCommand &command);
 
     };
 } // namespace Sexy

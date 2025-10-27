@@ -92,6 +92,8 @@ void OpenGLRenderer::Cleanup()
 	}
 	mImageSet.clear();
 
+	mCommandBuffer.clear();
+
     SDL_GL_DestroyContext(mContext);
 	
 
@@ -203,11 +205,51 @@ bool OpenGLRenderer::Redraw(Rect* theClipRect)
 {
     SDL_GL_SwapWindow(mApp->mWindow);
 
+	if (mCommandBuffer.empty())
+		return !gRendererPreDrawError;
+
 	glClear(GL_COLOR_BUFFER_BIT);
     glViewport(mPresentationRect.mX, mPresentationRect.mY, mPresentationRect.mWidth, mPresentationRect.mHeight);
 
+	PreDraw();
+
+	for (const auto &cmd : mCommandBuffer)
+	{
+		if (cmd.mVertices.size() > MAX_VERTICES)
+			continue; // Add a warning
+
+		ApplyBlendMode(cmd.mBlendMode);
+		GLShader *aShaderToUse;
+		if (cmd.mShader != nullptr)
+			aShaderToUse = cmd.mShader;
+		else
+			aShaderToUse = mDefaultShader;
+
+		if (cmd.mClipRect != nullptr)
+		{
+			glEnable(GL_SCISSOR_TEST);
+			// glScissor(cmd.mClipRect->mX, cmd.mClipRect->mY, cmd.mClipRect->mWidth, cmd.mClipRect->mHeight);
+		}
+
+		aShaderToUse->Use();
+		aShaderToUse->SetUniform("uProjection", mProjection);
+		aShaderToUse->SetUniform("uUseTexture", (cmd.mTextureID != 0));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, cmd.mTextureID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, cmd.mVertices.size() * sizeof(GLVertex), cmd.mVertices.data());
+		glDrawArrays(cmd.mPrimitiveType, 0, (GLsizei)cmd.mVertices.size());
+	}
+
+	mCommandBuffer.clear();
+
+	glDisable(GL_SCISSOR_TEST);
 
     return !gRendererPreDrawError;
+}
+
+void OpenGLRenderer::AddCommand(const GLDrawCommand &command)
+{
+	mCommandBuffer.push_back(command);
 }
 
 void OpenGLRenderer::SetVideoOnlyDraw(bool videoOnly)
@@ -378,7 +420,6 @@ void OpenGLRenderer::ApplyBlendMode(BlendMode theMode)
 
 void OpenGLRenderer::Blt(Image *theImage, int theX, int theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter)
 {
-    ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
     glm::vec2 p0 = {theX, theY};
@@ -407,20 +448,15 @@ void OpenGLRenderer::Blt(Image *theImage, int theX, int theY, const Rect &theSrc
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::BltClipF(Image *theImage, float theX, float theY, const Rect &theSrcRect, const Rect *theClipRect, const Color &theColor, int theDrawMode)
@@ -454,25 +490,15 @@ void OpenGLRenderer::BltClipF(Image *theImage, float theX, float theY, const Rec
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = theClipRect;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glEnable(GL_SCISSOR_TEST);
-    if (theClipRect != nullptr)
-        glScissor(theClipRect->mX, theClipRect->mY, theClipRect->mWidth, theClipRect->mHeight);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
-    
-    glDisable(GL_SCISSOR_TEST);
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::BltMirror(Image *theImage, float theX, float theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter)
@@ -508,20 +534,15 @@ void OpenGLRenderer::BltMirror(Image *theImage, float theX, float theY, const Re
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::StretchBlt(Image *theImage, const Rect &theDestRect, const Rect &theSrcRect, const Rect *theClipRect, const Color &theColor, int theDrawMode, bool fastStretch, bool mirror)
@@ -560,25 +581,15 @@ void OpenGLRenderer::StretchBlt(Image *theImage, const Rect &theDestRect, const 
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = theClipRect;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glEnable(GL_SCISSOR_TEST);
-    if (theClipRect != nullptr)
-        glScissor(theClipRect->mX, theClipRect->mY, theClipRect->mWidth, theClipRect->mHeight);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
-    
-    glDisable(GL_SCISSOR_TEST);
+	AddCommand(aCmd);
 }
 
 //rotation is so annoying...
@@ -634,25 +645,15 @@ void OpenGLRenderer::BltRotated(Image *theImage, float theX, float theY, const R
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = theClipRect;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glEnable(GL_SCISSOR_TEST);
-    if (theClipRect != nullptr)
-        glScissor(theClipRect->mX, theClipRect->mY, theClipRect->mWidth, theClipRect->mHeight);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
-    
-    glDisable(GL_SCISSOR_TEST);
+	AddCommand(aCmd);
 }
 
 glm::vec2 TransformToGLMPoint(float x, float y, const SexyMatrix3 &m, float aTransX = 0, float aTransY = 0)
@@ -708,25 +709,15 @@ void OpenGLRenderer::BltTransformed(Image *theImage, const Rect *theClipRect, co
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = theClipRect;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glEnable(GL_SCISSOR_TEST);
-    if (theClipRect != nullptr)
-        glScissor(theClipRect->mX, theClipRect->mY, theClipRect->mWidth, theClipRect->mHeight);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
-    
-    glDisable(GL_SCISSOR_TEST);
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::DrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color &theColor, int theDrawMode)
@@ -740,18 +731,15 @@ void OpenGLRenderer::DrawLine(double theStartX, double theStartY, double theEndX
 	aVertexArray.push_back({{theStartX, theStartY}, {}, aColor});
 	aVertexArray.push_back({{theEndX, theEndY}, {}, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_LINES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = 0;
+	aCmd.mShader = nullptr;
 
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_LINES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::FillRect(const Rect &theRect, const Color &theColor, int theDrawMode)
@@ -774,21 +762,23 @@ void OpenGLRenderer::FillRect(const Rect &theRect, const Color &theColor, int th
 	aVertexArray.push_back({p3, {}, aColor});
 	aVertexArray.push_back({p0, {}, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = 0;
+	aCmd.mShader = nullptr;
 
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::DrawTriangle(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, int theDrawMode)
+{
+    DrawTriangleClipped(p1, p2, p3, theColor, nullptr, theDrawMode);
+}
+
+void OpenGLRenderer::DrawTriangleClipped(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, const Rect *theClipRect, int theDrawMode)
 {
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
 
@@ -803,18 +793,15 @@ void OpenGLRenderer::DrawTriangle(const TriVertex &p1, const TriVertex &p2, cons
 	aVertexArray.push_back({vert1, {p2.u, p2.v}, aColor});
 	aVertexArray.push_back({vert2, {p3.u, p3.v}, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = theClipRect;
+	aCmd.mPrimitiveType = GL_LINES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = 0;
+	aCmd.mShader = nullptr;
 
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_LINES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, int theDrawMode, Image *theTexture, bool blend)
@@ -833,20 +820,15 @@ void OpenGLRenderer::DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, c
 	aVertexArray.push_back({vert1, {p2.u, p2.v}, aColor});
 	aVertexArray.push_back({vert2, {p3.u, p3.v}, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = static_cast<GLTextureData*>(aImg->mD3DData)->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 void OpenGLRenderer::DrawTrianglesTex(const TriVertex theVertices[][3], int theNumTriangles, const Color &theColor, int theDrawMode, Image *theTexture, float tx, float ty, bool blend)
@@ -903,12 +885,8 @@ void OpenGLRenderer::FillPoly(const Point theVertices[], int theNumVertices, con
 		v2.x = theVertices[i + 1].mX + tx;
 		v2.y = theVertices[i + 1].mY + ty;
 
-        glEnable(GL_SCISSOR_TEST);
-        if (theClipRect != nullptr)
-            glScissor(theClipRect->mX, theClipRect->mY, theClipRect->mWidth, theClipRect->mHeight);
-		DrawTriangle(v0, v1, v2, theColor, theDrawMode);
+		DrawTriangleClipped(v0, v1, v2, theColor, theClipRect, theDrawMode);
 	}
-    glDisable(GL_SCISSOR_TEST);
 }
 
 void OpenGLRenderer::BltTexture(Texture *theTexture, const Rect &theSrcRect, const Rect &theDestRect, const Color &theColor, int theDrawMode)
@@ -942,20 +920,15 @@ void OpenGLRenderer::BltTexture(Texture *theTexture, const Rect &theSrcRect, con
 	aVertexArray.push_back({p3, uv3, aColor});
 	aVertexArray.push_back({p0, uv0, aColor});
 
-    GLShader* aShaderToUse;
-   // if (cmd.mShader != nullptr)
-    //    aShaderToUse = cmd.mShader;
-  //  else
-        aShaderToUse = mDefaultShader;
+	GLDrawCommand aCmd;
+	aCmd.mClipRect = nullptr;
+	aCmd.mPrimitiveType = GL_TRIANGLES;
+	aCmd.mBlendMode = ChooseBlendMode(theDrawMode);
+	aCmd.mVertices = aVertexArray;
+	aCmd.mTextureID = aTex->mTextureID;
+	aCmd.mShader = nullptr;
 
-    GLuint aTextureID = aTex->mTextureID;
-    aShaderToUse->Use();
-    aShaderToUse->SetUniform("uProjection", mProjection);
-    aShaderToUse->SetUniform("uUseTexture", (aTextureID != 0));
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, aTextureID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
+	AddCommand(aCmd);
 }
 
 GLTextureData::GLTextureData()
