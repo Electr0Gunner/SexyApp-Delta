@@ -3614,13 +3614,16 @@ void SexyAppBase::EnforceCursor()
 		}
 		else
 		{
+			MemoryImage* aCast = static_cast<MemoryImage*>(mCursorImages[static_cast<int>(mCursorNum)]);
 			SDL_Surface *aSurface = SDL_CreateSurfaceFrom(
 				mCursorImages[static_cast<int>(mCursorNum)]->mWidth,
 				mCursorImages[static_cast<int>(mCursorNum)]->mHeight,
 				SDL_PIXELFORMAT_ARGB8888,
-				static_cast<MemoryImage*>(mCursorImages[static_cast<int>(mCursorNum)])->GetBits(),
+				aCast->mBits,
 				mCursorImages[static_cast<int>(mCursorNum)]->mWidth * sizeof(ulong)
 			);
+
+			const char* err = SDL_GetError();
 
 			SDL_Cursor *aCursor = SDL_CreateColorCursor(
 				aSurface,

@@ -9,7 +9,7 @@
 // A DDImage is actually derived from MemoryImage, so where an Image or
 // MemoryImage is required, a DDImage will suffice as well. A DDImage
 // contains optimized code for use with DirectX 7+.
-#include "SexyAppFramework/DDImage.h"
+#include "SexyAppFramework/GPUImage.h"
 
 // We're going to create a font for Board's button widget's label
 #include "SexyAppFramework/ImageFont.h"
@@ -131,7 +131,7 @@ void GameApp::LoadingThreadProc()
 	//	underscore instead of ending with it, it matters not, and again,
 	//	is automatically loaded in by the image loading code.
 	//	You need to clean up the memory allocated by these functions yourself.
-	mTurbotImg = (DDImage*) GetImage("images/turbot_worry");
+	mTurbotImg = (GPUImage*) GetImage("images/turbot_worry");
 
 	// If the file was not found or couldn't be loaded (i.e. due to an
 	// incompatible file format) the returned value will be nullptr.
@@ -150,7 +150,7 @@ void GameApp::LoadingThreadProc()
 		return;
 	}
 
-	mLightningImg = (DDImage*) GetImage("images/lightning");
+	mLightningImg = (GPUImage*) GetImage("images/lightning");
 	if (mLightningImg == nullptr)
 	{
 		mLoadingFailed = true;
@@ -254,7 +254,7 @@ void GameApp::LoadingThreadCompleted()
 
 	// 1. Let's make a copy of the image so we don't ruin the original.
 	// We should make sure to delete this when we're done.
-	mAlteredImg = (DDImage*) CopyImage(mTurbotImg);
+	mAlteredImg = (GPUImage*) CopyImage(mTurbotImg);
 
 	// 2. Now we need to get the pixel data. The pixel data is stored as
 	// an unsigned long array, where each entry represents the RGBA value.
