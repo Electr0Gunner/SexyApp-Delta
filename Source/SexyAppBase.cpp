@@ -1020,7 +1020,7 @@ std::string SexyAppBase::GetProductVersion(const std::string& thePath)
 void SexyAppBase::WaitForLoadingThread()
 {
 	while ((mLoadingThreadStarted) && (!mLoadingThreadCompleted))
-		Sleep(20);
+		SDL_Delay(20);
 }
 
 void SexyAppBase::SetCursorImage(int theCursorNum, Image* theImage)
@@ -1986,7 +1986,7 @@ void SexyAppBase::Shutdown()
 		// Blah
 		while (mCursorThreadRunning)
 		{
-			Sleep(10);
+			SDL_Delay(10);
 		}
 
 		if (mMusicInterface != nullptr)
@@ -2049,8 +2049,8 @@ bool SexyAppBase::DoUpdateFrames()
 	{
 		if ((mLoadingThreadCompleted) && (!mLoaded) && (mDemoLoadingComplete))
 		{
+			SDL_SetCurrentThreadPriority(SDL_THREAD_PRIORITY_NORMAL);
 			mLoaded = true;
-			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 			mYieldMainThread = false;
 			LoadingThreadCompleted();
 		}
@@ -2068,7 +2068,7 @@ bool SexyAppBase::DoUpdateFrames()
 	{
 		if ((mLoadingThreadCompleted) && (!mLoaded))
 		{
-			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
+			SDL_SetCurrentThreadPriority(SDL_THREAD_PRIORITY_NORMAL);
 			mLoaded = true;
 			mYieldMainThread = false;
 			LoadingThreadCompleted();
@@ -2360,7 +2360,7 @@ bool SexyAppBase::DrawDirtyStuff()
 		{
 			DWORD aTick = timeGetTime();
 			if (aTick - mLastDrawTick < mRenderer->mMillisecondsPerFrame)
-				Sleep(mRenderer->mMillisecondsPerFrame - (aTick - mLastDrawTick));
+				SDL_Delay(mRenderer->mMillisecondsPerFrame - (aTick - mLastDrawTick));
 		}
 
 		DWORD aPreScreenBltTime = timeGetTime();
@@ -3474,15 +3474,15 @@ void SexyAppBase::LoadingThreadCompleted() {}
 
 int SexyAppBase::LoadingThreadProcStub(void* theArg)
 {
-	SexyAppBase* aPopLibApp = (SexyAppBase*)theArg;
+	SexyAppBase* aSexyApp = (SexyAppBase*)theArg;
 
-	aPopLibApp->LoadingThreadProc();
+	aSexyApp->LoadingThreadProc();
 
 	char aStr[256];
-	sprintf(aStr, "Resource Loading Time: %lu\n", (SDL_GetTicks() - aPopLibApp->mTimeLoaded));
+	sprintf(aStr, "Resource Loading Time: %lu\n", (SDL_GetTicks() - aSexyApp->mTimeLoaded));
 	printf("%s", aStr);
 
-	aPopLibApp->mLoadingThreadCompleted = true;
+	aSexyApp->mLoadingThreadCompleted = true;
 
 	return 0;
 }
@@ -3919,7 +3919,7 @@ bool SexyAppBase::Process(bool allowSleep)
 
 					// Wait till next processing cycle
 					++mSleepCount;
-					Sleep(aTimeToNextFrame);
+					SDL_Delay(aTimeToNextFrame);
 
 					aCumSleepTime += aTimeToNextFrame;
 				}
@@ -3940,7 +3940,7 @@ bool SexyAppBase::Process(bool allowSleep)
 				if (!allowSleep)
 					return false;
 
-				Sleep(aLoadingYieldSleepTime);
+				SDL_Delay(aLoadingYieldSleepTime);
 			}
 		}
 	}
@@ -4010,13 +4010,6 @@ bool SexyAppBase::UpdateAppStep(bool* updated)
 	//  condition has already been met by processing windows messages
 	if (mUpdateAppState == UPDATESTATE_MESSAGES)
 	{
-		MSG msg;
-		while ((PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) && (!mShutdown))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
 		ProcessDemo();
 		if (!ProcessDeferredMessages(true))
 		{
@@ -4030,7 +4023,7 @@ bool SexyAppBase::UpdateAppStep(bool* updated)
 		{
 			if (mStepMode == 2)
 			{
-				Sleep(mFrameTime);
+				SDL_Delay(mFrameTime);
 				mUpdateAppState = UPDATESTATE_PROCESS_DONE; // skip actual update until next step
 			}
 			else
@@ -4072,6 +4065,11 @@ int SexyAppBase::InitRenderer()
 	PreRendererInitHook();
 	DeleteNativeImageData();
 	int aResult = mRenderer->Init();
+	const SDL_DisplayMode *aMode = SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(mWindow));
+	mRenderer->mRefreshRate = aMode->refresh_rate;
+	if (!mRenderer->mRefreshRate)
+		mRenderer->mRefreshRate = 60;
+	mRenderer->mMillisecondsPerFrame = 1000 / mRenderer->mRefreshRate;
 	DemoSyncRefreshRate();
 	if (RendererResult::RESULT_OK == aResult)
 	{

@@ -76,8 +76,24 @@ void OpenGLRenderer::Cleanup()
 {
     if (mScreenImage)
         delete mScreenImage;
+	mScreenImage = nullptr;
+
+    if (mDefaultShader)
+        delete mDefaultShader;
+	mDefaultShader = nullptr;
+
+	GLImageSet::iterator anItr;
+	for (anItr = mImageSet.begin(); anItr != mImageSet.end(); ++anItr)
+	{
+		GLImage *anImage = *anItr;
+		GLTextureData *aData = (GLTextureData *)anImage->mD3DData;
+		delete aData;
+		anImage->mD3DData = nullptr;
+	}
+	mImageSet.clear();
 
     SDL_GL_DestroyContext(mContext);
+	
 
     glDeleteBuffers(1, &mVBO);
     glDeleteVertexArrays(1, &mVAO);
@@ -116,6 +132,8 @@ int OpenGLRenderer::Init()
 		return aResult;
 	}
 
+	SDL_GL_MakeCurrent(mApp->mWindow, mContext);
+
 	mDefaultShader = new GLShader();
 	mDefaultShader->LoadFromSource(gVertexShaderSrc, gFragmentShaderSrc);
 
@@ -143,6 +161,8 @@ int OpenGLRenderer::Init()
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
+
+	mHasInitiated = true;
 
 	return aResult;
 }
@@ -192,7 +212,7 @@ bool OpenGLRenderer::Redraw(Rect* theClipRect)
 
 void OpenGLRenderer::SetVideoOnlyDraw(bool videoOnly)
 {
-    if (mScreenImage)
+    if (!mScreenImage)
         delete mScreenImage;
     mScreenImage = new GLImage(this);
     mScreenImage->Create(mWidth, mHeight);
@@ -976,6 +996,7 @@ void GLTextureData::CreateTextures(GLImage *theImage)
 
 	if (createTexture)
 	{
+		void *bits = theImage->mBits;
 		glGenTextures(1, &mTextureID);
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
 
@@ -985,7 +1006,7 @@ void GLTextureData::CreateTextures(GLImage *theImage)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, aWidth, aHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, theImage->GetBits());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, aWidth, aHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, bits);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else if (mBitsChangedCount != theImage->mBitsChangedCount)

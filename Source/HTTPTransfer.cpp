@@ -3,6 +3,7 @@
 #include <SexyAppFramework/SexyAppBase.h>
 #include <process.h>
 #include <winsock.h>
+#include <SDL3/SDL_timer.h>
 
 using namespace Sexy;
 
@@ -22,7 +23,7 @@ HTTPTransfer::~HTTPTransfer()
 	Abort();
 	while (mThreadRunning)
 	{
-		Sleep(20);
+		SDL_Delay(20);
 	}
 }
 
@@ -560,7 +561,7 @@ void HTTPTransfer::WaitFor()
 	while (mTransferPending)
 	{
 		UpdateStatus();
-		Sleep(20);
+		SDL_Delay(20);
 	}
 }
 
