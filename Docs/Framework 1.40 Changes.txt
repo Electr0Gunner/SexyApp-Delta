@@ -1,0 +1,20 @@
+Changelog for Framework version 1.4:
+
+General
+=======
+* Removed support for WString.
+
+Backend
+=======
+* Replaced WinAPI with SDL3.
+* ImageLib now uses stb_image for reading and writing.
+
+Rendering
+=======
+* Replaced the DirectX8 based renderer with an OpenGL based one.
+	* Note: You can implement more rendering backends by using the abstract Renderer class and GPUImage.
+
+Audio
+=======
+* Replaced DSound with OpenAL.
+* Removed FMOD support.
