@@ -15,12 +15,8 @@ namespace Sexy
     {
         BLENDMODE_NONE = 0,
         BLENDMODE_BLEND,
-        BLENDMODE_BLEND_PREMULTIPLIED,
         BLENDMODE_ADD,
-        BLENDMODE_ADD_PREMULTIPLIED,
-        BLENDMODE_MOD,
         BLENDMODE_MUL,
-        BLENDMODE_LAST,
     };
 
     struct ImageData
