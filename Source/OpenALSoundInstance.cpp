@@ -34,25 +34,25 @@ OpenALSoundInstance::OpenALSoundInstance(OpenALSoundManager* theSoundManager, AL
 
 OpenALSoundInstance::~OpenALSoundInstance()
 {
-	if (mSoundSource != nullptr)
+	if (mSoundSource != 0)
     {
         alSourceStop(mSoundSource);
         alSourcei(mSoundSource, AL_BUFFER, 0);
         alDeleteSources(1, &mSoundSource);
-        mSoundSource = nullptr;
+        mSoundSource = 0;
 		mSoundManagerP->CollectGarbage();
     }
 }
 
 void OpenALSoundInstance::RehupVolume()
 {
-    if (mSoundSource != nullptr)
+    if (mSoundSource != 0)
 		alSourcef(mSoundSource, AL_GAIN, mVolume * mBaseVolume * mSoundManagerP->mMasterVolume);
 }
 
 void OpenALSoundInstance::RehupPan()
 {
-    if (mSoundSource != nullptr)
+    if (mSoundSource != 0)
 	{
 		float aConvertedPanning = (mBasePan + mPan) / 10000.0f;
 		if (aConvertedPanning < -1.0f)
@@ -101,7 +101,7 @@ bool OpenALSoundInstance::Play(bool looping, bool autoRelease)
 	mHasPlayed = true;
 	mAutoRelease = autoRelease;
 
-	if (mSoundSource == nullptr)
+	if (mSoundSource == 0)
 	{
 		return false;
 	}
@@ -123,7 +123,7 @@ bool OpenALSoundInstance::Play(bool looping, bool autoRelease)
 
 void OpenALSoundInstance::Stop()
 {
-	if (mSoundSource != nullptr)
+	if (mSoundSource != 0)
 	{
 		alSourceStop(mSoundSource);
         alSourcei(mSoundSource, AL_SAMPLE_OFFSET, 0);
@@ -133,7 +133,7 @@ void OpenALSoundInstance::Stop()
 
 void OpenALSoundInstance::AdjustPitch(double theNumSteps)
 {
-	if (mSoundSource != nullptr)
+	if (mSoundSource != 0)
 	{
         //1.0594630943592952645618252949463 is the twelved root of 2.
 		double pitch = pow(1.0594630943592953, theNumSteps);
@@ -153,7 +153,7 @@ bool OpenALSoundInstance::IsPlaying()
 	if (!mHasPlayed)
 		return false;
 
-	if (mSoundSource == nullptr)
+	if (mSoundSource == 0)
 		return false;
 
 	ALint aStatus;

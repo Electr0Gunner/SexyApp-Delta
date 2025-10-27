@@ -90,7 +90,23 @@ int OpenGLRenderer::Init()
     if (mHasInitiated)
         Cleanup();
 
+	mRGBBits = 32;
+
+	mRedBits = 8;
+	mGreenBits = 8;
+	mBlueBits = 8;
+
+	mRedShift = 0;
+	mGreenShift = 8;
+	mBlueShift = 16;
+
+	mRedMask = (0xFFU << mRedShift);
+	mGreenMask = (0xFFU << mGreenShift);
+	mBlueMask = (0xFFU << mBlueShift);
+
     mContext = SDL_GL_CreateContext(mApp->mWindow);
+
+	SDL_GL_MakeCurrent(mApp->mWindow, mContext);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 	{
@@ -99,8 +115,6 @@ int OpenGLRenderer::Init()
         aResult = RESULT_FAIL;
 		return aResult;
 	}
-
-	SDL_GL_MakeCurrent(mApp->mWindow, mContext);
 
 	mDefaultShader = new GLShader();
 	mDefaultShader->LoadFromSource(gVertexShaderSrc, gFragmentShaderSrc);
@@ -127,6 +141,10 @@ int OpenGLRenderer::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+	return aResult;
 }
 
 void OpenGLRenderer::UpdateViewport()
@@ -165,7 +183,11 @@ bool OpenGLRenderer::Redraw(Rect* theClipRect)
 {
     SDL_GL_SwapWindow(mApp->mWindow);
 
-    return true;// !gRendererPreDrawError; later
+	glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(mPresentationRect.mX, mPresentationRect.mY, mPresentationRect.mWidth, mPresentationRect.mHeight);
+
+
+    return !gRendererPreDrawError;
 }
 
 void OpenGLRenderer::SetVideoOnlyDraw(bool videoOnly)
@@ -242,7 +264,7 @@ void OpenGLRenderer::RemoveImage(Image *theImage)
 		mImageSet.erase(anItr);
 }
 
-void OpenGLRenderer::Remove3DData(GPUImage *theImage)
+void OpenGLRenderer::Remove3DData(MemoryImage *theImage)
 {
 	if (theImage->mD3DData != nullptr)
 	{
@@ -253,7 +275,7 @@ void OpenGLRenderer::Remove3DData(GPUImage *theImage)
 		mImageSet.erase(static_cast<GLImage*>(theImage));
 	}
 }
-bool OpenGLRenderer::RecoverBits(GPUImage *theImage)
+bool OpenGLRenderer::RecoverBits(MemoryImage *theImage)
 {
 	if (theImage->mD3DData == nullptr)
 		return false;
@@ -272,11 +294,34 @@ bool OpenGLRenderer::RecoverBits(GPUImage *theImage)
 	return true;
 }
 
+std::string OpenGLRenderer::GetErrorString()
+{
+	GLenum err = glGetError();
+	switch (err)
+	{
+	case GL_NO_ERROR:
+		return "NONE";
+	case GL_INVALID_ENUM:
+		return "INVALID ENUM";
+	case GL_INVALID_VALUE:
+		return "INVALID VALUE";
+	case GL_INVALID_OPERATION:
+		return "INVALID OPERATION";
+	case GL_STACK_OVERFLOW:
+		return "STACK OVERFLOW";
+	case GL_STACK_UNDERFLOW:
+		return "STACK UNDERFLOW";
+	case GL_OUT_OF_MEMORY:
+		return "OUT OF MEMORY";
+	case GL_INVALID_FRAMEBUFFER_OPERATION:
+		return "INVALID FRAMEBUFFER OPERATION";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 bool OpenGLRenderer::PreDraw()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(mPresentationRect.mX, mPresentationRect.mY, mPresentationRect.mWidth, mPresentationRect.mHeight);
-
 	glBindVertexArray(mVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	return true;
@@ -311,9 +356,8 @@ void OpenGLRenderer::ApplyBlendMode(BlendMode theMode)
 	}
 }
 
-void OpenGLRenderer::Blt(Image *theImage, int theX, int theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter = false)
+void OpenGLRenderer::Blt(Image *theImage, int theX, int theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -361,7 +405,6 @@ void OpenGLRenderer::Blt(Image *theImage, int theX, int theY, const Rect &theSrc
 
 void OpenGLRenderer::BltClipF(Image *theImage, float theX, float theY, const Rect &theSrcRect, const Rect *theClipRect, const Color &theColor, int theDrawMode)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -412,9 +455,8 @@ void OpenGLRenderer::BltClipF(Image *theImage, float theX, float theY, const Rec
     glDisable(GL_SCISSOR_TEST);
 }
 
-void OpenGLRenderer::BltMirror(Image *theImage, float theX, float theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter = false)
+void OpenGLRenderer::BltMirror(Image *theImage, float theX, float theY, const Rect &theSrcRect, const Color &theColor, int theDrawMode, bool linearFilter)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -462,9 +504,8 @@ void OpenGLRenderer::BltMirror(Image *theImage, float theX, float theY, const Re
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
 }
 
-void OpenGLRenderer::StretchBlt(Image *theImage, const Rect &theDestRect, const Rect &theSrcRect, const Rect *theClipRect, const Color &theColor, int theDrawMode, bool fastStretch, bool mirror = false)
+void OpenGLRenderer::StretchBlt(Image *theImage, const Rect &theDestRect, const Rect &theSrcRect, const Rect *theClipRect, const Color &theColor, int theDrawMode, bool fastStretch, bool mirror)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -537,7 +578,6 @@ glm::vec2 RotatePointAroundPivot(const glm::vec2 point, const glm::vec2 center, 
 
 void OpenGLRenderer::BltRotated(Image *theImage, float theX, float theY, const Rect *theClipRect, const Color &theColor, int theDrawMode, double theRot, float theRotCenterX, float theRotCenterY, const Rect &theSrcRect)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -603,9 +643,8 @@ glm::vec2 TransformToGLMPoint(float x, float y, const SexyMatrix3 &m, float aTra
 	return result;
 }
 
-void OpenGLRenderer::BltTransformed(Image *theImage, const Rect *theClipRect, const Color &theColor, int theDrawMode, const Rect &theSrcRect, const SexyMatrix3 &theTransform, bool linearFilter, float theX = 0, float theY = 0, bool center = false)
+void OpenGLRenderer::BltTransformed(Image *theImage, const Rect *theClipRect, const Color &theColor, int theDrawMode, const Rect &theSrcRect, const SexyMatrix3 &theTransform, bool linearFilter, float theX, float theY, bool center)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage* aImg = SetupImage(theImage);
 
@@ -672,7 +711,6 @@ void OpenGLRenderer::BltTransformed(Image *theImage, const Rect *theClipRect, co
 
 void OpenGLRenderer::DrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color &theColor, int theDrawMode)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
 
 	glm::vec4 aColor = {(float)theColor.mRed / 255.0f, (float)theColor.mGreen / 255.0f, (float)theColor.mBlue / 255.0f, (float)theColor.mAlpha / 255.0f};
@@ -698,7 +736,6 @@ void OpenGLRenderer::DrawLine(double theStartX, double theStartY, double theEndX
 
 void OpenGLRenderer::FillRect(const Rect &theRect, const Color &theColor, int theDrawMode)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     
 	glm::vec2 p0 = {theRect.mX, theRect.mY};
@@ -728,12 +765,11 @@ void OpenGLRenderer::FillRect(const Rect &theRect, const Color &theColor, int th
     aShaderToUse->SetUniform("uUseTexture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBufferSubData(GL_ARRAY_BUFFER, 0, aVertexArray.size() * sizeof(GLVertex), aVertexArray.data());
-    glDrawArrays(GL_LINES, 0, (GLsizei)aVertexArray.size());
+    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
 }
 
 void OpenGLRenderer::DrawTriangle(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, int theDrawMode)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
 
 	glm::vec2 vert0 = {p1.x, p1.y};
@@ -761,9 +797,8 @@ void OpenGLRenderer::DrawTriangle(const TriVertex &p1, const TriVertex &p2, cons
     glDrawArrays(GL_LINES, 0, (GLsizei)aVertexArray.size());
 }
 
-void OpenGLRenderer::DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, int theDrawMode, Image *theTexture, bool blend = true)
+void OpenGLRenderer::DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, const TriVertex &p3, const Color &theColor, int theDrawMode, Image *theTexture, bool blend)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLImage *aImg = SetupImage(theTexture);
 
@@ -794,7 +829,7 @@ void OpenGLRenderer::DrawTriangleTex(const TriVertex &p1, const TriVertex &p2, c
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)aVertexArray.size());
 }
 
-void OpenGLRenderer::DrawTrianglesTex(const TriVertex theVertices[][3], int theNumTriangles, const Color &theColor, int theDrawMode, Image *theTexture, float tx = 0, float ty = 0, bool blend = true)
+void OpenGLRenderer::DrawTrianglesTex(const TriVertex theVertices[][3], int theNumTriangles, const Color &theColor, int theDrawMode, Image *theTexture, float tx, float ty, bool blend)
 {
 	for (int aTriangleNum = 0; aTriangleNum < theNumTriangles; aTriangleNum++)
 	{
@@ -812,7 +847,7 @@ void OpenGLRenderer::DrawTrianglesTex(const TriVertex theVertices[][3], int theN
 		DrawTriangleTex(v0, v1, v2, theColor, theDrawMode, theTexture, blend);
 	}
 }
-void OpenGLRenderer::DrawTrianglesTexStrip(const TriVertex theVertices[], int theNumTriangles, const Color &theColor, int theDrawMode, Image *theTexture, float tx = 0, float ty = 0, bool blend = true)
+void OpenGLRenderer::DrawTrianglesTexStrip(const TriVertex theVertices[], int theNumTriangles, const Color &theColor, int theDrawMode, Image *theTexture, float tx, float ty, bool blend)
 {
 	TriVertex aList[100][3];
 	int aTriNum = 0;
@@ -858,7 +893,6 @@ void OpenGLRenderer::FillPoly(const Point theVertices[], int theNumVertices, con
 
 void OpenGLRenderer::BltTexture(Texture *theTexture, const Rect &theSrcRect, const Rect &theDestRect, const Color &theColor, int theDrawMode)
 {
-    PreDraw();
     ApplyBlendMode(ChooseBlendMode(theDrawMode));
     GLTextureData* aTex = static_cast<GLTextureData*>(theTexture);
 
@@ -993,7 +1027,27 @@ int GLTextureData::GetMemSize()
 {
 	int aSize = 0;
 
-	aSize = 4 * mWidth * mHeight; // TODO: ADD MORE PIXEL FORMATS
+	switch (mPixelFormat)
+	{
+
+	case PixelFormat_A8R8G8B8:
+		aSize = 4 * mWidth * mHeight;
+		break;
+	case PixelFormat_R5G6B5:
+		aSize = 2 * mWidth * mHeight;
+		break;
+	case PixelFormat_Palette8:
+		aSize = 1 * mWidth * mHeight + (256 * 4);
+		break;
+	case PixelFormat_A4R4G4B4:
+		aSize = 2 * mWidth * mHeight;
+		break;
+	case PixelFormat_Unknown:
+	default:
+		aSize = 0;
+		break;
+	}
+
 
 	return aSize;
 }

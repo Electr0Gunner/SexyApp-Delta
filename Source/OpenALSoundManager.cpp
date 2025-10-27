@@ -165,7 +165,7 @@ int OpenALSoundManager::GetFreeSoundId()
 {
 	for (int i = 0; i < MAX_SOURCE_SOUNDS; i++)
 	{
-		if (mSoundBuffers[i] == nullptr)
+		if (mSoundBuffers[i] == 0)
 			return i;
 	}
 
@@ -221,7 +221,7 @@ SoundInstance* OpenALSoundManager::GetSoundInstance(unsigned int theSfxID)
 	if (aFreeChannel < 0)
 		return nullptr;
 
-	if (mSoundBuffers[theSfxID] == nullptr)
+	if (mSoundBuffers[theSfxID] == 0)
 		return nullptr;
 
 	mPlayingSounds[aFreeChannel] = new OpenALSoundInstance(this, mSoundBuffers[theSfxID]);
@@ -274,7 +274,7 @@ int OpenALSoundManager::LoadSound(const std::string& theFilename)
 
 	for (i = MAX_SOURCE_SOUNDS - 1; i >= 0; i--)
 	{
-		if (mSoundBuffers[i] == nullptr)
+		if (mSoundBuffers[i] == 0)
 		{
 			if (!LoadSound(i, theFilename))
 				return -1;

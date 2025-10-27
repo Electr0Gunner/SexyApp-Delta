@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SexyAppFramework/Font.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 namespace Sexy
 {
@@ -10,7 +11,7 @@ namespace Sexy
 	class SysFont : public Font
 	{
 	public:
-		HFONT mHFont;
+		TTF_Font* mFont;
 		SexyAppBase* mApp;
 		bool mDrawShadow;
 		bool mSimulateBold;
@@ -21,6 +22,8 @@ namespace Sexy
 		SysFont(const std::string& theFace, int thePointSize, bool bold = false, bool italics = false, bool underline = false);
 		SysFont(SexyAppBase* theApp, const std::string& theFace, int thePointSize, int theScript = ANSI_CHARSET, bool bold = false, bool italics = false,
 			bool underline = false);
+		SysFont(SexyAppBase* theApp, const unsigned char aData[], size_t aDataSize, int thePointSize,
+			int theScript = 0, bool bold = false, bool italics = false, bool underline = false);
 		SysFont(const SysFont& theSysFont);
 
 		virtual ~SysFont();

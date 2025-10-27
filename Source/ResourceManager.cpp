@@ -1,7 +1,7 @@
 #include <SexyAppFramework/ResourceManager.h>
 
-#include <SexyAppFramework/D3DInterface.h>
-#include <SexyAppFramework/DDImage.h>
+#include <SexyAppFramework/Renderer.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/ImageFont.h>
 #include <SexyAppFramework/ImageLib/ImageLib.h>
 #include <SexyAppFramework/SoundManager.h>
@@ -353,7 +353,7 @@ bool ResourceManager::ParseImageResource(XMLElement& theElement)
 	aRes->mAnimInfo.mAnimType = anAnimType;
 	if (anAnimType != AnimType_None)
 	{
-		int aNumCels = max(aRes->mRows, aRes->mCols);
+		int aNumCels = std::max(aRes->mRows, aRes->mCols);
 		int aBeginDelay = 0, anEndDelay = 0;
 
 		anItr = theElement.mAttributes.find(_S("framedelay"));
@@ -627,7 +627,7 @@ bool ResourceManager::ReparseResourcesFile(const std::string& theFilename)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-bool ResourceManager::LoadAlphaGridImage(ImageRes* theRes, DDImage* theImage)
+bool ResourceManager::LoadAlphaGridImage(ImageRes* theRes, GPUImage* theImage)
 {
 	ImageLib::Image* anAlphaImage = ImageLib::GetImage(theRes->mAlphaGridImage, true);
 	if (anAlphaImage == nullptr)
@@ -675,7 +675,7 @@ bool ResourceManager::LoadAlphaGridImage(ImageRes* theRes, DDImage* theImage)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-bool ResourceManager::LoadAlphaImage(ImageRes* theRes, DDImage* theImage)
+bool ResourceManager::LoadAlphaImage(ImageRes* theRes, GPUImage* theImage)
 {
 	SEXY_PERF_BEGIN("ResourceManager::GetImage");
 	ImageLib::Image* anAlphaImage = ImageLib::GetImage(theRes->mAlphaImage, true);
@@ -720,7 +720,7 @@ bool ResourceManager::DoLoadImage(ImageRes* theRes)
 	SharedImageRef aSharedImageRef = gSexyAppBase->GetSharedImage(theRes->mPath, theRes->mVariant, &isNew);
 	ImageLib::gAlphaComposeColor = 0xFFFFFF;
 
-	DDImage* aDDImage = (DDImage*)aSharedImageRef;
+	GPUImage* aDDImage = (GPUImage*)aSharedImageRef;
 
 	if (aDDImage == nullptr)
 		return Fail(StrFormat("Failed to load image: %s", theRes->mPath.c_str()));
@@ -752,7 +752,7 @@ bool ResourceManager::DoLoadImage(ImageRes* theRes)
 
 		if (!aDDImage->mHasAlpha)
 		{
-			aDDImage->mWantDDSurface = true;
+			//aDDImage->mWantDDSurface = true;
 			aDDImage->mPurgeBits = true;
 		}
 
@@ -762,7 +762,7 @@ bool ResourceManager::DoLoadImage(ImageRes* theRes)
 	if (theRes->mPalletize)
 	{
 		SEXY_PERF_BEGIN("ResourceManager:Palletize");
-		if (aDDImage->mSurface == nullptr)
+		if (aDDImage->mD3DData == nullptr)
 			aDDImage->Palletize();
 		else
 			aDDImage->mWantPal = true;
@@ -770,13 +770,13 @@ bool ResourceManager::DoLoadImage(ImageRes* theRes)
 	}
 
 	if (theRes->mA4R4G4B4)
-		aDDImage->mD3DFlags |= D3DImageFlag_UseA4R4G4B4;
+		aDDImage->mD3DFlags |= TextureFlags_UseA4R4G4B4;
 
 	if (theRes->mA8R8G8B8)
-		aDDImage->mD3DFlags |= D3DImageFlag_UseA8R8G8B8;
+		aDDImage->mD3DFlags |= TextureFlags_UseA8R8G8B8;
 
 	if (theRes->mMinimizeSubdivisions)
-		aDDImage->mD3DFlags |= D3DImageFlag_MinimizeNumSubdivisions;
+		aDDImage->mD3DFlags |= TextureFlags_MinimizeNumSubdivisions;
 
 	if (theRes->mAnimInfo.mAnimType != AnimType_None)
 		aDDImage->mAnimInfo = new AnimInfo(theRes->mAnimInfo);
@@ -807,7 +807,7 @@ SharedImageRef ResourceManager::LoadImage(const std::string& theName)
 		return nullptr;
 
 	ImageRes* aRes = (ImageRes*)anItr->second;
-	if ((DDImage*)aRes->mImage != nullptr)
+	if ((GPUImage*)aRes->mImage != nullptr)
 		return aRes->mImage;
 
 	if (aRes->mFromProgram)
@@ -970,7 +970,7 @@ bool ResourceManager::LoadNextResource()
 		{
 		case ResType_Image: {
 			ImageRes* anImageRes = (ImageRes*)aRes;
-			if ((DDImage*)anImageRes->mImage != nullptr)
+			if ((GPUImage*)anImageRes->mImage != nullptr)
 				continue;
 
 			return DoLoadImage(anImageRes);

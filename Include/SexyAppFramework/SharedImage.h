@@ -6,13 +6,13 @@ namespace Sexy
 {
 
 	class Image;
-	class DDImage;
+	class GPUImage;
 	class MemoryImage;
 
 	class SharedImage
 	{
 	public:
-		DDImage* mImage;
+		GPUImage* mImage;
 		int mRefCount;
 
 		SharedImage();
@@ -41,7 +41,7 @@ namespace Sexy
 		MemoryImage* operator->();
 		operator Image*();
 		operator MemoryImage*();
-		operator DDImage*();
+		operator GPUImage *();
 	};
 
 } // namespace Sexy

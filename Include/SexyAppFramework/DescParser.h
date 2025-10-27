@@ -13,7 +13,7 @@ namespace Sexy
 		DataElement();
 		virtual ~DataElement();
 
-		virtual DataElement* Duplicate() = nullptr;
+		virtual DataElement* Duplicate() = 0;
 	};
 
 	class SingleDataElement : public DataElement

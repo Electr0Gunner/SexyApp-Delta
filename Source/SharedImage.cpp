@@ -1,4 +1,4 @@
-#include <SexyAppFramework/DDImage.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/SexyAppBase.h>
 #include <SexyAppFramework/SharedImage.h>
 
@@ -93,10 +93,10 @@ SharedImageRef::operator MemoryImage*()
 	if (mUnsharedImage != nullptr)
 		return mUnsharedImage;
 	else
-		return (DDImage*)*this;
+		return (GPUImage*)*this;
 }
 
-SharedImageRef::operator DDImage*()
+SharedImageRef::operator GPUImage*()
 {
 	if (mSharedImage != nullptr)
 		return mSharedImage->mImage;

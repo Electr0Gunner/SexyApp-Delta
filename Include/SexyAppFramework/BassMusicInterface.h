@@ -7,11 +7,18 @@ namespace Sexy
 {
 	class SexyAppBase;
 
+
+	struct StreamData
+	{
+		uchar* mStreamData;
+		HSTREAM mHStream;
+	};
+
 	class BassMusicInfo
 	{
 	public:
 		HMUSIC mHMusic;
-		HSTREAM mHStream;
+		StreamData mStream;
 		double mVolume;
 		double mVolumeAdd;
 		double mVolumeCap;
@@ -22,7 +29,7 @@ namespace Sexy
 
 		DWORD GetHandle()
 		{
-			return mHMusic ? mHMusic : mHStream;
+			return mHMusic ? mHMusic : mStream.mHStream;
 		}
 	};
 
@@ -36,7 +43,7 @@ namespace Sexy
 		int mMusicLoadFlags;
 
 	public:
-		BassMusicInterface(HWND theHWnd);
+		BassMusicInterface();
 		virtual ~BassMusicInterface();
 
 		virtual bool LoadMusic(int theSongId, const std::string& theFileName);

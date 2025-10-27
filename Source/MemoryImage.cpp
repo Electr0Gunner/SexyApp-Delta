@@ -1,10 +1,8 @@
 #include <SexyAppFramework/MemoryImage.h>
 
-#include <SexyAppFramework/D3DInterface.h>
-#include <SexyAppFramework/DDInterface.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/Graphics.h>
-#include <SexyAppFramework/NativeDisplay.h>
+#include <SexyAppFramework/Renderer.h>
 #include <SexyAppFramework/PerfTimer.h>
 #include <SexyAppFramework/Quantize.h>
 #include <SexyAppFramework/SWTri.h>
@@ -177,10 +175,10 @@ void MemoryImage::BitsChanged()
 
 void MemoryImage::NormalDrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor)
 {
-	double aMinX = min(theStartX, theEndX);
-	double aMinY = min(theStartY, theEndY);
-	double aMaxX = max(theStartX, theEndX);
-	double aMaxY = max(theStartY, theEndY);
+	double aMinX = std::min(theStartX, theEndX);
+	double aMinY = std::min(theStartY, theEndY);
+	double aMaxX = std::max(theStartX, theEndX);
+	double aMaxY = std::max(theStartY, theEndY);
 
 	ulong aRMask = 0xFF0000;
 	ulong aGMask = 0x00FF00;
@@ -457,10 +455,10 @@ void MemoryImage::NormalDrawLine(double theStartX, double theStartY, double theE
 
 void MemoryImage::AdditiveDrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor)
 {
-	double aMinX = min(theStartX, theEndX);
-	double aMinY = min(theStartY, theEndY);
-	double aMaxX = max(theStartX, theEndX);
-	double aMaxY = max(theStartY, theEndY);
+	double aMinX = std::min(theStartX, theEndX);
+	double aMinY = std::min(theStartY, theEndY);
+	double aMaxX = std::max(theStartX, theEndX);
+	double aMaxY = std::max(theStartY, theEndY);
 
 	ulong aRMask = 0xFF0000;
 	ulong aGMask = 0x00FF00;
@@ -628,16 +626,16 @@ void MemoryImage::DrawLine(double theStartX, double theStartY, double theEndX, d
 {
 	if (theStartY == theEndY)
 	{
-		int aStartX = min(theStartX, theEndX);
-		int aEndX = max(theStartX, theEndX);
+		int aStartX = std::min(theStartX, theEndX);
+		int aEndX = std::max(theStartX, theEndX);
 
 		FillRect(Rect(aStartX, theStartY, aEndX - aStartX + 1, theEndY - theStartY + 1), theColor, theDrawMode);
 		return;
 	}
 	else if (theStartX == theEndX)
 	{
-		int aStartY = min(theStartY, theEndY);
-		int aEndY = max(theStartY, theEndY);
+		int aStartY = std::min(theStartY, theEndY);
+		int aEndY = std::max(theStartY, theEndY);
 
 		FillRect(Rect(theStartX, aStartY, theEndX - theStartX + 1, aEndY - aStartY + 1), theColor, theDrawMode);
 		return;
@@ -743,16 +741,16 @@ void MemoryImage::DrawLineAA(double theStartX, double theStartY, double theEndX,
 {
 	if (theStartY == theEndY)
 	{
-		int aStartX = min(theStartX, theEndX);
-		int aEndX = max(theStartX, theEndX);
+		int aStartX = std::min(theStartX, theEndX);
+		int aEndX = std::max(theStartX, theEndX);
 
 		FillRect(Rect(aStartX, theStartY, aEndX - aStartX + 1, theEndY - theStartY + 1), theColor, theDrawMode);
 		return;
 	}
 	else if (theStartX == theEndX)
 	{
-		int aStartY = min(theStartY, theEndY);
-		int aEndY = max(theStartY, theEndY);
+		int aStartY = std::min(theStartY, theEndY);
+		int aEndY = std::max(theStartY, theEndY);
 
 		FillRect(Rect(theStartX, aStartY, theEndX - theStartX + 1, aEndY - aStartY + 1), theColor, theDrawMode);
 		return;
@@ -840,7 +838,7 @@ void MemoryImage::SetVolatile(bool isVolatile)
 	mIsVolatile = isVolatile;
 }
 
-void* MemoryImage::GetNativeAlphaData(NativeDisplay* theDisplay)
+void* MemoryImage::GetNativeAlphaData(Renderer* theDisplay)
 {
 	if (mNativeAlphaData != nullptr)
 		return mNativeAlphaData;
@@ -947,7 +945,7 @@ uchar* MemoryImage::GetRLAlphaData()
 	return mRLAlphaData;
 }
 
-uchar* MemoryImage::GetRLAdditiveData(NativeDisplay* theNative)
+uchar* MemoryImage::GetRLAdditiveData(Renderer* theNative)
 {
 	if (mRLAdditiveData == nullptr)
 	{
@@ -1082,7 +1080,7 @@ void MemoryImage::PurgeBits()
 		if ((mBits == nullptr) && (mColorIndices == nullptr))
 			return;
 
-		GetNativeAlphaData(gSexyAppBase->mDDInterface);
+		GetNativeAlphaData(gSexyAppBase->mRenderer);
 	}
 
 	delete[] mBits;
@@ -1212,7 +1210,7 @@ ulong* MemoryImage::GetBits()
 		}
 		else if (mNativeAlphaData != nullptr)
 		{
-			NativeDisplay* aDisplay = gSexyAppBase->mDDInterface;
+			Renderer* aDisplay = gSexyAppBase->mRenderer;
 
 			const int rMask = aDisplay->mRedMask;
 			const int gMask = aDisplay->mGreenMask;
@@ -1239,7 +1237,7 @@ ulong* MemoryImage::GetBits()
 				*(aDestPtr++) = (r << 16) | (g << 8) | (b) | (anAlpha << 24);
 			}
 		}
-		else if ((mD3DData == nullptr) || (!mApp->mDDInterface->mD3DInterface->RecoverBits(this)))
+		else if ((mD3DData == nullptr) || (!mApp->mRenderer->RecoverBits(this)))
 		{
 			ZeroMemory(mBits, aSize * sizeof(ulong));
 		}

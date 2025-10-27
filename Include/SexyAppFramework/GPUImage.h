@@ -27,18 +27,6 @@ namespace Sexy
 		virtual void BitsChanged() {};
 		virtual void CommitBits() {};
 
-		virtual void NormalFillRect(const Rect& theRect, const Color& theColor) {};
-		virtual void AdditiveFillRect(const Rect& theRect, const Color& theColor) {};
-		virtual void NormalBlt(Image* theImage, int theX, int theY, const Rect& theSrcRect, const Color& theColor) {};
-		virtual void AdditiveBlt(Image* theImage, int theX, int theY, const Rect& theSrcRect, const Color& theColor);
-		virtual void NormalDrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor) {};
-		virtual void AdditiveDrawLine(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor) {};
-		virtual void NormalDrawLineAA(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor) {};
-		virtual void AdditiveDrawLineAA(double theStartX, double theStartY, double theEndX, double theEndY, const Color& theColor) {};
-
-		virtual void NormalBltMirror(Image* theImage, int theX, int theY, const Rect& theSrcRect, const Color& theColor) {};
-		virtual void AdditiveBltMirror(Image* theImage, int theX, int theY, const Rect& theSrcRect, const Color& theColor)  {};
-
 		virtual void FillScanLinesWithCoverage(Span* theSpans, int theSpanCount, const Color& theColor, int theDrawMode, const BYTE* theCoverage, int theCoverX,
 			int theCoverY, int theCoverWidth, int theCoverHeight)  {};
 
@@ -73,7 +61,7 @@ namespace Sexy
 		virtual void StretchBltMirror(Image* theImage, const Rect& theDestRectOrig, const Rect& theSrcRect, const Rect& theClipRect, const Color& theColor,
 			int theDrawMode, bool fastStretch) {};
 
-		virtual bool Palletize() {};
+		virtual bool Palletize() { return false;};
 		virtual void PurgeBits() {};
 		virtual void DeleteNativeData() {};
 		virtual void DeleteExtraBuffers() {};

@@ -16,30 +16,30 @@ namespace Sexy
 		SoundManager() {}
 		virtual ~SoundManager() {}
 
-		virtual bool Initialized() = nullptr;
+		virtual bool Initialized() = 0;
 		virtual void CollectGarbage() = 0;
 
-		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename) = nullptr;
-		virtual int LoadSound(const std::string& theFilename) = nullptr;
-		virtual void ReleaseSound(unsigned int theSfxID) = nullptr;
+		virtual bool LoadSound(unsigned int theSfxID, const std::string& theFilename) = 0;
+		virtual int LoadSound(const std::string& theFilename) = 0;
+		virtual void ReleaseSound(unsigned int theSfxID) = 0;
 
-		virtual void SetVolume(double theVolume) = nullptr;
-		virtual bool SetBaseVolume(unsigned int theSfxID, double theBaseVolume) = nullptr;
-		virtual bool SetBasePan(unsigned int theSfxID, int theBasePan) = nullptr;
+		virtual void SetVolume(double theVolume) = 0;
+		virtual bool SetBaseVolume(unsigned int theSfxID, double theBaseVolume) = 0;
+		virtual bool SetBasePan(unsigned int theSfxID, int theBasePan) = 0;
 
-		virtual SoundInstance* GetSoundInstance(unsigned int theSfxID) = nullptr;
+		virtual SoundInstance* GetSoundInstance(unsigned int theSfxID) = 0;
 
-		virtual void ReleaseSounds() = nullptr;
-		virtual void ReleaseChannels() = nullptr;
+		virtual void ReleaseSounds() = 0;
+		virtual void ReleaseChannels() = 0;
 
-		virtual double GetMasterVolume() = nullptr;
-		virtual void SetMasterVolume(double theVolume) = nullptr;
+		virtual double GetMasterVolume() = 0;
+		virtual void SetMasterVolume(double theVolume) = 0;
 
-		virtual void Flush() = nullptr;
-		virtual void SetCooperativeWindow(HWND theHWnd, bool isWindowed) = nullptr;
-		virtual void StopAllSounds() = nullptr;
-		virtual int GetFreeSoundId() = nullptr;
-		virtual int GetNumSounds() = nullptr;
+		virtual void Flush() = 0;
+		virtual void SetCooperativeWindow(HWND theHWnd, bool isWindowed) = 0;
+		virtual void StopAllSounds() = 0;
+		virtual int GetFreeSoundId() = 0;
+		virtual int GetNumSounds() = 0;
 	};
 
 } // namespace Sexy

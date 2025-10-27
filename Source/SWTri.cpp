@@ -639,7 +639,7 @@ void Sexy::SWTri_AddAllDrawTriFuncs()
 	gDrawTriFunc[127] = DrawTriangle_0555_TEX1_TALPHA1_MOD1_GLOB1_BLEND1;
 }
 
-#include "SWTri_DrawTriangleInc1.cpp"
+#include "SWTri/SWTri_DrawTriangleInc1.cpp"
 
 void SWHelper::SWDrawTriangle(bool textured, bool talpha, bool mod_argb, bool global_argb, SWVertex* pVerts, unsigned int* pFrameBuffer,
 	const unsigned int bytepitch, const SWTextureInfo* textureInfo, SWDiffuse& globalDiffuse, int thePixelFormat, bool blend)
@@ -668,5 +668,5 @@ void SWHelper::SWDrawTriangle(bool textured, bool talpha, bool mod_argb, bool gl
 	else
 		aFunc(pVerts, pFrameBuffer, bytepitch, textureInfo, globalDiffuse);
 
-	//	#include "SWTri_DrawTriangleInc2.cpp"
+	//	#include "SWTri/SWTri_DrawTriangleInc2.cpp"
 }

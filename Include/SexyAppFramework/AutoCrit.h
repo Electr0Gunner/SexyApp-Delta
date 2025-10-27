@@ -7,22 +7,20 @@ namespace Sexy
 {
 	class AutoCrit
 	{
-		LPCRITICAL_SECTION mCritSec;
+	public:
+		std::unique_lock<std::recursive_mutex> mLock;
 
 	public:
-		AutoCrit(LPCRITICAL_SECTION theCritSec) : mCritSec(theCritSec)
-		{
-			EnterCriticalSection(mCritSec);
-		}
+			AutoCrit(std::recursive_mutex theCritSec) : mLock(theCritSec)
+			{
+			}
 
-		AutoCrit(const CritSect& theCritSect) : mCritSec((LPCRITICAL_SECTION)&theCritSect.mCriticalSection)
-		{
-			EnterCriticalSection(mCritSec);
-		}
+			AutoCrit(CritSect &theCritSect) : mLock(theCritSect.mCriticalSection)
+			{
+			}
 
-		~AutoCrit()
-		{
-			LeaveCriticalSection(mCritSec);
-		}
+			~AutoCrit()
+			{
+			}
 	};
 } // namespace Sexy

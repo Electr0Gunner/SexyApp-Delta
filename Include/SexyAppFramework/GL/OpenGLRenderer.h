@@ -4,7 +4,7 @@
 #include <SexyAppFramework/GL/GLImage.h>
 #include <SexyAppFramework/GL/GLShader.h>
 
-#include <glad.h>
+#include <glad/glad.h>
 #include <SDL3/SDL_video.h>
 
 #include <unordered_map>
@@ -39,19 +39,16 @@ namespace Sexy
     {
     public:
         GLuint mTextureID;
-        int mWidth;
-        int mHeight;
-        int mBitsChangedCount;
 
         GLTextureData();
         ~GLTextureData();
 
-        void ReleaseTextures();
+        virtual void ReleaseTextures();
 
-        void CreateTextures(GLImage *theImage);
-        void CheckCreateTextures(GLImage *theImage);
+        virtual void CreateTextures(GLImage *theImage);
+        virtual void CheckCreateTextures(GLImage *theImage);
 
-        int GetMemSize();
+        virtual int GetMemSize();
     };
 
     class OpenGLRenderer: public Renderer
@@ -71,14 +68,12 @@ namespace Sexy
 
         virtual void AddImage(Image *theImage);
         virtual void RemoveImage(Image *theImage);
-        virtual void Remove3DData(GPUImage *theImage);
+        virtual void Remove3DData(MemoryImage *theImage);
 
         virtual GPUImage *NewGPUImage() 
         {
             return new GLImage(this);
         };
-
-        virtual GPUImage *GetScreenImage();
 
         virtual void UpdateViewport();
         virtual int Init();
@@ -91,7 +86,9 @@ namespace Sexy
         virtual bool PreDraw();
 
         virtual bool CreateImageTexture(GPUImage *theImage);
-        virtual bool RecoverBits(GPUImage *theImage);
+        virtual bool RecoverBits(MemoryImage *theImage);
+
+        virtual std::string GetErrorString();
 
         virtual void Blt(Image *theImage, int theX, int theY, const Rect &theSrcRect, const Color &theColor,
                         int theDrawMode, bool linearFilter = false);

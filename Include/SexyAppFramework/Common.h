@@ -24,51 +24,24 @@
 #include <mmsystem.h>
 #include <shellapi.h>
 
+#define TO_STRING_MACRO(x) #x
+#define TO_STRING(x) TO_STRING_MACRO(x)
+
 #ifdef _USE_WIDE_STRING
 
-typedef std::wstring SexyString;
-#define _S(x) L##x
-
-#define sexystrncmp wcsncmp
-#define sexystrcmp wcscmp
-#define sexystricmp wcsicmp
-#define sexysscanf swscanf
-#define sexyatoi _wtoi
-#define sexystrcpy wcscpy
-
-#define SexyStringToStringFast(x) WStringToString(x)
-#define SexyStringToWStringFast(x) (x)
-#define StringToSexyStringFast(x) StringToWString(x)
-#define WStringToSexyStringFast(x) (x)
-
-#ifndef SEXYFRAMEWORK_NO_REDEFINE_WIN_API
-// Redefine the functions and structs we need to be wide-string
-#undef CreateWindowEx
-#undef RegisterClass
-#undef MessageBox
-#undef ShellExecute
-#undef GetTextExtentPoint32
-#undef RegisterWindowMessage
-#undef CreateMutex
-#undef DrawTextEx
-#undef TextOut
-
-#define CreateWindowEx CreateWindowExW
-#define RegisterClass RegisterClassW
-#define WNDCLASS WNDCLASSW
-#define MessageBox MessageBoxW
-#define ShellExecute ShellExecuteW
-#define GetTextExtentPoint32 GetTextExtentPoint32W
-#define RegisterWindowMessage RegisterWindowMessageW
-#define CreateMutex CreateMutexW
-#define DrawTextEx DrawTextExW
-#define TextOut TextOutW
-#endif
+#error "_USE_WIDE_STRING is deprecated. SexyAppFramework >=1.40 now uses UTF-8 std::string exclusively."
 
 #else
 
+//Compatibility for earlier versions.
 typedef std::string SexyString;
-#define _S(x) x
+#if defined(_MSC_VER)
+    #define _S(x) __pragma(message(__FILE__ "(" TO_STRING(__LINE__) "): warning: _S() is deprecated")) x
+#elif defined(__GNUC__) || defined(__clang__)
+    #define _S(x) _Pragma("message \"warning: _S() is deprecated\"") x
+#else
+    #define _S(x) x
+#endif
 
 #define sexystrncmp strncmp
 #define sexystrcmp strcmp
@@ -101,6 +74,19 @@ typedef std::map<std::string, std::string> DefinesMap;
 typedef std::map<std::wstring, std::wstring> WStringWStringMap;
 typedef SexyString::value_type SexyChar;
 #define HAS_SEXYCHAR
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+//vorbis workaounds since for some fucking reason, vorbis force defines min and max.
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
 
 namespace Sexy
 {

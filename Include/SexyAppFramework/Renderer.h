@@ -57,7 +57,18 @@ namespace Sexy
     class Texture
     {
     public:
+
+        int mWidth;
+        int mHeight;
+        int mBitsChangedCount;
+        PixelFormat mPixelFormat;
+
+        Texture() = default;
         ~Texture() = default;
+
+        virtual void ReleaseTextures() {};
+
+        virtual int GetMemSize() {return 0;};
     };
 
     class Renderer
@@ -79,6 +90,17 @@ namespace Sexy
         int mMillisecondsPerFrame;
 
         GPUImage *mScreenImage;
+
+		int mRGBBits = 0;
+		ulong mRedMask = 0;
+		ulong mGreenMask = 0;
+		ulong mBlueMask = 0;
+		int mRedBits = 0;
+		int mGreenBits = 0;
+		int mBlueBits = 0;
+		int mRedShift = 0;
+		int mGreenShift = 0;
+		int mBlueShift = 0;
     public:
         Renderer(SexyAppBase* theApp) {};
         ~Renderer() = default;	
@@ -86,7 +108,7 @@ namespace Sexy
 
         virtual void AddImage(Image *theImage) = 0;
         virtual void RemoveImage(Image *theImage) = 0;
-        virtual void Remove3DData(GPUImage *theImage) = 0;
+        virtual void Remove3DData(MemoryImage *theImage) = 0;
 
         virtual GPUImage *NewGPUImage() = 0;
 
@@ -105,7 +127,9 @@ namespace Sexy
         virtual bool PreDraw() = 0;
 
         virtual bool CreateImageTexture(GPUImage *theImage) = 0;
-        virtual bool RecoverBits(GPUImage *theImage) = 0;
+        virtual bool RecoverBits(MemoryImage *theImage) = 0;
+
+        virtual std::string GetErrorString() { return "";};
 
         virtual BlendMode ChooseBlendMode(int theDrawMode)
         {
@@ -153,6 +177,6 @@ namespace Sexy
         virtual void BltTexture(Texture *theTexture, const Rect &theSrcRect, const Rect &theDestRect, const Color &theColor,
                                 int theDrawMode) = 0;
     };
-
+extern bool gRendererPreDrawError;
     
 } // namespace Sexy

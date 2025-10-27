@@ -280,7 +280,7 @@ void HTTPTransfer::GetThreadProc()
 						}
 
 						// Chunk it in
-						int aCopyLen = min(aChunkLengthLeft, (int)aRecvStr.length() - aPos);
+						int aCopyLen = std::min(aChunkLengthLeft, (int)aRecvStr.length() - aPos);
 						if (aCopyLen > 0)
 						{
 							mContent += aRecvStr.substr(aPos, aCopyLen);
@@ -296,7 +296,7 @@ void HTTPTransfer::GetThreadProc()
 					{
 						if (aContentLengthLeft > 0)
 						{
-							int aCopyLen = min(aContentLengthLeft, (int)aRecvStr.length() - aPos);
+							int aCopyLen = std::min(aContentLengthLeft, (int)aRecvStr.length() - aPos);
 							mContent += aRecvStr.substr(aPos, aCopyLen);
 							aPos += aCopyLen;
 							aContentLengthLeft -= aCopyLen;
@@ -320,7 +320,7 @@ void HTTPTransfer::GetThreadProc()
 	}
 
 	closesocket(mSocket);
-	mSocket = nullptr;
+	mSocket = 0;
 	WSACleanup();
 
 	if (mAborted)

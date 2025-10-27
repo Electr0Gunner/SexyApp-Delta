@@ -1,8 +1,7 @@
 #include <SexyAppFramework/SysFont.h>
 
-#include <SexyAppFramework/D3DInterface.h>
-#include <SexyAppFramework/DDImage.h>
-#include <SexyAppFramework/DDInterface.h>
+#include <SexyAppFramework/Renderer.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/Graphics.h>
 #include <SexyAppFramework/ImageFont.h>
 #include <SexyAppFramework/MemoryImage.h>
@@ -12,46 +11,68 @@
 
 using namespace Sexy;
 
-SysFont::SysFont(const std::string& theFace, int thePointSize, bool bold, bool italics, bool underline)
+SysFont::SysFont(const std::string &theFace, int thePointSize, bool bold, bool italics, bool underline)
 {
-	Init(gSexyAppBase, theFace, thePointSize, ANSI_CHARSET, bold, italics, underline, false);
+	Init(gSexyAppBase, theFace, thePointSize, 0, bold, italics, underline, false);
 }
 
-SysFont::SysFont(SexyAppBase* theApp, const std::string& theFace, int thePointSize, int theScript, bool bold, bool italics, bool underline)
+SysFont::SysFont(SexyAppBase *theApp, const std::string &theFace, int thePointSize, int theScript, bool bold, bool italics,
+				 bool underline)
 {
 	Init(theApp, theFace, thePointSize, theScript, bold, italics, underline, true);
 }
 
-void SysFont::Init(SexyAppBase* theApp, const std::string& theFace, int thePointSize, int theScript, bool bold, bool italics, bool underline, bool useDevCaps)
+SysFont::SysFont(SexyAppBase *theApp, const unsigned char aData[], size_t aDataSize, int thePointSize, int theScript,
+				 bool bold, bool italics, bool underline)
 {
 	mApp = theApp;
+	SDL_IOStream *io = SDL_IOFromConstMem((void *)aData, aDataSize);
+	if (!io)
+	{
+		SDL_ShowSimpleMessageBox(static_cast<SDL_MessageBoxFlags>(MsgBox_OK), "Failed to create SDL_IOStream", SDL_GetError(), mApp->mWindow);
+		return;
+	}
 
-	HDC aDC = ::GetDC(mApp->mHWnd);
+	mFont = TTF_OpenFontIO(io, false, thePointSize);
+	if (!mFont)
+	{
+		SDL_ShowSimpleMessageBox(static_cast<SDL_MessageBoxFlags>(MsgBox_OK), "Error", SDL_GetError(), mApp->mWindow);
+	}
 
-	int aHeight = -MulDiv(thePointSize, useDevCaps ? GetDeviceCaps(aDC, LOGPIXELSY) : 96, 72);
+	TTF_SetFontStyle(mFont, (bold ? TTF_STYLE_BOLD : 0) | (italics ? TTF_STYLE_ITALIC : 0) |
+								   (underline ? TTF_STYLE_UNDERLINE : 0));
 
-	mHFont = CreateFontA(aHeight, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, italics, underline, false, theScript, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
-		ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, theFace.c_str());
-
-	TEXTMETRIC aTextMetric;
-	HFONT anOldFont = (HFONT)SelectObject(aDC, mHFont);
-	GetTextMetrics(aDC, &aTextMetric);
-	SelectObject(aDC, anOldFont);
-	ReleaseDC(mApp->mHWnd, aDC);
-
-	mHeight = aTextMetric.tmHeight;
-	mAscent = aTextMetric.tmAscent;
+	mAscent = TTF_GetFontAscent(mFont);
+	mHeight = TTF_GetFontHeight(mFont);
 
 	mDrawShadow = false;
 	mSimulateBold = false;
 }
 
-SysFont::SysFont(const SysFont& theSysFont)
+void SysFont::Init(SexyAppBase *theApp, const std::string &theFace, int thePointSize, int theScript, bool bold,
+				   bool italics, bool underline, bool useDevCaps)
 {
-	LOGFONT aLogFont;
+	mApp = theApp;
 
-	GetObject(theSysFont.mHFont, sizeof(LOGFONT), &aLogFont);
-	mHFont = CreateFontIndirect(&aLogFont);
+	mFont = TTF_OpenFont(theFace.c_str(), thePointSize);
+	if (!mFont)
+	{
+		SDL_ShowSimpleMessageBox(static_cast<SDL_MessageBoxFlags>(MsgBox_OK), "Error", SDL_GetError(), mApp->mWindow);
+	}
+
+	TTF_SetFontStyle(mFont, (bold ? TTF_STYLE_BOLD : 0) | (italics ? TTF_STYLE_ITALIC : 0) |
+								   (underline ? TTF_STYLE_UNDERLINE : 0));
+
+	mAscent = TTF_GetFontAscent(mFont);
+	mHeight = TTF_GetFontHeight(mFont);
+
+	mDrawShadow = false;
+	mSimulateBold = false;
+}
+
+SysFont::SysFont(const SysFont &theSysFont)
+{
+	mFont = theSysFont.mFont;
 	mApp = theSysFont.mApp;
 	mHeight = theSysFont.mHeight;
 	mAscent = theSysFont.mAscent;
@@ -62,11 +83,12 @@ SysFont::SysFont(const SysFont& theSysFont)
 
 SysFont::~SysFont()
 {
-	DeleteObject(mHFont);
+	TTF_CloseFont(mFont);
 }
 
 ImageFont* SysFont::CreateImageFont()
 {
+	/*
 	int i;
 	MemoryImage* anImage;
 	int anImageCharWidth, anImageXOff, anImageYOff;
@@ -150,166 +172,31 @@ ImageFont* SysFont::CreateImageFont()
 
 	aFont->GenerateActiveFontLayers();
 	aFont->mActiveListValid = true;
-
-	return aFont;
+*/
+	return nullptr; //TODO: implement
 }
 
 int SysFont::StringWidth(const SexyString& theString)
 {
-	HDC aDC = ::GetDC(mApp->mHWnd);
-	HFONT anOldFont = (HFONT)::SelectObject(aDC, mHFont);
 	int aWidth = 0;
-
-#ifdef _USE_WIDE_STRING
-	if (CheckFor98Mill())
-	{
-		SIZE aSize = { 0, 0 };
-		GetTextExtentPoint32W(aDC, theString.c_str(), theString.length(), &aSize);
-		aWidth = int(aSize.cx);
-	}
-	else
-#endif
-	{
-		RECT aRect = { 0, 0, 0, 0 };
-		DrawTextEx(aDC, (SexyChar*)theString.c_str(), theString.length(), &aRect, DT_CALCRECT | DT_NOPREFIX, nullptr);
-		aWidth = aRect.right;
-	}
-
-	::SelectObject(aDC, anOldFont);
-	::ReleaseDC(mApp->mHWnd, aDC);
-
+	TTF_GetStringSize(mFont, theString.c_str(), 0, &aWidth, nullptr);
 	return aWidth;
 }
 
 void SysFont::DrawString(Graphics* g, int theX, int theY, const SexyString& theString, const Color& theColor, const Rect& theClipRect)
 {
-	DDImage* aDDImage = dynamic_cast<DDImage*>(g->mDestImage);
+	SDL_Color aColor = {theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha};
 
-	if (aDDImage != nullptr)
-	{
-		LPDIRECTDRAWSURFACE aSurface = aDDImage->GetSurface();
-		if (aSurface != nullptr)
-		{
-			HDC aDC;
+	SDL_Surface* aTextSurface = TTF_RenderText_Blended(mFont, theString.c_str(), 0, aColor);
 
-			if (aDDImage->mLockCount > 0)
-				aDDImage->mSurface->Unlock(nullptr);
+	MemoryImage aTempImage;
+	aTempImage.Create(aTextSurface->w, aTextSurface->h);
+	memcpy(aTempImage.GetBits(), aTextSurface->pixels, aTextSurface->w * aTextSurface->h * sizeof(decltype(aTempImage.mBits))); //Save way to get the size of the type defining mBits, useful for when we change it to uint32_t later
 
-			if ((g->mDestImage == gSexyAppBase->mWidgetManager->mImage) && (gSexyAppBase->Is3DAccelerated()))
-				gSexyAppBase->mDDInterface->mD3DInterface->Flush();
-
-			if (aSurface->GetDC(&aDC) == DD_OK)
-			{
-				HFONT anOldFont = (HFONT)SelectObject(aDC, mHFont);
-				SetBkMode(aDC, TRANSPARENT);
-				IntersectClipRect(aDC, theClipRect.mX, theClipRect.mY, theClipRect.mX + theClipRect.mWidth, theClipRect.mY + theClipRect.mHeight);
-
-				if (mDrawShadow)
-				{
-					SetTextColor(aDC, RGB(0, 0, 0));
-					TextOut(aDC, theX + g->mTransX + 1, theY - mAscent + 1 + g->mTransY + 1, theString.c_str(), theString.length());
-					if (mSimulateBold)
-						TextOut(aDC, theX + g->mTransX + 2, theY - mAscent + 1 + g->mTransY + 1, theString.c_str(), theString.length());
-				}
-				SetTextColor(aDC, RGB(theColor.GetRed(), theColor.GetGreen(), theColor.GetBlue()));
-				TextOut(aDC, theX + g->mTransX, theY - mAscent + 1 + g->mTransY, theString.c_str(), theString.length());
-				if (mSimulateBold)
-					TextOut(aDC, theX + g->mTransX + 1, theY - mAscent + 1 + g->mTransY, theString.c_str(), theString.length());
-
-				::SelectObject(aDC, anOldFont);
-				aSurface->ReleaseDC(aDC);
-				aDDImage->DeleteAllNonSurfaceData();
-			}
-
-			if (aDDImage->mLockCount > 0)
-				aDDImage->mSurface->Lock(nullptr, &aDDImage->mLockedSurfaceDesc, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, nullptr);
-		}
-	}
-	else if (g->mDestImage != &Graphics::mStaticImage) // DrawString can be called when not drawing onto an image.
-	{
-		HDC aDC = CreateCompatibleDC(nullptr);
-		HFONT anOldFont = (HFONT)SelectObject(aDC, mHFont);
-
-		int aWidth = StringWidth(theString);
-		int aHeight = mHeight;
-
-		BITMAPINFOHEADER bih;
-		memset(&bih, 0, sizeof(bih));
-
-		bih.biPlanes = 1;
-		bih.biWidth = aWidth;
-		bih.biHeight = -aHeight;
-		bih.biCompression = BI_RGB;
-		bih.biBitCount = 32;
-		bih.biSize = sizeof(BITMAPINFOHEADER);
-
-		ulong *whiteBits, *blackBits;
-		HBITMAP whiteBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&whiteBits, nullptr, 0);
-		HBITMAP blackBitmap = (HBITMAP)CreateDIBSection(aDC, (BITMAPINFO*)&bih, DIB_RGB_COLORS, (void**)&blackBits, nullptr, 0);
-
-		RECT rc = { 0, 0, aWidth, aHeight };
-
-#define DRAW_BITMAP(bmp, brush)                                                                                                                                \
-	{                                                                                                                                                          \
-		HBITMAP oldBmp = (HBITMAP)SelectObject(aDC, bmp);                                                                                                      \
-		::FillRect(aDC, &rc, brush);                                                                                                                           \
-		SetBkMode(aDC, TRANSPARENT);                                                                                                                           \
-                                                                                                                                                               \
-		if (mDrawShadow)                                                                                                                                       \
-		{                                                                                                                                                      \
-			SetTextColor(aDC, RGB(0, 0, 0));                                                                                                                   \
-			TextOut(aDC, 1, 1, theString.c_str(), theString.length());                                                                                         \
-			if (mSimulateBold)                                                                                                                                 \
-				TextOut(aDC, 2, 1, theString.c_str(), theString.length());                                                                                     \
-		}                                                                                                                                                      \
-		SetTextColor(aDC, RGB(theColor.GetRed(), theColor.GetGreen(), theColor.GetBlue()));                                                                    \
-		TextOut(aDC, 0, 0, theString.c_str(), theString.length());                                                                                             \
-		if (mSimulateBold)                                                                                                                                     \
-			TextOut(aDC, 1, 0, theString.c_str(), theString.length());                                                                                         \
-                                                                                                                                                               \
-		SelectObject(aDC, oldBmp);                                                                                                                             \
-	}
-
-		DRAW_BITMAP(whiteBitmap, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DRAW_BITMAP(blackBitmap, (HBRUSH)GetStockObject(BLACK_BRUSH));
-
-		SelectObject(aDC, anOldFont);
-
-		MemoryImage aTempImage;
-		aTempImage.Create(aWidth, aHeight);
-
-		int aCount = aHeight * aWidth;
-		ulong *ptr1 = whiteBits, *ptr2 = blackBits;
-		while (aCount > 0)
-		{
-			if (*ptr1 == *ptr2)
-				*ptr1 |= 0xFF000000;
-			else if ((*ptr1 & 0xFFFFFF) != 0xFFFFFF || (*ptr2 & 0xFFFFFF) != 0x000000) // if not the background of either, it's a 'blend'
-			{
-				int ba = 255 + (*ptr2 & 0xFF) - (*ptr1 & 0xFF);
-				int ga = 255 + ((*ptr2 >> 8) & 0xFF) - ((*ptr1 >> 8) & 0xFF);
-				int ra = 255 + ((*ptr2 >> 16) & 0xFF) - ((*ptr1 >> 16) & 0xFF);
-				int aBlue = 255 * (*ptr2 & 0xFF) / ba;
-				int aGreen = 255 * ((*ptr2 >> 8) & 0xFF) / ga;
-				int aRed = 255 * ((*ptr2 >> 16) & 0xFF) / ra;
-				int anAlpha = min(ra, min(ga, ba));
-				*ptr1 = (aBlue) | (aGreen << 8) | (aRed << 16) | (anAlpha << 24);
-			}
-			else
-				*ptr1 &= 0;
-
-			ptr1++;
-			ptr2++;
-			--aCount;
-		}
-
-		memcpy(aTempImage.GetBits(), whiteBits, aWidth * aHeight * sizeof(ulong));
-		g->DrawImage(&aTempImage, theX, theY - mAscent);
-
-		DeleteObject(whiteBitmap);
-		DeleteObject(blackBitmap);
-		DeleteDC(aDC);
-	}
+	g->PushState();
+	g->mClipRect = g->mClipRect.Intersection(theClipRect);
+	g->DrawImageF(&aTempImage, theX, theY);
+	g->PopState();
 }
 
 Font* SysFont::Duplicate()

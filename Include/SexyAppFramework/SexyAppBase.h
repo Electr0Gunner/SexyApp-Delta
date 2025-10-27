@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <SexyAppFramework/Buffer.h>
 #include <SexyAppFramework/ButtonListener.h>
 #include <SexyAppFramework/Color.h>
@@ -11,6 +12,7 @@
 #include <SexyAppFramework/SharedImage.h>
 #include <SexyAppFramework/WidgetManager.h>
 #include <SDL3/SDL_video.h>
+#include <mutex>
 
 namespace ImageLib
 {
@@ -49,29 +51,10 @@ namespace Sexy
 
 	typedef std::map<std::string, SexyString> StringSexyStringMap;
 	typedef std::map<std::string, std::string> StringStringMap;
-	typedef std::map<std::string, std::wstring> StringWStringMap;
 	typedef std::map<std::string, bool> StringBoolMap;
 	typedef std::map<std::string, int> StringIntMap;
 	typedef std::map<std::string, double> StringDoubleMap;
 	typedef std::map<std::string, StringVector> StringStringVectorMap;
-
-	enum
-	{
-		CURSOR_POINTER,
-		CURSOR_HAND,
-		CURSOR_DRAGGING,
-		CURSOR_TEXT,
-		CURSOR_CIRCLE_SLASH,
-		CURSOR_SIZEALL,
-		CURSOR_SIZENESW,
-		CURSOR_SIZENS,
-		CURSOR_SIZENWSE,
-		CURSOR_SIZEWE,
-		CURSOR_WAIT,
-		CURSOR_NONE,
-		CURSOR_CUSTOM,
-		NUM_CURSORS
-	};
 
 	enum
 	{
@@ -117,6 +100,41 @@ namespace Sexy
 		UPDATESTATE_PROCESS_DONE
 	};
 
+	enum MsgBoxFlags
+	{
+		MsgBox_OK = 0,
+		MsgBox_OKCANCEL = 1,
+		MsgBox_ABORTRETRYIGNORE = 2,
+		MsgBox_YESNOCANCEL = 3,
+		MsgBox_YESNO = 4,
+		MsgBox_RETRYCANCEL = 5,
+	};
+	
+	enum InternalCursorType
+	{
+		CURSOR_UNKNOWN = -1,
+		CURSOR_POINTER = 0,
+		CURSOR_HAND,
+		CURSOR_DRAGGING,
+		CURSOR_TEXT,
+		CURSOR_CIRCLESLASH,
+		CURSOR_SIZEAll,
+		CURSOR_SIZENESW,
+		CURSOR_SIZENS,
+		CURSOR_SIZENWSE,
+		CURSOR_SIZEWE,
+		CURSOR_WAIT,
+		CURSOR_CUSTOM,
+		NUM_CURSORS,
+	};
+
+	struct MsgBoxData
+	{
+		MsgBoxFlags mFlags;
+		const char *mTitle;
+		const char *mMessage;
+	};
+
 	typedef std::map<HANDLE, int> HandleToIntMap;
 
 	class SexyAppBase : public ButtonListener, public DialogListener
@@ -147,9 +165,8 @@ namespace Sexy
 		bool mStandardWordWrap;
 		bool mbAllowExtendedChars;
 
-		HANDLE mMutex;
+		std::mutex* mMutex;
 		bool mOnlyAllowOneCopyToRun;
-		UINT mNotifyGameMessage;
 		CritSect mCritSect;
 		bool mBetaValidate;
 		uchar mAdd8BitMaxTable[512];
@@ -181,7 +198,7 @@ namespace Sexy
 		bool mReadFromRegistry;
 		std::string mRegisterLink;
 		std::string mProductVersion;
-		Image* mCursorImages[NUM_CURSORS];
+		Image* mCursorImages[InternalCursorType::NUM_CURSORS];
 		HCURSOR mOverrideCursor;
 		bool mIsOpeningURL;
 		bool mShutdownOnURLOpen;
@@ -225,7 +242,7 @@ namespace Sexy
 		DWORD mNextDrawTick;
 		int mStepMode; // 0 = off, 1 = step, 2 = waiting for step
 
-		int mCursorNum;
+		InternalCursorType mCursorNum;
 		SoundManager* mSoundManager;
 		HCURSOR mHandCursor;
 		HCURSOR mDraggingCursor;
@@ -310,14 +327,12 @@ namespace Sexy
 		bool mEnableWindowAspect;
 		Ratio mWindowAspect;
 
-		StringWStringMap mStringProperties;
+		StringStringMap mStringProperties;
 		StringBoolMap mBoolProperties;
 		StringIntMap mIntProperties;
 		StringDoubleMap mDoubleProperties;
 		StringStringVectorMap mStringVectorProperties;
 		ResourceManager* mResourceManager;
-
-		LONG mOldWndProc;
 
 	protected:
 		void RehupFocus();
@@ -336,12 +351,7 @@ namespace Sexy
 
 		// Loading thread methods
 		virtual void LoadingThreadCompleted();
-		static void LoadingThreadProcStub(void* theArg);
-
-		// Cursor thread methods
-		void CursorThreadProc();
-		static void CursorThreadProcStub(void* theArg);
-		void StartCursorThread();
+		static int LoadingThreadProcStub(void* theArg);
 
 		void WaitForLoadingThread();
 		void ProcessSafeDeleteList();
@@ -365,7 +375,7 @@ namespace Sexy
 		virtual ~SexyAppBase();
 
 		// Common overrides:
-		virtual MusicInterface* CreateMusicInterface(HWND theHWnd);
+		virtual MusicInterface* CreateMusicInterface();
 		virtual void InitHook();
 		virtual void ShutdownHook();
 		virtual void PreTerminate();
@@ -379,9 +389,7 @@ namespace Sexy
 		virtual void BeginPopup();
 		virtual void EndPopup();
 		virtual int MsgBox(const std::string& theText, const std::string& theTitle = "Message", int theFlags = MB_OK);
-		virtual int MsgBox(const std::wstring& theText, const std::wstring& theTitle = L"Message", int theFlags = MB_OK);
 		virtual void Popup(const std::string& theString);
-		virtual void Popup(const std::wstring& theString);
 		virtual void LogScreenSaverError(const std::string& theError);
 		virtual void SafeDeleteWidget(Widget* theWidget);
 
@@ -427,8 +435,8 @@ namespace Sexy
 		void CopyToClipboard(const std::string& theString);
 		std::string GetClipboard();
 
-		void SetCursor(int theCursorNum);
-		int GetCursor();
+		void SetCursor(InternalCursorType theCursorNum);
+		InternalCursorType GetCursor();
 		void EnableCustomCursors(bool enabled);
 		virtual GPUImage* GetImage(const std::string& theFileName, bool commitBits = true);
 		virtual SharedImageRef GetSharedImage(const std::string& theFileName, const std::string& theVariant = "", bool* isNew = nullptr);
@@ -515,7 +523,7 @@ namespace Sexy
 		void SetBoolean(const std::string& theId, bool theValue);
 		void SetInteger(const std::string& theId, int theValue);
 		void SetDouble(const std::string& theId, double theValue);
-		void SetString(const std::string& theId, const std::wstring& theValue);
+		void SetString(const std::string& theId, const std::string& theValue);
 
 		// Demo access methods
 		bool PrepareDemoCommand(bool required);

@@ -1,7 +1,7 @@
 #include <SexyAppFramework/ImageFont.h>
 
 #include <SexyAppFramework/AutoCrit.h>
-#include <SexyAppFramework/DDImage.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/Graphics.h>
 #include <SexyAppFramework/MemoryImage.h>
 #include <SexyAppFramework/SexyAppBase.h>
@@ -1466,13 +1466,13 @@ void ImageFont::DrawStringEx(
 
 			Color aColor;
 			aColor.mRed =
-				min((theColor.mRed * anActiveFontLayer->mBaseFontLayer->mColorMult.mRed / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mRed, 255);
+				std::min((theColor.mRed * anActiveFontLayer->mBaseFontLayer->mColorMult.mRed / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mRed, 255);
 			aColor.mGreen =
-				min((theColor.mGreen * anActiveFontLayer->mBaseFontLayer->mColorMult.mGreen / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mGreen, 255);
+				std::min((theColor.mGreen * anActiveFontLayer->mBaseFontLayer->mColorMult.mGreen / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mGreen, 255);
 			aColor.mBlue =
-				min((theColor.mBlue * anActiveFontLayer->mBaseFontLayer->mColorMult.mBlue / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mBlue, 255);
+				std::min((theColor.mBlue * anActiveFontLayer->mBaseFontLayer->mColorMult.mBlue / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mBlue, 255);
 			aColor.mAlpha =
-				min((theColor.mAlpha * anActiveFontLayer->mBaseFontLayer->mColorMult.mAlpha / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mAlpha, 255);
+				std::min((theColor.mAlpha * anActiveFontLayer->mBaseFontLayer->mColorMult.mAlpha / 255) + anActiveFontLayer->mBaseFontLayer->mColorAdd.mAlpha, 255);
 
 			int anOrder = anActiveFontLayer->mBaseFontLayer->mBaseOrder + anActiveFontLayer->mBaseFontLayer->mCharData[(uchar)aChar].mOrder;
 
@@ -1492,7 +1492,7 @@ void ImageFont::DrawStringEx(
 			aRenderCommand->mMode = anActiveFontLayer->mBaseFontLayer->mDrawMode;
 			aRenderCommand->mNext = nullptr;
 
-			int anOrderIdx = min(max(anOrder + 128, 0), 255);
+			int anOrderIdx = std::min(std::max(anOrder + 128, 0), 255);
 
 			if (gRenderTail[anOrderIdx] == nullptr)
 			{

@@ -1,4 +1,4 @@
-#include <SexyAppFramework/DDImage.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/Graphics.h>
 #include <SexyAppFramework/Image.h>
@@ -416,10 +416,8 @@ bool WidgetManager::DrawScreen()
 	Graphics aScrG(mImage);
 	mCurG = &aScrG;
 
-	DDImage* aDDImage = dynamic_cast<DDImage*>(mImage);
+	GPUImage* aDDImage = dynamic_cast<GPUImage*>(mImage);
 	bool surfaceLocked = false;
-	if (aDDImage != nullptr)
-		surfaceLocked = aDDImage->LockSurface();
 
 	if (aDirtyCount > 0)
 	{
@@ -453,9 +451,6 @@ bool WidgetManager::DrawScreen()
 	}
 
 	FlushDeferredOverlayWidgets(0x7FFFFFFF);
-
-	if (aDDImage != nullptr && surfaceLocked)
-		aDDImage->UnlockSurface();
 
 	mCurG = nullptr;
 

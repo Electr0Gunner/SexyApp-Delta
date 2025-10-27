@@ -11,7 +11,7 @@ namespace Sexy
 {
 	const ulong MEMORYCHECK_ID = 0x4BEEFADE;
 
-	class NativeDisplay;
+	class Renderer;
 	class SexyAppBase;
 
 	class MemoryImage : public Image
@@ -43,9 +43,9 @@ namespace Sexy
 		void Init();
 
 	public:
-		virtual void* GetNativeAlphaData(NativeDisplay* theNative);
+		virtual void* GetNativeAlphaData(Renderer* theNative);
 		virtual uchar* GetRLAlphaData();
-		virtual uchar* GetRLAdditiveData(NativeDisplay* theNative);
+		virtual uchar* GetRLAdditiveData(Renderer* theNative);
 		virtual void PurgeBits();
 		virtual void DeleteSWBuffers();
 		virtual void Delete3DBuffers();

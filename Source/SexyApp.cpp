@@ -36,7 +36,7 @@ SexyApp::SexyApp()
 	mInternetManager = /*new InternetManager()*/ nullptr;
 	mBetaSupport = nullptr;
 	mBetaValidate = false;
-	SetString("UPDATE_CHECK_BODY", L"Contacting PopCap.com to determine if there are any updates available for this product ...");
+	SetString("UPDATE_CHECK_BODY", "Contacting PopCap.com to determine if there are any updates available for this product ...");
 	char aStr[9] = { 0 };
 	strncpy(aStr, BUILD_INFO_MARKER, 8);
 	aStr[8] = 0;

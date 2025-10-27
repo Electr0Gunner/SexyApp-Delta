@@ -35,6 +35,19 @@ bool GLShader::LoadFromSource(const std::string &theVertexSource, const std::str
 	return true;
 }
 
+GLuint GLShader::CompileShader(GLenum theType, const std::string &theSource)
+{
+	GLuint shader = glCreateShader(theType);
+	const char *src = theSource.c_str();
+	glShaderSource(shader, 1, &src, nullptr);
+	glCompileShader(shader);
+
+	GLint success;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+	return shader;
+}
+
 void GLShader::Use()
 {
     glUseProgram(mProgramID);

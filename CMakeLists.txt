@@ -41,6 +41,21 @@ set(BASS_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/bass/Include")
 add_subdirectory(ThirdParty)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h)
+set(FILTERED_FILES "")
+foreach(FILE_PATH ${SOURCES})
+    file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${FILE_PATH}")
+    string(REPLACE "\\" "/" REL_PATH "${REL_PATH}") # normalize for Windows
+
+    if(REL_PATH MATCHES "^Source/SWTri/SWTri\\.(cpp|h)$")
+        list(APPEND FILTERED_FILES "${FILE_PATH}")
+    elseif(REL_PATH MATCHES "^Source/SWTri/")
+        continue()
+    else()
+        list(APPEND FILTERED_FILES "${FILE_PATH}")
+    endif()
+endforeach()
+
+set(SOURCES ${FILTERED_FILES})
 add_library(SexyAppFramework STATIC ${SOURCES})
 
 target_include_directories(SexyAppFramework

@@ -1,4 +1,4 @@
-#include <SexyAppFramework/DDImage.h>
+#include <SexyAppFramework/GPUImage.h>
 #include <SexyAppFramework/Debug.h>
 #include <SexyAppFramework/Font.h>
 #include <SexyAppFramework/Graphics.h>
@@ -65,7 +65,7 @@ Graphics::Graphics(Image* theDestImage)
 	}
 	else
 	{
-		mIs3D = DDImage::Check3D(theDestImage);
+		mIs3D = GPUImage::Check3D(theDestImage);
 	}
 
 	mClipRect = Rect(0, 0, mDestImage->GetWidth(), mDestImage->GetHeight());
@@ -295,8 +295,8 @@ void Graphics::PolyFill(const Point* theVertexList, int theNumVertices, bool con
 
 	mPFNumActiveEdges = 0;																/* start with empty active list */
 	k = 0;																				/* ind[k] is next vertex to process */
-	y0 = (int)max(aMinY, ceil(mPFPoints[ind[0]].mY - 0.5 + mTransY));					/* ymin of polygon */
-	y1 = (int)min(aMaxY, floor(mPFPoints[ind[mPFNumVertices - 1]].mY - 0.5 + mTransY)); /* ymax of polygon */
+	y0 = (int)std::max((double)aMinY, ceil(mPFPoints[ind[0]].mY - 0.5 + mTransY));					/* ymin of polygon */
+	y1 = (int)std::min((double)aMaxY, floor(mPFPoints[ind[mPFNumVertices - 1]].mY - 0.5 + mTransY)); /* ymax of polygon */
 
 	for (y = y0; y <= y1; y++)
 	{
@@ -382,10 +382,10 @@ void Graphics::PolyFillAA(const Point* theVertexList, int theNumVertices, bool c
 		}
 		else
 		{
-			aCoverLeft = min(aCoverLeft, aPt->mX);
-			aCoverRight = max(aCoverRight, aPt->mX);
-			aCoverTop = min(aCoverTop, aPt->mY);
-			aCoverBottom = max(aCoverBottom, aPt->mY);
+			aCoverLeft = std::min(aCoverLeft, aPt->mX);
+			aCoverRight = std::max(aCoverRight, aPt->mX);
+			aCoverTop = std::min(aCoverTop, aPt->mY);
+			aCoverBottom = std::max(aCoverBottom, aPt->mY);
 		}
 	}
 	BYTE* coverPtr = aCoverageBuffer;
@@ -421,8 +421,8 @@ void Graphics::PolyFillAA(const Point* theVertexList, int theNumVertices, bool c
 
 	mPFNumActiveEdges = 0;																/* start with empty active list */
 	k = 0;																				/* ind[k] is next vertex to process */
-	y0 = (int)max(aMinY, ceil(mPFPoints[ind[0]].mY - 0.5 + mTransY));					/* ymin of polygon */
-	y1 = (int)min(aMaxY, floor(mPFPoints[ind[mPFNumVertices - 1]].mY - 0.5 + mTransY)); /* ymax of polygon */
+	y0 = (int)std::max((double)aMinY, ceil(mPFPoints[ind[0]].mY - 0.5 + mTransY));					/* ymin of polygon */
+	y1 = (int)std::min((double)aMaxY, floor(mPFPoints[ind[mPFNumVertices - 1]].mY - 0.5 + mTransY)); /* ymax of polygon */
 
 	for (y = y0; y <= y1; y++)
 	{
@@ -483,7 +483,7 @@ void Graphics::PolyFillAA(const Point* theVertexList, int theNumVertices, bool c
 				BYTE* coverRow = coverPtr + (y - aCoverTop) * aCoverWidth;
 				if (xr == xl)
 				{
-					coverRow[xl - aCoverLeft] = min(255, coverRow[xl - aCoverLeft] + ((lErr * rErr) >> 8));
+					coverRow[xl - aCoverLeft] = std::min(255, coverRow[xl - aCoverLeft] + ((lErr * rErr) >> 8));
 				}
 				else
 				{
@@ -493,15 +493,15 @@ void Graphics::PolyFillAA(const Point* theVertexList, int theNumVertices, bool c
 						do
 						{
 							double _y = m * xl + b;
-							lErr = min(255, int(fabs((_y)-y - .5) * 255));
-							coverRow[xl - aCoverLeft] = min(255, coverRow[xl - aCoverLeft] + lErr);
+							lErr = std::min(255, int(fabs((_y)-y - .5) * 255));
+							coverRow[xl - aCoverLeft] = std::min(255, coverRow[xl - aCoverLeft] + lErr);
 							xl++;
 							c -= 1.0;
 						} while (xl <= xr && c > 0);
 					}
 					else
 					{
-						coverRow[xl - aCoverLeft] = min(255, coverRow[xl - aCoverLeft] + lErr);
+						coverRow[xl - aCoverLeft] = std::min(255, coverRow[xl - aCoverLeft] + lErr);
 						xl++;
 					}
 
@@ -511,15 +511,15 @@ void Graphics::PolyFillAA(const Point* theVertexList, int theNumVertices, bool c
 						do
 						{
 							double _y = m * xr + b;
-							rErr = min(255, int(fabs((_y)-y - .5) * 255));
-							coverRow[xr - aCoverLeft] = min(255, coverRow[xr - aCoverLeft] + rErr);
+							rErr = std::min(255, int(fabs((_y)-y - .5) * 255));
+							coverRow[xr - aCoverLeft] = std::min(255, coverRow[xr - aCoverLeft] + rErr);
 							xr--;
 							c -= 1.0;
 						} while (xr >= xl && c > 0);
 					}
 					else
 					{
-						coverRow[xr - aCoverLeft] = min(255, coverRow[xr - aCoverLeft] + rErr);
+						coverRow[xr - aCoverLeft] = std::min(255, coverRow[xr - aCoverLeft] + rErr);
 						xr--;
 					}
 
@@ -840,7 +840,7 @@ void Graphics::DrawImageMatrix(Image* theImage, const SexyMatrix3& theMatrix, co
 
 void Graphics::DrawImageTransformHelper(Image* theImage, const Transform& theTransform, const Rect& theSrcRect, float x, float y, bool useFloat)
 {
-	if (theTransform.mComplex || (DDImage::Check3D(mDestImage) && useFloat))
+	if (theTransform.mComplex || (GPUImage::Check3D(mDestImage) && useFloat))
 	{
 		DrawImageMatrix(theImage, theTransform.GetMatrix(), theSrcRect, x, y);
 		return;

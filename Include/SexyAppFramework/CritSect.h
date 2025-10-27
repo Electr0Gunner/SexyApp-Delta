@@ -1,20 +1,21 @@
 #pragma once
 
 #include <SexyAppFramework/Common.h>
+#include <mutex>
 
 class CritSync;
-
 namespace Sexy
 {
 	class CritSect
 	{
-	private:
-		CRITICAL_SECTION mCriticalSection;
-		friend class AutoCrit;
+		private:
+			// We are using std::recursive_mutex because the old Win32 CRITICAL_SECTION was recursive by default.
+			std::recursive_mutex mCriticalSection;
+			friend class AutoCrit;
 
-	public:
-		CritSect(void);
-		~CritSect(void);
+		public:
+			CritSect(void){};
+			~CritSect(void){};
 	};
 
 } // namespace Sexy

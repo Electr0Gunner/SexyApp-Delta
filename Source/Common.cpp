@@ -790,7 +790,7 @@ void Sexy::MkDir(const std::string& theDir)
 
 std::string Sexy::GetFileName(const std::string& thePath, bool noExtension)
 {
-	int aLastSlash = max((int)thePath.rfind('\\'), (int)thePath.rfind('/'));
+	int aLastSlash = std::max((int)thePath.rfind('\\'), (int)thePath.rfind('/'));
 
 	if (noExtension)
 	{
@@ -807,7 +807,7 @@ std::string Sexy::GetFileName(const std::string& thePath, bool noExtension)
 
 std::string Sexy::GetFileDir(const std::string& thePath, bool withSlash)
 {
-	int aLastSlash = max((int)thePath.rfind('\\'), (int)thePath.rfind('/'));
+	int aLastSlash = std::max((int)thePath.rfind('\\'), (int)thePath.rfind('/'));
 
 	if (aLastSlash == -1)
 		return "";

@@ -31,6 +31,12 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
+    sdl_ttf
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
+    GIT_TAG main
+)
+
+FetchContent_Declare(
   glm
   GIT_REPOSITORY https://github.com/g-truc/glm
   GIT_TAG master
@@ -39,8 +45,8 @@ FetchContent_Declare(
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 set(SDL_SHARED OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(ogg vorbis zlib openal sdl glm)
+FetchContent_MakeAvailable(ogg vorbis zlib openal sdl sdl_ttf glm)
 
-add_library(ThirdParty STATIC Source/stb_image.cpp)
-target_link_libraries(ThirdParty PUBLIC glm SDL3::SDL3-static OpenAL ogg Vorbis::vorbisfile Vorbis::vorbis zlibstatic )
+add_library(ThirdParty STATIC Source/stb_image.cpp Source/glad.c)
+target_link_libraries(ThirdParty PUBLIC glm SDL3::SDL3-static SDL3_ttf::SDL3_ttf OpenAL ogg Vorbis::vorbisfile Vorbis::vorbis zlibstatic )
 target_include_directories(ThirdParty PUBLIC Include)

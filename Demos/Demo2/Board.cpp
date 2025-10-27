@@ -13,12 +13,11 @@
 #include "SexyAppFramework/ImageFont.h"
 
 // The Image.h file just declares basic functions. All images are either of 
-// the DDImage or MemoryImage type. For this demo, we will use DDImage
+// the GPUImage or MemoryImage type. For this demo, we will use GPUImage
 // types, as they are the type returned by the image loading code.
-// A DDImage is actually derived from MemoryImage, so where an Image or
-// MemoryImage is required, a DDImage will suffice as well. A DDImage
-// contains optimized code for use with DirectX 7+.
-#include "SexyAppFramework/DDImage.h"
+// A GPUImage is actually derived from MemoryImage, so where an Image or
+// MemoryImage is required, a GPUImage will suffice as well.
+#include "SexyAppFramework/GPUImage.h"
 
 // The Rectangle template, used to specify X, Y, Width, Height
 #include "SexyAppFramework/Rect.h"

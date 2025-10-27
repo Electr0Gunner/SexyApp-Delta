@@ -13,7 +13,7 @@ namespace Sexy
 	    friend class SysFont;
     public:
 		GLImage();
-		GLImage(Renderer* theRenderer) {};
+		GLImage(Renderer* theRenderer);
         virtual ~GLImage();
 
         virtual void Create(int theWidth, int theHeight);

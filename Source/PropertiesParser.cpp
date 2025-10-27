@@ -111,7 +111,7 @@ bool PropertiesParser::ParseProperties()
 					return false;
 
 				std::string anId = SexyStringToStringFast(aXMLElement.mAttributes[_S("id")]);
-				mApp->SetString(anId, SexyStringToWStringFast(aDef));
+				mApp->SetString(anId, aDef);
 			}
 			else if (aXMLElement.mValue == _S("StringArray"))
 			{
